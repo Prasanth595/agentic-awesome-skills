@@ -1696,6 +1696,73 @@
     }
   },
   {
+    "id": "agentic-test-audit",
+    "path": "skills/agentic-test-audit",
+    "category": "testing",
+    "name": "agentic-test-audit",
+    "description": "Audit a pytest suite: surviving mutants and untested code, flaky, order-dependent and slow tests, and removal candidates checked on held-out mutants. Report-only.",
+    "risk": "safe",
+    "source": "community",
+    "date_added": "2026-10-16",
+    "plugin": {
+      "targets": {
+        "codex": "supported",
+        "claude": "supported"
+      },
+      "setup": {
+        "type": "none",
+        "summary": "",
+        "docs": null
+      },
+      "reasons": []
+    },
+    "source_type": "community",
+    "source_repo": "timini/agentic-verification",
+    "license": "MIT",
+    "license_source": "https://github.com/timini/agentic-verification/blob/v0.3.0/LICENSE",
+    "tags": [
+      "testing",
+      "pytest",
+      "mutation-testing",
+      "python",
+      "flaky-tests",
+      "test-audit"
+    ]
+  },
+  {
+    "id": "agentic-verify",
+    "path": "skills/agentic-verify",
+    "category": "testing",
+    "name": "agentic-verify",
+    "description": "Check that a Python change is caught by tests: run every mutant of the changed lines and write tests until they catch them. Reports evidence instead of a diff to read.",
+    "risk": "safe",
+    "source": "community",
+    "date_added": "2026-10-16",
+    "plugin": {
+      "targets": {
+        "codex": "supported",
+        "claude": "supported"
+      },
+      "setup": {
+        "type": "none",
+        "summary": "",
+        "docs": null
+      },
+      "reasons": []
+    },
+    "source_type": "community",
+    "source_repo": "timini/agentic-verification",
+    "license": "MIT",
+    "license_source": "https://github.com/timini/agentic-verification/blob/v0.3.0/LICENSE",
+    "tags": [
+      "testing",
+      "pytest",
+      "mutation-testing",
+      "python",
+      "verification"
+    ]
+  },
+  {
     "id": "agentmail",
     "path": "skills/agentmail",
     "category": "ai-ml",

@@ -2,7 +2,7 @@
 
 Generated at: 2026-10-14T18:55:53.000Z
 
-Total skills: 2702
+Total skills: 2704
 
 ## agent-behavior (5)
 
@@ -2999,7 +2999,7 @@ Total skills: 2702
 | `test-automator` | Master AI-powered test automation with modern frameworks, self-healing tests, and comprehensive quality engineering. Build scalable testing strategies with a... | critical | community | automator | automator, test, ai, powered, automation, frameworks, self, healing, tests, quality, engineering, scalable |
 | `webapp-testing` | To test local web applications, write native Python Playwright scripts. | critical | community | webapp | webapp, testing, test, local, web, applications, write, native, python, playwright, scripts |
 
-## testing (47)
+## testing (49)
 
 | Skill | Description | Risk | Source | Tags | Triggers |
 | --- | --- | --- | --- | --- | --- |
@@ -3007,6 +3007,8 @@ Total skills: 2702
 | `agent-qa-authoring` | Create, edit, validate, and run Agent QA tests, suites, and hooks through MCP or CLI while preserving canonical IDs and schema contracts. | critical | vostride/agent-qa | testing, qa, mcp, web-testing, mobile-testing | testing, qa, mcp, web-testing, mobile-testing, agent, authoring, edit, validate, run, tests, suites |
 | `agent-qa-debug-fix` | Debug, patch, and verify failed Agent QA runs from MCP evidence, artifacts, logs, and local code without hiding product or infrastructure defects. | critical | vostride/agent-qa | testing, qa, debugging, mcp, self-healing | testing, qa, debugging, mcp, self-healing, agent, debug, fix, patch, verify, failed, runs |
 | `agent-qa-result-triage` | Triage failed Agent QA runs with MCP evidence, artifacts, logs, fixed failure categories, confidence, and actionable next steps. | safe | vostride/agent-qa | testing, qa, triage, mcp, debugging | testing, qa, triage, mcp, debugging, agent, result, failed, runs, evidence, artifacts, logs |
+| `agentic-test-audit` | Audit a pytest suite: surviving mutants and untested code, flaky, order-dependent and slow tests, and removal candidates checked on held-out mutants. Report-... | safe | timini/agentic-verification | testing, pytest, mutation-testing, python, flaky-tests, test-audit | testing, pytest, mutation-testing, python, flaky-tests, test-audit, agentic, test, audit, suite, surviving, mutants |
+| `agentic-verify` | Check that a Python change is caught by tests: run every mutant of the changed lines and write tests until they catch them. Reports evidence instead of a dif... | safe | timini/agentic-verification | testing, pytest, mutation-testing, python, verification | testing, pytest, mutation-testing, python, verification, agentic, verify, check, change, caught, tests, run |
 | `android-ui-journey-testing` | XML-specified Android UI journey testing, interactive step execution, assertion verification, and JSON outcome reporting. | critical | self | android, journey-testing, ui-verification, testing, adb, automation | android, journey-testing, ui-verification, testing, adb, automation, ui, journey, xml, specified, interactive, step |
 | `assay` | Run assay on a web page you just wrote or changed. It opens the page in a real browser, drives every control, and reports where the page contradicts itself. ... | safe | awss1i/assay | testing, qa, web, browser, playwright, html | testing, qa, web, browser, playwright, html, assay, run, page, just, wrote, changed |
 | `bats-testing-patterns` | Master Bash Automated Testing System (Bats) for comprehensive shell script testing. Use when writing tests for shell scripts, CI/CD pipelines, or requiring t... | critical | community | bats | bats, testing, bash, automated, shell, script, writing, tests, scripts, ci, cd, pipelines |
