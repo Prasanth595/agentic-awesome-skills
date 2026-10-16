@@ -10,6 +10,8 @@
         "agent-framework-azure-ai-py",
         "agent-memory-discipline",
         "agent-squad/aria",
+        "agentic-test-audit",
+        "agentic-verify",
         "agentmail",
         "agentphone",
         "ai-agent-tool-routing",

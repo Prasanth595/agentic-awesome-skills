@@ -1343,6 +1343,44 @@
       "runtime_files": []
     },
     {
+      "id": "agentic-test-audit",
+      "path": "skills/agentic-test-audit",
+      "targets": {
+        "codex": "supported",
+        "claude": "supported"
+      },
+      "setup": {
+        "type": "none",
+        "summary": "",
+        "docs": null
+      },
+      "reasons": [],
+      "blocked_reasons": {
+        "codex": [],
+        "claude": []
+      },
+      "runtime_files": []
+    },
+    {
+      "id": "agentic-verify",
+      "path": "skills/agentic-verify",
+      "targets": {
+        "codex": "supported",
+        "claude": "supported"
+      },
+      "setup": {
+        "type": "none",
+        "summary": "",
+        "docs": null
+      },
+      "reasons": [],
+      "blocked_reasons": {
+        "codex": [],
+        "claude": []
+      },
+      "runtime_files": []
+    },
+    {
       "id": "agentmail",
       "path": "skills/agentmail",
       "targets": {
@@ -51833,10 +51871,10 @@
     }
   ],
   "summary": {
-    "total_skills": 2702,
+    "total_skills": 2704,
     "supported": {
-      "codex": 2617,
-      "claude": 2639
+      "codex": 2619,
+      "claude": 2641
     },
     "blocked": {
       "codex": 85,

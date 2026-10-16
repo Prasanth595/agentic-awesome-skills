@@ -1,6 +1,6 @@
 {
   "generatedAt": "2026-10-14T18:55:53.000Z",
-  "total": 2702,
+  "total": 2704,
   "skills": [
     {
       "id": "00-andruia-consultant",
@@ -2107,6 +2107,77 @@
         "claude"
       ],
       "path": "skills/agentic-actions-auditor/SKILL.md"
+    },
+    {
+      "id": "agentic-test-audit",
+      "canonical_id": "agentic-test-audit",
+      "name": "agentic-test-audit",
+      "description": "Audit a pytest suite: surviving mutants and untested code, flaky, order-dependent and slow tests, and removal candidates checked on held-out mutants. Report-only.",
+      "category": "testing",
+      "risk": "safe",
+      "source": "community",
+      "source_type": "community",
+      "source_repo": "timini/agentic-verification",
+      "license": "MIT",
+      "license_source": "https://github.com/timini/agentic-verification/blob/v0.3.0/LICENSE",
+      "tags": [
+        "testing",
+        "pytest",
+        "mutation-testing",
+        "python",
+        "flaky-tests",
+        "test-audit"
+      ],
+      "triggers": [
+        "testing",
+        "pytest",
+        "mutation-testing",
+        "python",
+        "flaky-tests",
+        "test-audit",
+        "agentic",
+        "test",
+        "audit",
+        "suite",
+        "surviving",
+        "mutants"
+      ],
+      "path": "skills/agentic-test-audit/SKILL.md"
+    },
+    {
+      "id": "agentic-verify",
+      "canonical_id": "agentic-verify",
+      "name": "agentic-verify",
+      "description": "Check that a Python change is caught by tests: run every mutant of the changed lines and write tests until they catch them. Reports evidence instead of a diff to read.",
+      "category": "testing",
+      "risk": "safe",
+      "source": "community",
+      "source_type": "community",
+      "source_repo": "timini/agentic-verification",
+      "license": "MIT",
+      "license_source": "https://github.com/timini/agentic-verification/blob/v0.3.0/LICENSE",
+      "tags": [
+        "testing",
+        "pytest",
+        "mutation-testing",
+        "python",
+        "verification"
+      ],
+      "triggers": [
+        "testing",
+        "pytest",
+        "mutation-testing",
+        "python",
+        "verification",
+        "agentic",
+        "verify",
+        "check",
+        "change",
+        "caught",
+        "tests",
+        "run"
+      ],
+      "path": "skills/agentic-verify/SKILL.md"
     },
     {
       "id": "agentmail",
