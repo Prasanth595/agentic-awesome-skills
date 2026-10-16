@@ -340,6 +340,7 @@ Key source families include:
 
 ### Community Contributors
 
+- **[timini/agentic-verification](https://github.com/timini/agentic-verification)**: MIT source for the `agentic-verify` and `agentic-test-audit` skills - check a Python change by running every mutant of the changed lines and writing tests until they catch them, and audit a pytest suite for gaps, flaky and slow tests, and removal candidates checked on held-out mutants.
 - **[UmarSiddiqui/obsess](https://github.com/UmarSiddiqui/obsess)**: MIT source for the `obsess` skill - a bounded perfectionist loop for one target that keeps the best evidence-backed attempt and stops on an attempt or time budget.
 - **[openhook-dev/openhook-inbox](https://github.com/openhook-dev/openhook-inbox)**: MIT source for the `openhook` skill: disposable callback inboxes, event inspection and cursor-based waiting for authorized integration tests.
 - **[huyanxius/logo-to-stickers](https://github.com/huyanxius/logo-to-stickers)**: MIT source for `logo-to-stickers` — brand marks become consistent paper-sticker characters with small visual stories, reference roles and fifteen real examples.
