@@ -4,7 +4,7 @@
 
 This is a local skill package in the open Agent Skills format. The host follows its instructions in an active session. The installers copy files; they don't launch a model or change account settings. The scalar helper compares receipts; it doesn't perform the work described by the skill.
 
-Distribution routes: the `npx skills` CLI for skills-capable agents, a Claude Code plugin marketplace, a Gemini CLI extension, the local Python installer for Claude Code and OpenCode, `/obsess` adapters in `integrations/` and a portable rules file for agents without skills. The repository's INSTALL.md lists each command. This build has package-level checks, not interactive certification in every host.
+Distribution routes: the `npx skills` CLI for skills-capable agents, a Claude Code plugin marketplace, a Gemini CLI extension, the local Python installer for Claude Code and OpenCode, `/obsess` adapters in `references/integrations/` and a portable rules file for agents without skills. The repository's INSTALL.md lists each command. This build has package-level checks, not interactive certification in every host.
 
 ## Native installation
 
@@ -20,14 +20,14 @@ Hosts without native skill commands get a thin adapter that loads the installed 
 
 | Host | Adapter | Destination | Invoke |
 |---|---|---|---|
-| Cursor | `integrations/cursor/obsess.md` | `.cursor/commands/obsess.md` | `/obsess` |
-| GitHub Copilot (VS Code) | `integrations/copilot/obsess.prompt.md` | `.github/prompts/obsess.prompt.md` | `/obsess` |
-| Windsurf | `integrations/windsurf/obsess.md` | `.windsurf/workflows/obsess.md` | `/obsess` |
-| Cline | `integrations/cline/obsess.md` | `.clinerules/workflows/obsess.md` | `/obsess.md` |
-| Gemini CLI | `integrations/gemini/obsess.toml` | `.gemini/commands/obsess.toml` | `/obsess` |
-| Codex (optional) | `integrations/codex/obsess.md` | `~/.codex/prompts/obsess.md` | `/prompts:obsess` |
+| Cursor | `references/integrations/cursor/obsess.md` | `.cursor/commands/obsess.md` | `/obsess` |
+| GitHub Copilot (VS Code) | `references/integrations/copilot/obsess.prompt.md` | `.github/prompts/obsess.prompt.md` | `/obsess` |
+| Windsurf | `references/integrations/windsurf/obsess.md` | `.windsurf/workflows/obsess.md` | `/obsess` |
+| Cline | `references/integrations/cline/obsess.md` | `.clinerules/workflows/obsess.md` | `/obsess.md` |
+| Gemini CLI | `references/integrations/gemini/obsess-command.md` | `.gemini/commands/obsess.toml` | `/obsess` |
+| Codex (optional) | `references/integrations/codex/obsess.md` | `~/.codex/prompts/obsess.md` | `/prompts:obsess` |
 
-`integrations/rules/obsess.md` is a compact, dormant-until-asked protocol for `AGENTS.md` and other rules files. Prefer the full skill where the host supports skills.
+`references/integrations/rules/obsess.md` is a compact, dormant-until-asked protocol for `AGENTS.md` and other rules files. Prefer the full skill where the host supports skills.
 
 The package keeps Claude Code's explicit-invocation frontmatter. OpenCode metadata enables a native slash command while excluding automatic selection. OpenCode also searches Claude-compatible and `.agents/skills/` paths. Avoid multiple copies with the same name. Sources: [Claude Code](https://code.claude.com/docs/en/skills), [OpenCode skills](https://opencode.ai/docs/skills/) and the [Agent Skills specification](https://agentskills.io/specification), checked 15 October 2026.
 
@@ -45,7 +45,7 @@ python3 skills/obsess/scripts/install.py --host opencode --project /path/to/proj
 
 The wrapper goes into `.opencode/commands/obsess.md`, or `~/.config/opencode/commands/obsess.md` globally. It loads the skill by exact name and forwards the user's request with `$ARGUMENTS`. The installed skill's native slash flag is set to `"false"` so there is only one command registration. No model override or subagent is configured. This follows [OpenCode's command documentation](https://opencode.ai/docs/commands/).
 
-For manual installation, copy `integrations/opencode/obsess.md` to that commands path and set `metadata.opencode/slash` to `"false"` in the installed `SKILL.md`. Preserve any existing command first. Use this fallback instead of, not alongside, native slash registration.
+For manual installation, copy `references/integrations/opencode/obsess.md` to that commands path and set `metadata.opencode/slash` to `"false"` in the installed `SKILL.md`. Preserve any existing command first. Use this fallback instead of, not alongside, native slash registration.
 
 ## Tools and smaller models
 

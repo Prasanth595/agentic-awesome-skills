@@ -83,7 +83,7 @@ def validate(plan: Plan) -> None:
                 "Use --upgrade to preserve a backup before replacing it."
             )
     if plan.legacy_command:
-        wrapper = plan.source / "integrations" / "opencode" / "obsess.md"
+        wrapper = plan.source / "references" / "integrations" / "opencode" / "obsess.md"
         if not wrapper.is_file():
             raise InstallError("The package is missing its OpenCode command wrapper")
         skill_text = (plan.source / "SKILL.md").read_text(encoding="utf-8")
@@ -163,7 +163,7 @@ def install(plan: Plan, *, dry_run: bool = False) -> dict[str, Any]:
                 encoding="utf-8",
             )
             staged_command = stage / "command.md"
-            shutil.copy2(plan.source / "integrations" / "opencode" / "obsess.md", staged_command)
+            shutil.copy2(plan.source / "references" / "integrations" / "opencode" / "obsess.md", staged_command)
             assert plan.command is not None
             items.append((staged_command, plan.command, "command.md"))
 
