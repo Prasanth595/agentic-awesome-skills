@@ -84,6 +84,30 @@
       "skill_root": "skills/trip-coupon",
       "reviewed_head": "86d016467f0b4810dc526cca2d8dbc4d73f8e2d0",
       "tree_oid": "9396c76c66fed335823d2e4fad2a51677dee82c4"
+    },
+    {
+      "pr": 1938,
+      "base_repository": "sickn33/agentic-awesome-skills",
+      "head_repository": "UmarSiddiqui/agentic-awesome-skills",
+      "skill_root": "skills/obsess",
+      "reviewed_head": "524865fea3039c387779895e2999a030b5d1e94a",
+      "tree_oid": "198d6b6bb47c8e5e3798665e98b550ad51dce0f4"
+    },
+    {
+      "pr": 1939,
+      "base_repository": "sickn33/agentic-awesome-skills",
+      "head_repository": "huyanxius/agentic-awesome-skills",
+      "skill_root": "skills/logo-to-stickers",
+      "reviewed_head": "2f1a82193081e820cd2076dc43503a2945028a4d",
+      "tree_oid": "93622c694de6b4743eb0e1d33b4b984357e6c2e0"
+    },
+    {
+      "pr": 1943,
+      "base_repository": "sickn33/agentic-awesome-skills",
+      "head_repository": "berkantay/openhook-agentic-awesome-skills",
+      "skill_root": "skills/openhook",
+      "reviewed_head": "97655e3dbc61258dde9d50d0823b574ecb970fb8",
+      "tree_oid": "6528a68f95d521292a48b49911ba362b93ab50e1"
     }
   ]
 }
