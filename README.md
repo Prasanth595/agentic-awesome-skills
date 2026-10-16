@@ -1,9 +1,9 @@
-<!-- registry-sync: version=19.7.0; skills=2690; stars=47600; updated_at=2026-10-14T18:55:53+00:00 -->
+<!-- registry-sync: version=19.7.0; skills=2691; stars=47600; updated_at=2026-10-14T18:55:53+00:00 -->
 # AAS Core — Agentic Awesome Skills
 
 > **Find reusable instructions for your project, inspect their complete files, and keep an exact skill set you can review and reuse.**
 
-Agentic Awesome Skills is a library of 2,690+ installable `SKILL.md` playbooks. AAS Core helps Codex or Claude search the complete local catalog, record the skills the agent chooses, and preview a plan you can inspect before changing a target. Core does not rank or recommend skills.
+Agentic Awesome Skills is a library of 2,691+ installable `SKILL.md` playbooks. AAS Core helps Codex or Claude search the complete local catalog, record the skills the agent chooses, and preview a plan you can inspect before changing a target. Core does not rank or recommend skills.
 
 **Current release: V19.7.0.** AAS Core supports local catalog inspection, agent-owned selection, stack validation, and plan preview. Apply and recovery remain experimental. [Read the AAS Core preview guide](https://github.com/sickn33/agentic-awesome-skills/blob/v19.7.0/docs/users/aas-core.md) for setup and exact trust boundaries.
 
@@ -35,7 +35,7 @@ This is an independent community project, not affiliated with or endorsed by Goo
 - [Choose Your Tool](#choose-your-tool)
 - [Recommended Specialized Plugins](#recommended-specialized-plugins)
 - [Bundles & Workflows](#bundles--workflows)
-- [Browse 2,690+ Skills](#browse-2690-skills)
+- [Browse 2,691+ Skills](#browse-2691-skills)
 - [Troubleshooting](#troubleshooting)
 - [Stable Skills Manifest v1](#stable-skills-manifest-v1)
 - [Contributing](#contributing)
@@ -170,7 +170,7 @@ Bundles suggest related skills; workflows describe the order to use them. They a
 - [Workflows](docs/users/workflows.md) give ordered playbooks for planning, shipping, testing, and auditing; [workflow metadata](data/workflows.json) is available for integrations.
 - If too many installed skills overload Antigravity, follow the [selective activation guide](docs/users/agent-overload-recovery.md). For other hosts, preview a smaller exact install or use the installer's `--risk`, `--category`, and `--tags` filters.
 
-## Browse 2,690+ Skills
+## Browse 2,691+ Skills
 
 Explore the complete library in the [hosted catalog](https://aaskills.tech/) or [`CATALOG.md`](CATALOG.md). The canonical playbooks live in [`skills/`](skills/); [`skills_index.json`](skills_index.json) provides machine-readable discovery. Use [Getting Started](docs/users/getting-started.md) and [Usage](docs/users/usage.md) for first steps, or the [Workbench](https://aaskills.tech/workbench) to inspect a saved Core stack and plan in your browser.
 
@@ -220,6 +220,10 @@ Key source families include:
 <summary><strong>Official Sources</strong></summary>
 
 ### Official Sources
+
+- **[getchordlabs/chord](https://github.com/getchordlabs/chord/tree/main/skills/chord)**: MIT official source for the `chord-onchain-trading` skill - DEX market data, best-route swap quotes and unsigned swap transactions on eight EVM chains through the Chord API; the skill never signs or sends. The hosted API and server have separate licensing.
+
+- **[tuantqse90/moltnode-mcp](https://github.com/tuantqse90/moltnode-mcp/tree/main/skills/moltnode)**: MIT official source for the `moltnode-chain-reader` skill - keyless JSON-RPC reads on 31 blockchains through MoltNode by Chord, plus Chord swap quotes with an unsigned transaction and simulation. The hosted gateway and server have separate licensing.
 
 - **[arcmira/mcp](https://github.com/arcmira/mcp/tree/v0.10.6/plugins/arcmira)**: Apache-2.0 plugin source for `arcmira-find-quotes`, YouTube and podcast quote research with timestamped sources. The hosted service and server have separate licensing.
 
@@ -430,6 +434,7 @@ Key source families include:
 - **[mattpocock/skills](https://github.com/mattpocock/skills)**: Source for 17 Matt Pocock workflow skills - codebase design, TDD, bug diagnosis, triage, PRDs, issues, prototyping, handoff, teaching, and skill-writing guidance (MIT).
 - **[emilkowalski/skills](https://github.com/emilkowalski/skills)**: Source for Emil Kowalski design engineering skills - UI polish, motion review, animation standards, component craft, and high-taste frontend guidance (MIT).
 - **[chaunsin/agent-skills](https://github.com/chaunsin/agent-skills)**: Source for the `pre-release-review` and `drizzle-migration-conflict` skills - deploy-readiness audits and Drizzle Kit migration-conflict workflows (Apache-2.0).
+- **[harshmaur/apify-reddit-scraper-skill](https://github.com/harshmaur/apify-reddit-scraper-skill)**: Source for the `apify-reddit-scraper` skill - Reddit posts, comments, subreddits and user profiles as structured data through the `harshmaur/reddit-scraper` Apify Actor, with no Reddit API key, cost estimates before each run and date-window filters (MIT).
 - **[addyosmani/agent-skills](https://github.com/addyosmani/agent-skills)**: Source for the `browser-testing-with-devtools` skill - Chrome DevTools MCP browser verification, profiling, network inspection, and frontend debugging guidance (MIT).
 - **[stareezy-1/frontend-architecture-skill](https://github.com/stareezy-1/frontend-architecture-skill)**: Source for the `frontend-lighthouse` skill - portable Lighthouse CI Core Web Vitals gates, performance budgets, and GitHub Actions reporting (MIT).
 - **[bin1874/before-you-build-skill](https://github.com/bin1874/before-you-build-skill)**: Source for the `before-you-build` skill - pre-coding product risk review across demand, alternatives, switching costs, channels, and validation steps (MIT).

@@ -1,6 +1,6 @@
 {
   "generatedAt": "2026-10-14T18:55:53.000Z",
-  "total": 2690,
+  "total": 2691,
   "skills": [
     {
       "id": "00-andruia-consultant",
@@ -5555,6 +5555,43 @@
         "validation"
       ],
       "path": "skills/apify-market-research/SKILL.md"
+    },
+    {
+      "id": "apify-reddit-scraper",
+      "canonical_id": "apify-reddit-scraper",
+      "name": "apify-reddit-scraper",
+      "description": "Scrape Reddit posts, comments, subreddits and users with the harshmaur/reddit-scraper Apify Actor. No Reddit API key. Keyword search, date windows, full threads.",
+      "category": "data",
+      "risk": "critical",
+      "source": "community",
+      "source_type": "community",
+      "source_repo": "harshmaur/apify-reddit-scraper-skill",
+      "license": "MIT",
+      "license_source": "https://github.com/harshmaur/apify-reddit-scraper-skill/blob/main/LICENSE.txt",
+      "tags": [
+        "reddit",
+        "apify",
+        "scraping",
+        "social-listening",
+        "brand-monitoring",
+        "subreddit",
+        "comments"
+      ],
+      "triggers": [
+        "reddit",
+        "apify",
+        "scraping",
+        "social-listening",
+        "brand-monitoring",
+        "subreddit",
+        "comments",
+        "scraper",
+        "scrape",
+        "posts",
+        "subreddits",
+        "users"
+      ],
+      "path": "skills/apify-reddit-scraper/SKILL.md"
     },
     {
       "id": "apify-trend-analysis",

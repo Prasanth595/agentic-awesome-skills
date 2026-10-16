@@ -2,7 +2,7 @@
 
 Generated at: 2026-10-14T18:55:53.000Z
 
-Total skills: 2690
+Total skills: 2691
 
 ## agent-behavior (5)
 
@@ -1081,7 +1081,7 @@ Total skills: 2690
 | `liuguang-banlan-ui` | Builds two parameterized UI modes—流光溢彩白 (iridescent white) and 五彩斑斓黑 (colorful black)—with OKLCH, WebGL/CSS fallback, vision gating, screenshot QA, and total... | critical | self | ui, frontend, oklch, webgl, accessibility | ui, frontend, oklch, webgl, accessibility, liuguang, banlan, two, parameterized, modes, iridescent, white |
 | `modellix` | Integrate the Modellix API/CLI for async AI image, video, and speech generation or transcription (model run --wait, task download). | critical | Modellix/modellix-plugin | image-generation, video-generation, audio-generation, text-to-speech, speech-to-text, speech-to-speech, modellix, cli, api | image-generation, video-generation, audio-generation, text-to-speech, speech-to-text, speech-to-speech, modellix, cli, api, integrate, async, ai |
 
-## data (44)
+## data (45)
 
 | Skill | Description | Risk | Source | Tags | Triggers |
 | --- | --- | --- | --- | --- | --- |
@@ -1090,6 +1090,7 @@ Total skills: 2690
 | `analytics` | When the user wants to set up, improve, or audit analytics tracking and measurement. | critical | coreyhaines31/marketingskills | analytics | analytics, user, wants, set, up, improve, audit, tracking, measurement |
 | `analytics-product` | Analytics de produto — PostHog, Mixpanel, eventos, funnels, cohorts, retencao, north star metric, OKRs e dashboards de produto. | none | community | analytics, product, metrics, posthog, mixpanel | analytics, product, metrics, posthog, mixpanel, de, produto, eventos, funnels, cohorts, retencao, north |
 | `analytics-tracking` | Design, audit, and improve analytics tracking systems that produce reliable, decision-ready data. | critical | community | analytics, tracking | analytics, tracking, audit, improve, produce, reliable, decision, data |
+| `apify-reddit-scraper` | Scrape Reddit posts, comments, subreddits and users with the harshmaur/reddit-scraper Apify Actor. No Reddit API key. Keyword search, date windows, full thre... | critical | harshmaur/apify-reddit-scraper-skill | reddit, apify, scraping, social-listening, brand-monitoring, subreddit, comments | reddit, apify, scraping, social-listening, brand-monitoring, subreddit, comments, scraper, scrape, posts, subreddits, users |
 | `arrowspace` | Spectral vector search using graph Laplacian eigenstructure. Use when cosine/L2 similarity misses latent structure in your embeddings. | safe | Genefold/arrowspace-skills | vector-search, spectral-analysis, graph-laplacian, embeddings, lambda-tau | vector-search, spectral-analysis, graph-laplacian, embeddings, lambda-tau, arrowspace, spectral, vector, search, graph, laplacian, eigenstructure |
 | `data-engineer` | Build scalable data pipelines, modern data warehouses, and real-time streaming architectures. Implements Apache Spark, dbt, Airflow, and cloud-native data pl... | critical | community | data | data, engineer, scalable, pipelines, warehouses, real, time, streaming, architectures, implements, apache, spark |
 | `datacircle` | Look up LinkedIn profiles by URL through Datacircle (Up2Data, HarvestAPI or Fetchin, no markup), over its hosted MCP server or REST API, with the user's yes ... | critical | self | b2b-data, linkedin, enrichment, rest-api, mcp | b2b-data, linkedin, enrichment, rest-api, mcp, datacircle, look, up, profiles, url, through, up2data |
