@@ -1,6 +1,6 @@
 {
   "generatedAt": "2026-10-14T18:55:53.000Z",
-  "total": 2694,
+  "total": 2699,
   "skills": [
     {
       "id": "00-andruia-consultant",
@@ -50224,6 +50224,38 @@
       "path": "skills/moodle-external-api-development/SKILL.md"
     },
     {
+      "id": "movie-coupon",
+      "canonical_id": "movie-coupon",
+      "name": "movie-coupon",
+      "description": "Fetch movie ticket coupons from platforms like Taopiaopiao and Maoyan. Returns coupon links and QR code images for users to redeem via WeChat.",
+      "category": "shopping",
+      "risk": "safe",
+      "source": "community",
+      "source_type": "community",
+      "source_repo": "moooai/movie-coupon",
+      "tags": [
+        "coupons",
+        "movie",
+        "cinema",
+        "entertainment"
+      ],
+      "triggers": [
+        "coupons",
+        "movie",
+        "cinema",
+        "entertainment",
+        "coupon",
+        "fetch",
+        "ticket",
+        "platforms",
+        "like",
+        "taopiaopiao",
+        "maoyan",
+        "returns"
+      ],
+      "path": "skills/movie-coupon/SKILL.md"
+    },
+    {
       "id": "moyu",
       "canonical_id": "moyu",
       "name": "moyu",
@@ -52646,6 +52678,40 @@
       "path": "skills/obsidian-markdown/SKILL.md"
     },
     {
+      "id": "obtain-coupons-all-in-one",
+      "canonical_id": "obtain-coupons-all-in-one",
+      "name": "obtain-coupons-all-in-one",
+      "description": "All-in-one coupon fetcher supporting takeout (Meituan, Ele.me, JD), parcel/courier (SF, ZTO, YTO, etc.), travel (DiDi, Ctrip), and movie tickets (Taopiaopiao, Maoyan) coupons with one-click access to all discounts.",
+      "category": "shopping",
+      "risk": "safe",
+      "source": "community",
+      "source_type": "community",
+      "source_repo": "moooai/obtain-coupons-all-in-one",
+      "tags": [
+        "coupons",
+        "all-in-one",
+        "takeout",
+        "travel",
+        "movie",
+        "parcel"
+      ],
+      "triggers": [
+        "coupons",
+        "all-in-one",
+        "takeout",
+        "travel",
+        "movie",
+        "parcel",
+        "obtain",
+        "all",
+        "one",
+        "coupon",
+        "fetcher",
+        "supporting"
+      ],
+      "path": "skills/obtain-coupons-all-in-one/SKILL.md"
+    },
+    {
       "id": "occupational-health-analyzer",
       "canonical_id": "occupational-health-analyzer",
       "name": "occupational-health-analyzer",
@@ -55037,6 +55103,39 @@
         "user"
       ],
       "path": "skills/parallel-search-mcp/SKILL.md"
+    },
+    {
+      "id": "parcel-coupon",
+      "canonical_id": "parcel-coupon",
+      "name": "parcel-coupon",
+      "description": "Call parcel/courier coupon API to fetch one-stop logistics service coupons, including smart shipping and smart price matching. Returns coupon links and QR code images for users to redeem via WeChat.",
+      "category": "shopping",
+      "risk": "safe",
+      "source": "community",
+      "source_type": "community",
+      "source_repo": "moooai/parcel-coupon",
+      "tags": [
+        "coupons",
+        "parcel",
+        "courier",
+        "sf-express",
+        "cainiao"
+      ],
+      "triggers": [
+        "coupons",
+        "parcel",
+        "courier",
+        "sf-express",
+        "cainiao",
+        "coupon",
+        "call",
+        "api",
+        "fetch",
+        "one",
+        "stop",
+        "logistics"
+      ],
+      "path": "skills/parcel-coupon/SKILL.md"
     },
     {
       "id": "party-ledger-reconciliation",
@@ -70882,6 +70981,39 @@
       "path": "skills/taisly-social-media-posting/SKILL.md"
     },
     {
+      "id": "takeout-coupon",
+      "canonical_id": "takeout-coupon",
+      "name": "takeout-coupon",
+      "description": "Call takeout coupon API to fetch hidden coupon lists, red packets and aggregated redemption pages for platforms (Meituan, Taobao Flash/Ele.me, JD.com). Returns coupon codes and redemption instructions for users to copy and redeem in corresponding apps.",
+      "category": "shopping",
+      "risk": "safe",
+      "source": "community",
+      "source_type": "community",
+      "source_repo": "moooai/takeout-coupon",
+      "tags": [
+        "coupons",
+        "takeout",
+        "food-delivery",
+        "meituan",
+        "eleme"
+      ],
+      "triggers": [
+        "coupons",
+        "takeout",
+        "food-delivery",
+        "meituan",
+        "eleme",
+        "coupon",
+        "call",
+        "api",
+        "fetch",
+        "hidden",
+        "lists",
+        "red"
+      ],
+      "path": "skills/takeout-coupon/SKILL.md"
+    },
+    {
       "id": "talivia-agent-kit",
       "canonical_id": "talivia-agent-kit",
       "name": "talivia-agent-kit",
@@ -73899,6 +74031,39 @@
         "typescript"
       ],
       "path": "skills/trigger-dev/SKILL.md"
+    },
+    {
+      "id": "trip-coupon",
+      "canonical_id": "trip-coupon",
+      "name": "trip-coupon",
+      "description": "Call trip/travel coupon API to fetch travel coupons including DiDi ride-hailing gift packages and hotel coupon bundles. Returns coupon links and QR code images for users to redeem via WeChat.",
+      "category": "shopping",
+      "risk": "safe",
+      "source": "community",
+      "source_type": "community",
+      "source_repo": "moooai/trip-coupon",
+      "tags": [
+        "coupons",
+        "travel",
+        "didi",
+        "hotel",
+        "ride-hailing"
+      ],
+      "triggers": [
+        "coupons",
+        "travel",
+        "didi",
+        "hotel",
+        "ride-hailing",
+        "trip",
+        "coupon",
+        "call",
+        "api",
+        "fetch",
+        "including",
+        "ride"
+      ],
+      "path": "skills/trip-coupon/SKILL.md"
     },
     {
       "id": "trl-training",
