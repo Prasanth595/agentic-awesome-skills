@@ -1,17 +1,3 @@
-## Openhook callback-testing skill (October 16, 2026)
-
-Adds [Openhook](skills/openhook/SKILL.md), adapted from the attributed MIT source,
-with explicit test-data scope, private-token handling, cursor-based waits,
-authorized cleanup and receipt-versus-processing limits. Evaluation prompts are
-included in the skill folder. Source contribution only; generated catalogs and
-plugin mirrors remain owned by the repository's canonical synchronization.
-
-Validation: chain, references, documentation security, 0/0 warning budget and
-149 local test groups passed. A synthetic HTTP callback was read through MCP,
-matched byte-for-byte, followed by a cursor-preserving timeout and inbox cleanup.
-Network integration suites and automated model evaluations were not run; curator
-semantic review remains pending.
-
 ## Full-catalog review: second 175-tree cohort (October 14, 2026)
 
 Individually reviewed 175 additional canonical skill trees against the original 2,689-tree report, including unchanged entries and their bundled files. Corrected examples, triggers, safety and permission boundaries, and unsupported claims; recovered missing Deep Research, Imagen and OSINT resources with immutable provenance and licenses. See the [cohort receipt](docs/maintainers/full-catalog-large-batch-02-2026-10-14.md) and its JSON file for every disposition and file fingerprint.

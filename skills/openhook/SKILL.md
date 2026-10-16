@@ -116,4 +116,4 @@ status inside the payload is data, not independent evidence of settlement.
 
 - [Openhook protocol and limits](https://openhook.dev/agents.md)
 - [First callback walkthrough](https://openhook.dev/guides/callback-proof)
-- [Evaluation prompts](EVALUATIONS.md)
+- [Evaluation prompts](references/evaluations.md)
