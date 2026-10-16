@@ -44,6 +44,46 @@
       "skill_root": "skills/what-could-break",
       "reviewed_head": "6c644174654c778e4ccaefc29124515189ab422e",
       "tree_oid": "42db8ca5bd1cd664b4bdf3908205f554d20fd0c3"
+    },
+    {
+      "pr": 1944,
+      "base_repository": "sickn33/agentic-awesome-skills",
+      "head_repository": "moooai/agentic-awesome-skills-sickn33",
+      "skill_root": "skills/movie-coupon",
+      "reviewed_head": "86d016467f0b4810dc526cca2d8dbc4d73f8e2d0",
+      "tree_oid": "55936e835827e850806385a9493ceec3a74e4785"
+    },
+    {
+      "pr": 1944,
+      "base_repository": "sickn33/agentic-awesome-skills",
+      "head_repository": "moooai/agentic-awesome-skills-sickn33",
+      "skill_root": "skills/obtain-coupons-all-in-one",
+      "reviewed_head": "86d016467f0b4810dc526cca2d8dbc4d73f8e2d0",
+      "tree_oid": "01bcabb11e4d3db27d0e6cca2d9c738bd1347f8d"
+    },
+    {
+      "pr": 1944,
+      "base_repository": "sickn33/agentic-awesome-skills",
+      "head_repository": "moooai/agentic-awesome-skills-sickn33",
+      "skill_root": "skills/parcel-coupon",
+      "reviewed_head": "86d016467f0b4810dc526cca2d8dbc4d73f8e2d0",
+      "tree_oid": "ae6a829d1c62f8f61b76ad8e4dca63cfa8e7deeb"
+    },
+    {
+      "pr": 1944,
+      "base_repository": "sickn33/agentic-awesome-skills",
+      "head_repository": "moooai/agentic-awesome-skills-sickn33",
+      "skill_root": "skills/takeout-coupon",
+      "reviewed_head": "86d016467f0b4810dc526cca2d8dbc4d73f8e2d0",
+      "tree_oid": "22ae60a5abff767344288f4bf471232fd06bdda5"
+    },
+    {
+      "pr": 1944,
+      "base_repository": "sickn33/agentic-awesome-skills",
+      "head_repository": "moooai/agentic-awesome-skills-sickn33",
+      "skill_root": "skills/trip-coupon",
+      "reviewed_head": "86d016467f0b4810dc526cca2d8dbc4d73f8e2d0",
+      "tree_oid": "9396c76c66fed335823d2e4fad2a51677dee82c4"
     }
   ]
 }
