@@ -9,12 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [19.8.0] - 2026-10-16 - "Fifteen Reviewed Additions And A Healthier Review Lane"
 
-> Adds **14** catalog skills, updates **mmx-cli**, and ships **2,702** skills. Every external contribution in this release went through an individual maintainer review bound to its exact content, and the fork review lane now records four more explicitly reviewed bundles.
+> Adds **15** catalog skills, updates **mmx-cli**, and ships **2,705** skills. Every external contribution in this release went through an individual maintainer review bound to its exact content, and the fork review lane records eight additional explicitly reviewed skill bundles.
 
 ### Added
 
 - **agentic-verify** — check that a Python change is caught by tests: run every mutant of the changed lines with a pinned runner, write tests until they catch them, and report kills, uncovered changed lines and which new tests fail on the old code.
 - **agentic-test-audit** — report-only audit of a pytest suite for surviving mutants, untested code, flaky, order-dependent and slow tests, with removal candidates checked on held-out mutants.
+- **altorank** — SEO and AI-search readiness audits, Search Console reads, keyword research and draft creation into a person-reviewed queue through the hosted AltoRank MCP server. Never publishes, approves or deletes content.
 - **apify-reddit-scraper** — Reddit posts, comments, subreddits and profiles as structured data through the `harshmaur/reddit-scraper` Apify Actor, with cost estimates before each run and explicit paid-run boundaries.
 - **chord-onchain-trading** — read DEX market data and prepare best-route swap quotes and unsigned transactions on eight EVM chains. Never signs or moves funds.
 - **moltnode-chain-reader** — keyless JSON-RPC reads (balances, blocks, contract calls) on 31 blockchains, plus Chord swap quotes with an unsigned transaction and simulation.
@@ -28,7 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **mmx-cli** now documents the current MiniMax-H3 v2 video model, regional endpoints, content roles and lifecycle operations, and the current H3 and music-3.0 pricing instead of the retired defaults.
 - Raised `@supabase/supabase-js` and `react-virtuoso` to their current patch releases in the catalog app.
-- The protected fork ledger now records five additional explicitly reviewed bundles (#1938, #1939, #1943, #1944 and the follow-up #1949), each bound to its fork, PR, reviewed head and complete skill tree object.
+- The protected fork ledger records eight additional explicitly reviewed skill bundles — #1938, #1939, #1943 and the five #1944 coupon skills — each bound to its fork, PR, reviewed head and complete skill tree object.
 
 ### Fixed
 
@@ -42,7 +43,7 @@ Each new or changed skill was reviewed in full at its exact content, including b
 
 ### Thanks
 
-Thanks to **@harshmaur**, **@UmarSiddiqui**, **@huyanxius**, **@tuantqse90**, **@berkantay**, **@moooai**, **@yumaheymans**, **@octo-patch** and **@timini** for the reviewed additions, and to the upstream authors whose licensed material is included.
+Thanks to **@harshmaur**, **@mikececco**, **@UmarSiddiqui**, **@huyanxius**, **@tuantqse90**, **@berkantay**, **@moooai**, **@yumaheymans**, **@octo-patch** and **@timini** for the reviewed additions, and to the upstream authors whose licensed material is included.
 
 ---
 
