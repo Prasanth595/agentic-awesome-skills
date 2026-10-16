@@ -221,6 +221,8 @@ Key source families include:
 
 ### Official Sources
 
+- **[AltoRank/altorank](https://github.com/AltoRank/altorank)**: AGPL-3.0 official source for the `altorank` skill - SEO/AI-search readiness audits, Search Console reads, keyword research and draft creation into a person-reviewed queue through the hosted AltoRank MCP server.
+
 - **[getchordlabs/chord](https://github.com/getchordlabs/chord/tree/main/skills/chord)**: MIT official source for the `chord-onchain-trading` skill - DEX market data, best-route swap quotes and unsigned swap transactions on eight EVM chains through the Chord API; the skill never signs or sends. The hosted API and server have separate licensing.
 
 - **[tuantqse90/moltnode-mcp](https://github.com/tuantqse90/moltnode-mcp/tree/main/skills/moltnode)**: MIT official source for the `moltnode-chain-reader` skill - keyless JSON-RPC reads on 31 blockchains through MoltNode by Chord, plus Chord swap quotes with an unsigned transaction and simulation. The hosted gateway and server have separate licensing.
