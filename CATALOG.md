@@ -2,7 +2,7 @@
 
 Generated at: 2026-10-14T18:55:53.000Z
 
-Total skills: 2694
+Total skills: 2699
 
 ## agent-behavior (5)
 
@@ -2934,6 +2934,16 @@ Total skills: 2694
 | `seo-sitemap` | Analyze existing XML sitemaps or generate new ones with industry templates. Validates format, URLs, and structure. Use when user says "sitemap", "generate si... | critical | https://github.com/AgriciDaniel/claude-seo | seo, sitemap | seo, sitemap, analyze, existing, xml, sitemaps, generate, new, ones, industry, validates, format |
 | `social-metadata-hardening` | Fix social sharing previews so URLs render as rich cards on Facebook, LinkedIn, X/Twitter, WhatsApp, Telegram, and more. Covers OG tags, Twitter cards, absol... | safe | self | seo, open-graph, twitter-card, social-sharing, og-image, nextjs, metadata | seo, open-graph, twitter-card, social-sharing, og-image, nextjs, metadata, social, hardening, fix, sharing, previews |
 | `tools-page-seo-optimizer` | Framework-agnostic SEO workflow for any site with multiple tool, product, or feature pages. Covers duplicate content, unique meta tags, heading hierarchy, in... | safe | community | seo, tools-pages, product-pages, duplicate-content, content-registry, meta-tags, internal-linking, url-slugs, e-e-a-t, framework-agnostic | seo, tools-pages, product-pages, duplicate-content, content-registry, meta-tags, internal-linking, url-slugs, e-e-a-t, framework-agnostic, page, optimizer |
+
+## shopping (5)
+
+| Skill | Description | Risk | Source | Tags | Triggers |
+| --- | --- | --- | --- | --- | --- |
+| `movie-coupon` | Fetch movie ticket coupons from platforms like Taopiaopiao and Maoyan. Returns coupon links and QR code images for users to redeem via WeChat. | safe | moooai/movie-coupon | coupons, movie, cinema, entertainment | coupons, movie, cinema, entertainment, coupon, fetch, ticket, platforms, like, taopiaopiao, maoyan, returns |
+| `obtain-coupons-all-in-one` | All-in-one coupon fetcher supporting takeout (Meituan, Ele.me, JD), parcel/courier (SF, ZTO, YTO, etc.), travel (DiDi, Ctrip), and movie tickets (Taopiaopiao... | safe | moooai/obtain-coupons-all-in-one | coupons, all-in-one, takeout, travel, movie, parcel | coupons, all-in-one, takeout, travel, movie, parcel, obtain, all, one, coupon, fetcher, supporting |
+| `parcel-coupon` | Call parcel/courier coupon API to fetch one-stop logistics service coupons, including smart shipping and smart price matching. Returns coupon links and QR co... | safe | moooai/parcel-coupon | coupons, parcel, courier, sf-express, cainiao | coupons, parcel, courier, sf-express, cainiao, coupon, call, api, fetch, one, stop, logistics |
+| `takeout-coupon` | Call takeout coupon API to fetch hidden coupon lists, red packets and aggregated redemption pages for platforms (Meituan, Taobao Flash/Ele.me, JD.com). Retur... | safe | moooai/takeout-coupon | coupons, takeout, food-delivery, meituan, eleme | coupons, takeout, food-delivery, meituan, eleme, coupon, call, api, fetch, hidden, lists, red |
+| `trip-coupon` | Call trip/travel coupon API to fetch travel coupons including DiDi ride-hailing gift packages and hotel coupon bundles. Returns coupon links and QR code imag... | safe | moooai/trip-coupon | coupons, travel, didi, hotel, ride-hailing | coupons, travel, didi, hotel, ride-hailing, trip, coupon, call, api, fetch, including, ride |
 
 ## skill-authoring (2)
 

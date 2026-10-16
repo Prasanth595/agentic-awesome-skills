@@ -32200,6 +32200,25 @@
       "runtime_files": []
     },
     {
+      "id": "movie-coupon",
+      "path": "skills/movie-coupon",
+      "targets": {
+        "codex": "supported",
+        "claude": "supported"
+      },
+      "setup": {
+        "type": "none",
+        "summary": "",
+        "docs": null
+      },
+      "reasons": [],
+      "blocked_reasons": {
+        "codex": [],
+        "claude": []
+      },
+      "runtime_files": []
+    },
+    {
       "id": "moyu",
       "path": "skills/moyu",
       "targets": {
@@ -33753,6 +33772,25 @@
       "runtime_files": []
     },
     {
+      "id": "obtain-coupons-all-in-one",
+      "path": "skills/obtain-coupons-all-in-one",
+      "targets": {
+        "codex": "supported",
+        "claude": "supported"
+      },
+      "setup": {
+        "type": "none",
+        "summary": "",
+        "docs": null
+      },
+      "reasons": [],
+      "blocked_reasons": {
+        "codex": [],
+        "claude": []
+      },
+      "runtime_files": []
+    },
+    {
       "id": "occupational-health-analyzer",
       "path": "skills/occupational-health-analyzer",
       "targets": {
@@ -35249,6 +35287,25 @@
     {
       "id": "parallel-search-mcp",
       "path": "skills/parallel-search-mcp",
+      "targets": {
+        "codex": "supported",
+        "claude": "supported"
+      },
+      "setup": {
+        "type": "none",
+        "summary": "",
+        "docs": null
+      },
+      "reasons": [],
+      "blocked_reasons": {
+        "codex": [],
+        "claude": []
+      },
+      "runtime_files": []
+    },
+    {
+      "id": "parcel-coupon",
+      "path": "skills/parcel-coupon",
       "targets": {
         "codex": "supported",
         "claude": "supported"
@@ -45448,6 +45505,25 @@
       "runtime_files": []
     },
     {
+      "id": "takeout-coupon",
+      "path": "skills/takeout-coupon",
+      "targets": {
+        "codex": "supported",
+        "claude": "supported"
+      },
+      "setup": {
+        "type": "none",
+        "summary": "",
+        "docs": null
+      },
+      "reasons": [],
+      "blocked_reasons": {
+        "codex": [],
+        "claude": []
+      },
+      "runtime_files": []
+    },
+    {
       "id": "talivia-agent-kit",
       "path": "skills/talivia-agent-kit",
       "targets": {
@@ -47366,6 +47442,25 @@
     {
       "id": "trigger-dev",
       "path": "skills/trigger-dev",
+      "targets": {
+        "codex": "supported",
+        "claude": "supported"
+      },
+      "setup": {
+        "type": "none",
+        "summary": "",
+        "docs": null
+      },
+      "reasons": [],
+      "blocked_reasons": {
+        "codex": [],
+        "claude": []
+      },
+      "runtime_files": []
+    },
+    {
+      "id": "trip-coupon",
+      "path": "skills/trip-coupon",
       "targets": {
         "codex": "supported",
         "claude": "supported"
@@ -51681,10 +51776,10 @@
     }
   ],
   "summary": {
-    "total_skills": 2694,
+    "total_skills": 2699,
     "supported": {
-      "codex": 2609,
-      "claude": 2631
+      "codex": 2614,
+      "claude": 2636
     },
     "blocked": {
       "codex": 85,
