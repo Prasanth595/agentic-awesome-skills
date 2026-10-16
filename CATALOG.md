@@ -2,7 +2,7 @@
 
 Generated at: 2026-10-14T18:55:53.000Z
 
-Total skills: 2699
+Total skills: 2702
 
 ## agent-behavior (5)
 
@@ -1228,7 +1228,7 @@ Total skills: 2699
 | `logic-locate` | Locate the root cause of a CONFIRMED failure via backward-then-forward semi-formal tracing. | safe | hyhmrright/logic-lens | logic, locate | logic, locate, root, cause, confirmed, failure, via, backward, then, forward, semi, formal |
 | `phase-gated-debugging` | Use when debugging any bug. Enforces a 5-phase protocol where code edits are blocked until root cause is confirmed. Prevents premature fix attempts. | safe | community | phase, gated, debugging | phase, gated, debugging, any, bug, enforces, protocol, where, code, edits, blocked, until |
 
-## design (43)
+## design (44)
 
 | Skill | Description | Risk | Source | Tags | Triggers |
 | --- | --- | --- | --- | --- | --- |
@@ -1251,6 +1251,7 @@ Total skills: 2699
 | `favicon` | Generate favicons from a source image | critical | community | favicon | favicon, generate, favicons, source, image |
 | `figma-automation` | Automate Figma tasks via Rube MCP (Composio): files, components, design tokens, comments, exports. Always search tools first for current schemas. | safe | community | figma | figma, automation, automate, tasks, via, rube, mcp, composio, files, components, tokens, comments |
 | `free-design-resources` | Design resource register: resource and provider, licence type, commercial-use and attribution rules, export format, lock-in risk, free tier limit and accessi... | safe | WHOISABHISHEKADHIKARI/sme-ops-system-builder | sme, design-tools, free-licences, fonts, icons, images, templates, accessibility, cost, csv, sql, notion | sme, design-tools, free-licences, fonts, icons, images, templates, accessibility, cost, csv, sql, notion |
+| `logo-to-stickers` | Turn a brand mark or existing IP into consistent, playful paper stickers with small visual stories and separate transparent images. Use for brand characters ... | safe | huyanxius/logo-to-stickers | branding, stickers, illustration, image-generation | branding, stickers, illustration, image-generation, logo, turn, brand, mark, existing, ip, consistent, playful |
 | `lookdev` | Human-in-the-loop web studio to tune AI-generated output by eye. Stand up a local interactive studio (sliders, pickers, drag handles) or an inline edit/highl... | safe | connerkward/lookdev-studio-skill | lookdev, design, ui, tuning, studio, visual-eval, annotation | lookdev, design, ui, tuning, studio, visual-eval, annotation, human, loop, web, tune, ai |
 | `lookdev-auto` | Automated visual tuning: a vision or video model rates rendered variants in a loop. Render several labeled variants into one artifact, ask the model to rate ... | safe | connerkward/lookdev-auto-skill | visual-eval, vision-model, tuning, automation, render-loop | visual-eval, vision-model, tuning, automation, render-loop, lookdev, auto, automated, visual, vision, video, model |
 | `loss-aversion-designer` | Compare gain and loss framing and describe credible costs of inaction when an offer needs urgency without fearmongering. | safe | community | loss, aversion, designer | loss, aversion, designer, compare, gain, framing, describe, credible, costs, inaction, offer, urgency |
@@ -1341,7 +1342,7 @@ Total skills: 2699
 | `skill-porter` | Preview conservative tool-name translations and copy complete local skill bundles for manual adaptation to Google Antigravity. | critical | Pranav-Nexus/antigravity-skill-porter | antigravity, claude, skills, migration, agent | antigravity, claude, skills, migration, agent, skill, porter, preview, conservative, name, translations, copy |
 | `tokenwise` | Measurement-driven model router for Claude Code. Routes Haiku/Sonnet/Opus per task class, logs every routed task with real $ numbers, and A/B tests cheaper t... | critical | CodeShuX/tokenwise | model-routing, token-optimization, cost-reduction, anthropic, haiku, sonnet, opus, claude-code, ab-testing, measurement | model-routing, token-optimization, cost-reduction, anthropic, haiku, sonnet, opus, claude-code, ab-testing, measurement, tokenwise, driven |
 
-## development (224)
+## development (226)
 
 | Skill | Description | Risk | Source | Tags | Triggers |
 | --- | --- | --- | --- | --- | --- |
@@ -1508,7 +1509,9 @@ Total skills: 2699
 | `nerdzao-elite` | Software engineering and product design workflow and Senior Product Designer. Full workflow with planning, architecture, TDD, clean code, and pixel-perfect U... | safe | community | nerdzao, elite | nerdzao, elite, software, engineering, product, senior, designer, full, planning, architecture, tdd, clean |
 | `nerdzao-elite-gemini-high` | Modo Elite Coder + UX Pixel-Perfect otimizado especificamente para Gemini 3.1 Pro High. Workflow completo com foco em qualidade máxima e eficiência de tokens. | safe | community | nerdzao, elite, gemini, high | nerdzao, elite, gemini, high, modo, coder, ux, pixel, perfect, otimizado, especificamente, para |
 | `nx-workspace-patterns` | Configure and optimize Nx monorepo workspaces. Use when setting up Nx, configuring project boundaries, optimizing build caching, or implementing affected com... | critical | community | nx, workspace | nx, workspace, configure, optimize, monorepo, workspaces, setting, up, configuring, boundaries, optimizing, caching |
+| `obsess` | Perfectionist mode for one target: checked attempts on a UI detail or hot path, keeps the best version, stops on a budget. Only on explicit /obsess. | safe | UmarSiddiqui/obsess | polish, ui, performance, verification, refactoring | polish, ui, performance, verification, refactoring, obsess, perfectionist, mode, one, target, checked, attempts |
 | `ontoly-software-graph` | Use Ontoly's deterministic Software Graph, MCP server, and agent skills for architecture review, request tracing, impact analysis, and dependency analysis. | critical | 0xsarwagya/ontoly | software-graph, codebase-analysis, mcp, typescript, architecture, impact-analysis | software-graph, codebase-analysis, mcp, typescript, architecture, impact-analysis, ontoly, software, graph, deterministic, server, agent |
+| `openhook` | Creates private callback inboxes with Openhook. Use when an agent needs to wait for a webhook, inspect received HTTP/email/DNS events, or verify a test callb... | critical | openhook-dev/openhook-inbox | webhooks, integration-testing, mcp | webhooks, integration-testing, mcp, openhook, creates, private, callback, inboxes, agent, wait, webhook, inspect |
 | `orca-replay` | Answers questions about a past agent run from its recording rather than from memory, and replays or forks that run. Use when asked why an earlier run did som... | critical | Continuum-AI-Corp/OrcaReplay | debugging, replay, trace, root-cause, agent-runs, mcp | debugging, replay, trace, root-cause, agent-runs, mcp, orca, answers, questions, about, past, agent |
 | `performance-engineer` | Diagnose performance bottlenecks using profiling, traces, load tests, and observability; verify latency and capacity improvements. | critical | community | performance | performance, engineer, diagnose, bottlenecks, profiling, traces, load, tests, observability, verify, latency, capacity |
 | `performance-optimization` | Optimizes application performance. Use when performance requirements exist, when you suspect performance regressions, or when Core Web Vitals or load times n... | critical | addyosmani/agent-skills | performance, optimization | performance, optimization, optimizes, application, requirements, exist, suspect, regressions, core, web, vitals, load |

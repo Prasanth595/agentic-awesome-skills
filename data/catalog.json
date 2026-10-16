@@ -1,6 +1,6 @@
 {
   "generatedAt": "2026-10-14T18:55:53.000Z",
-  "total": 2699,
+  "total": 2702,
   "skills": [
     {
       "id": "00-andruia-consultant",
@@ -45545,6 +45545,40 @@
       "path": "skills/logo-image-design/SKILL.md"
     },
     {
+      "id": "logo-to-stickers",
+      "canonical_id": "logo-to-stickers",
+      "name": "logo-to-stickers",
+      "description": "Turn a brand mark or existing IP into consistent, playful paper stickers with small visual stories and separate transparent images. Use for brand characters and website sticker sets.",
+      "category": "design",
+      "risk": "safe",
+      "source": "community",
+      "source_type": "community",
+      "source_repo": "huyanxius/logo-to-stickers",
+      "license": "MIT",
+      "license_source": "https://github.com/huyanxius/logo-to-stickers/blob/main/LICENSE",
+      "tags": [
+        "branding",
+        "stickers",
+        "illustration",
+        "image-generation"
+      ],
+      "triggers": [
+        "branding",
+        "stickers",
+        "illustration",
+        "image-generation",
+        "logo",
+        "turn",
+        "brand",
+        "mark",
+        "existing",
+        "ip",
+        "consistent",
+        "playful"
+      ],
+      "path": "skills/logo-to-stickers/SKILL.md"
+    },
+    {
       "id": "loki-logging",
       "canonical_id": "loki-logging",
       "name": "loki-logging",
@@ -52565,6 +52599,41 @@
       "path": "skills/observability-monitoring-slo-implement/SKILL.md"
     },
     {
+      "id": "obsess",
+      "canonical_id": "obsess",
+      "name": "obsess",
+      "description": "Perfectionist mode for one target: checked attempts on a UI detail or hot path, keeps the best version, stops on a budget. Only on explicit /obsess.",
+      "category": "development",
+      "risk": "safe",
+      "source": "community",
+      "source_type": "community",
+      "source_repo": "UmarSiddiqui/obsess",
+      "license": "MIT",
+      "license_source": "https://github.com/UmarSiddiqui/obsess/blob/main/LICENSE",
+      "tags": [
+        "polish",
+        "ui",
+        "performance",
+        "verification",
+        "refactoring"
+      ],
+      "triggers": [
+        "polish",
+        "ui",
+        "performance",
+        "verification",
+        "refactoring",
+        "obsess",
+        "perfectionist",
+        "mode",
+        "one",
+        "target",
+        "checked",
+        "attempts"
+      ],
+      "path": "skills/obsess/SKILL.md"
+    },
+    {
       "id": "obsidian-bases",
       "canonical_id": "obsidian-bases",
       "name": "obsidian-bases",
@@ -54325,6 +54394,39 @@
         "review"
       ],
       "path": "skills/opencode-delegate/SKILL.md"
+    },
+    {
+      "id": "openhook",
+      "canonical_id": "openhook",
+      "name": "openhook",
+      "description": "Creates private callback inboxes with Openhook. Use when an agent needs to wait for a webhook, inspect received HTTP/email/DNS events, or verify a test callback's contents.",
+      "category": "development",
+      "risk": "critical",
+      "source": "https://github.com/openhook-dev/openhook-inbox/tree/9b11d08dfa520f37f387f6b003b67371dca930eb/skills/openhook",
+      "source_type": "community",
+      "source_repo": "openhook-dev/openhook-inbox",
+      "license": "MIT",
+      "license_source": "https://github.com/openhook-dev/openhook-inbox/blob/9b11d08dfa520f37f387f6b003b67371dca930eb/LICENSE",
+      "tags": [
+        "webhooks",
+        "integration-testing",
+        "mcp"
+      ],
+      "triggers": [
+        "webhooks",
+        "integration-testing",
+        "mcp",
+        "openhook",
+        "creates",
+        "private",
+        "callback",
+        "inboxes",
+        "agent",
+        "wait",
+        "webhook",
+        "inspect"
+      ],
+      "path": "skills/openhook/SKILL.md"
     },
     {
       "id": "openshift",

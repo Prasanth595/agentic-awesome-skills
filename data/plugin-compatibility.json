@@ -29234,6 +29234,25 @@
       "runtime_files": []
     },
     {
+      "id": "logo-to-stickers",
+      "path": "skills/logo-to-stickers",
+      "targets": {
+        "codex": "supported",
+        "claude": "supported"
+      },
+      "setup": {
+        "type": "none",
+        "summary": "",
+        "docs": null
+      },
+      "reasons": [],
+      "blocked_reasons": {
+        "codex": [],
+        "claude": []
+      },
+      "runtime_files": []
+    },
+    {
       "id": "loki-logging",
       "path": "skills/loki-logging",
       "targets": {
@@ -33696,6 +33715,25 @@
       "runtime_files": []
     },
     {
+      "id": "obsess",
+      "path": "skills/obsess",
+      "targets": {
+        "codex": "supported",
+        "claude": "supported"
+      },
+      "setup": {
+        "type": "none",
+        "summary": "",
+        "docs": null
+      },
+      "reasons": [],
+      "blocked_reasons": {
+        "codex": [],
+        "claude": []
+      },
+      "runtime_files": []
+    },
+    {
       "id": "obsidian-bases",
       "path": "skills/obsidian-bases",
       "targets": {
@@ -34793,6 +34831,25 @@
     {
       "id": "opencode-delegate",
       "path": "skills/opencode-delegate",
+      "targets": {
+        "codex": "supported",
+        "claude": "supported"
+      },
+      "setup": {
+        "type": "none",
+        "summary": "",
+        "docs": null
+      },
+      "reasons": [],
+      "blocked_reasons": {
+        "codex": [],
+        "claude": []
+      },
+      "runtime_files": []
+    },
+    {
+      "id": "openhook",
+      "path": "skills/openhook",
       "targets": {
         "codex": "supported",
         "claude": "supported"
@@ -51776,10 +51833,10 @@
     }
   ],
   "summary": {
-    "total_skills": 2699,
+    "total_skills": 2702,
     "supported": {
-      "codex": 2614,
-      "claude": 2636
+      "codex": 2617,
+      "claude": 2639
     },
     "blocked": {
       "codex": 85,
