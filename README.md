@@ -340,6 +340,12 @@ Key source families include:
 
 ### Community Contributors
 
+- **[moooai/takeout-coupon](https://github.com/moooai/takeout-coupon)**: MIT source for the `takeout-coupon` skill - Meituan, Ele.me/Taobao Shangou and JD Waimai hidden coupon feeds with verbatim taokouling codes and QR/H5 claim pages.
+- **[moooai/trip-coupon](https://github.com/moooai/trip-coupon)**: MIT source for the `trip-coupon` skill - Didi ride-hailing and hotel coupon feeds with verbatim codes and claim pages.
+- **[moooai/movie-coupon](https://github.com/moooai/movie-coupon)**: MIT source for the `movie-coupon` skill - movie-ticket discount feeds for Chinese cinema platforms with verbatim codes and claim links.
+- **[moooai/parcel-coupon](https://github.com/moooai/parcel-coupon)**: MIT source for the `parcel-coupon` skill - courier and parcel-delivery coupon feeds with verbatim codes and claim pages.
+- **[moooai/obtain-coupons-all-in-one](https://github.com/moooai/obtain-coupons-all-in-one)**: MIT source for the `obtain-coupons-all-in-one` skill - one aggregated coupon feed across the four categories above.
+
 - **[yumaheymans/carejobs-mcp](https://github.com/yumaheymans/carejobs-mcp)**: MIT source for the `healthcare-job-search` skill - US healthcare job and posted-pay lookup for nursing, CNA, allied health, therapy, imaging, pharmacy and physician roles through CareJobs.Now's free read-only MCP server or public CC BY 4.0 JSON endpoints.
 
 - **[AshenJyy/antigravity-browser-bridge](https://github.com/AshenJyy/antigravity-browser-bridge)**: Source for the Browser Bridge guide for authorized Edge/Chrome automation using a separately installed local extension and daemon (Apache-2.0).
