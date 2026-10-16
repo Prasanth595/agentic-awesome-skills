@@ -1,6 +1,6 @@
 {
   "generatedAt": "2026-10-14T18:55:53.000Z",
-  "total": 2691,
+  "total": 2694,
   "skills": [
     {
       "id": "00-andruia-consultant",
@@ -15795,6 +15795,42 @@
         "austrac"
       ],
       "path": "skills/check-identity-pack/SKILL.md"
+    },
+    {
+      "id": "chord-onchain-trading",
+      "canonical_id": "chord-onchain-trading",
+      "name": "chord-onchain-trading",
+      "description": "Read DEX market data and prepare best-route swap quotes and unsigned swap transactions on eight EVM chains with the Chord API. Never signs or moves funds.",
+      "category": "blockchain",
+      "risk": "critical",
+      "source": "https://github.com/getchordlabs/chord/tree/main/skills/chord",
+      "source_type": "official",
+      "source_repo": "getchordlabs/chord",
+      "license": "MIT",
+      "license_source": "https://github.com/getchordlabs/chord/blob/main/LICENSE",
+      "tags": [
+        "crypto",
+        "defi",
+        "dex",
+        "swap",
+        "evm",
+        "market-data"
+      ],
+      "triggers": [
+        "crypto",
+        "defi",
+        "dex",
+        "swap",
+        "evm",
+        "market-data",
+        "chord",
+        "onchain",
+        "trading",
+        "read",
+        "market",
+        "data"
+      ],
+      "path": "skills/chord-onchain-trading/SKILL.md"
     },
     {
       "id": "chrome-extension-developer",
@@ -36470,6 +36506,42 @@
       "path": "skills/health-wellness/SKILL.md"
     },
     {
+      "id": "healthcare-job-search",
+      "canonical_id": "healthcare-job-search",
+      "name": "healthcare-job-search",
+      "description": "Find open US healthcare jobs (nursing, CNA, allied health, therapy, imaging, pharmacy, physicians) and the hourly pay employers post, via CareJobs.Now's free MCP server or JSON endpoints.",
+      "category": "career-jobs",
+      "risk": "safe",
+      "source": "community",
+      "source_type": "community",
+      "source_repo": "yumaheymans/carejobs-mcp",
+      "license": "MIT",
+      "license_source": "https://github.com/yumaheymans/carejobs-mcp/blob/main/LICENSE",
+      "tags": [
+        "jobs",
+        "healthcare",
+        "nursing",
+        "job-search",
+        "pay",
+        "mcp"
+      ],
+      "triggers": [
+        "jobs",
+        "healthcare",
+        "nursing",
+        "job-search",
+        "pay",
+        "mcp",
+        "job",
+        "search",
+        "find",
+        "open",
+        "us",
+        "cna"
+      ],
+      "path": "skills/healthcare-job-search/SKILL.md"
+    },
+    {
       "id": "helium-mcp",
       "canonical_id": "helium-mcp",
       "name": "helium-mcp",
@@ -49399,6 +49471,42 @@
         "code"
       ],
       "path": "skills/modern-javascript-patterns/SKILL.md"
+    },
+    {
+      "id": "moltnode-chain-reader",
+      "canonical_id": "moltnode-chain-reader",
+      "name": "moltnode-chain-reader",
+      "description": "Read 31 blockchains over keyless JSON-RPC with MoltNode (balances, blocks, contract calls) and get Chord swap quotes with an unsigned transaction and simulation.",
+      "category": "blockchain",
+      "risk": "critical",
+      "source": "https://github.com/tuantqse90/moltnode-mcp/tree/main/skills/moltnode",
+      "source_type": "official",
+      "source_repo": "tuantqse90/moltnode-mcp",
+      "license": "MIT",
+      "license_source": "https://github.com/tuantqse90/moltnode-mcp/blob/main/LICENSE",
+      "tags": [
+        "crypto",
+        "blockchain",
+        "json-rpc",
+        "evm",
+        "solana",
+        "swap"
+      ],
+      "triggers": [
+        "crypto",
+        "blockchain",
+        "json-rpc",
+        "evm",
+        "solana",
+        "swap",
+        "moltnode",
+        "chain",
+        "reader",
+        "read",
+        "31",
+        "blockchains"
+      ],
+      "path": "skills/moltnode-chain-reader/SKILL.md"
     },
     {
       "id": "molykit",
