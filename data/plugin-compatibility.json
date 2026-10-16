@@ -3528,6 +3528,25 @@
       "runtime_files": []
     },
     {
+      "id": "apify-reddit-scraper",
+      "path": "skills/apify-reddit-scraper",
+      "targets": {
+        "codex": "supported",
+        "claude": "supported"
+      },
+      "setup": {
+        "type": "none",
+        "summary": "",
+        "docs": null
+      },
+      "reasons": [],
+      "blocked_reasons": {
+        "codex": [],
+        "claude": []
+      },
+      "runtime_files": []
+    },
+    {
       "id": "apify-trend-analysis",
       "path": "skills/apify-trend-analysis",
       "targets": {
@@ -51605,10 +51624,10 @@
     }
   ],
   "summary": {
-    "total_skills": 2690,
+    "total_skills": 2691,
     "supported": {
-      "codex": 2605,
-      "claude": 2627
+      "codex": 2606,
+      "claude": 2628
     },
     "blocked": {
       "codex": 85,
