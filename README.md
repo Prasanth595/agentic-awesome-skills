@@ -341,6 +341,7 @@ Key source families include:
 ### Community Contributors
 
 - **[openhook-dev/openhook-inbox](https://github.com/openhook-dev/openhook-inbox)**: MIT source for the `openhook` skill: disposable callback inboxes, event inspection and cursor-based waiting for authorized integration tests.
+- **[huyanxius/logo-to-stickers](https://github.com/huyanxius/logo-to-stickers)**: MIT source for `logo-to-stickers` — brand marks become consistent paper-sticker characters with small visual stories, reference roles and fifteen real examples.
 - **[moooai/takeout-coupon](https://github.com/moooai/takeout-coupon)**: MIT source for the `takeout-coupon` skill - Meituan, Ele.me/Taobao Shangou and JD Waimai hidden coupon feeds with verbatim taokouling codes and QR/H5 claim pages.
 - **[moooai/trip-coupon](https://github.com/moooai/trip-coupon)**: MIT source for the `trip-coupon` skill - Didi ride-hailing and hotel coupon feeds with verbatim codes and claim pages.
 - **[moooai/movie-coupon](https://github.com/moooai/movie-coupon)**: MIT source for the `movie-coupon` skill - movie-ticket discount feeds for Chinese cinema platforms with verbatim codes and claim links.
