@@ -2303,6 +2303,25 @@
       "runtime_files": []
     },
     {
+      "id": "altorank",
+      "path": "skills/altorank",
+      "targets": {
+        "codex": "supported",
+        "claude": "supported"
+      },
+      "setup": {
+        "type": "none",
+        "summary": "",
+        "docs": null
+      },
+      "reasons": [],
+      "blocked_reasons": {
+        "codex": [],
+        "claude": []
+      },
+      "runtime_files": []
+    },
+    {
       "id": "alumni-re-hire-tracker",
       "path": "skills/alumni-re-hire-tracker",
       "targets": {
@@ -51871,10 +51890,10 @@
     }
   ],
   "summary": {
-    "total_skills": 2704,
+    "total_skills": 2705,
     "supported": {
-      "codex": 2619,
-      "claude": 2641
+      "codex": 2620,
+      "claude": 2642
     },
     "blocked": {
       "codex": 85,

@@ -1,6 +1,6 @@
 {
   "generatedAt": "2026-10-14T18:55:53.000Z",
-  "total": 2704,
+  "total": 2705,
   "skills": [
     {
       "id": "00-andruia-consultant",
@@ -3669,6 +3669,42 @@
         "competitive"
       ],
       "path": "skills/alternatives-pages/SKILL.md"
+    },
+    {
+      "id": "altorank",
+      "canonical_id": "altorank",
+      "name": "altorank",
+      "description": "Run AltoRank through its hosted MCP server: readiness audits, Search Console, keyword research, and SEO drafts into a review queue.",
+      "category": "seo",
+      "risk": "safe",
+      "source": "https://github.com/AltoRank/altorank/tree/main/plugins/altorank/skills/altorank",
+      "source_type": "official",
+      "source_repo": "AltoRank/altorank",
+      "license": "AGPL-3.0",
+      "license_source": "https://github.com/AltoRank/altorank/blob/main/LICENSE",
+      "tags": [
+        "seo",
+        "geo",
+        "mcp",
+        "content",
+        "search-console",
+        "keyword-research"
+      ],
+      "triggers": [
+        "seo",
+        "geo",
+        "mcp",
+        "content",
+        "search-console",
+        "keyword-research",
+        "altorank",
+        "run",
+        "through",
+        "hosted",
+        "server",
+        "readiness"
+      ],
+      "path": "skills/altorank/SKILL.md"
     },
     {
       "id": "alumni-re-hire-tracker",

@@ -2,7 +2,7 @@
 
 Generated at: 2026-10-14T18:55:53.000Z
 
-Total skills: 2704
+Total skills: 2705
 
 ## agent-behavior (5)
 
@@ -2900,10 +2900,11 @@ Total skills: 2704
 | `zero-trust` | Implement zero-trust network architecture. Configure identity-based access, micro-segmentation, and continuous verification. Use when implementing modern sec... | critical | BagelHole/DevOps-Security-Agent-Skills | zero, trust | zero, trust, network, architecture, configure, identity, access, micro, segmentation, continuous, verification, implementing |
 | `zeroize-audit` | Detects missing zeroization of sensitive data in source code and identifies zeroization removed by compiler optimizations, with assembly-level analysis, and ... | offensive | community | zeroize, audit | zeroize, audit, detects, missing, zeroization, sensitive, data, source, code, identifies, removed, compiler |
 
-## seo (33)
+## seo (34)
 
 | Skill | Description | Risk | Source | Tags | Triggers |
 | --- | --- | --- | --- | --- | --- |
+| `altorank` | Run AltoRank through its hosted MCP server: readiness audits, Search Console, keyword research, and SEO drafts into a review queue. | safe | AltoRank/altorank | seo, geo, mcp, content, search-console, keyword-research | seo, geo, mcp, content, search-console, keyword-research, altorank, run, through, hosted, server, readiness |
 | `geo-audit` | Full website GEO+SEO audit with parallel subagent delegation. | safe | zubair-trabzada/geo-seo-claude | geo, audit | geo, audit, full, website, seo, parallel, subagent, delegation |
 | `geo-brand-mentions` | Brand mention and authority scanner for AI visibility. | safe | zubair-trabzada/geo-seo-claude | geo, brand, mentions | geo, brand, mentions, mention, authority, scanner, ai, visibility |
 | `geo-citability` | AI citability scoring and optimization. | safe | zubair-trabzada/geo-seo-claude | geo, citability | geo, citability, ai, scoring, optimization |

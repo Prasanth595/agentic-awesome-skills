@@ -3097,6 +3097,40 @@
     "license_source": "https://github.com/jonathimer/devmarketing-skills/blob/main/LICENSE"
   },
   {
+    "id": "altorank",
+    "path": "skills/altorank",
+    "category": "seo",
+    "name": "altorank",
+    "description": "Run AltoRank through its hosted MCP server: readiness audits, Search Console, keyword research, and SEO drafts into a review queue.",
+    "risk": "safe",
+    "source": "https://github.com/AltoRank/altorank/tree/main/plugins/altorank/skills/altorank",
+    "date_added": "2026-10-16",
+    "plugin": {
+      "targets": {
+        "codex": "supported",
+        "claude": "supported"
+      },
+      "setup": {
+        "type": "none",
+        "summary": "",
+        "docs": null
+      },
+      "reasons": []
+    },
+    "source_type": "official",
+    "source_repo": "AltoRank/altorank",
+    "license": "AGPL-3.0",
+    "license_source": "https://github.com/AltoRank/altorank/blob/main/LICENSE",
+    "tags": [
+      "seo",
+      "geo",
+      "mcp",
+      "content",
+      "search-console",
+      "keyword-research"
+    ]
+  },
+  {
     "id": "alumni-re-hire-tracker",
     "path": "skills/alumni-re-hire-tracker",
     "category": "business",
