@@ -4695,6 +4695,41 @@
     }
   },
   {
+    "id": "apify-reddit-scraper",
+    "path": "skills/apify-reddit-scraper",
+    "category": "data",
+    "name": "apify-reddit-scraper",
+    "description": "Scrape Reddit posts, comments, subreddits and users with the harshmaur/reddit-scraper Apify Actor. No Reddit API key. Keyword search, date windows, full threads.",
+    "risk": "critical",
+    "source": "community",
+    "date_added": "2026-10-15",
+    "plugin": {
+      "targets": {
+        "codex": "supported",
+        "claude": "supported"
+      },
+      "setup": {
+        "type": "none",
+        "summary": "",
+        "docs": null
+      },
+      "reasons": []
+    },
+    "source_type": "community",
+    "source_repo": "harshmaur/apify-reddit-scraper-skill",
+    "license": "MIT",
+    "license_source": "https://github.com/harshmaur/apify-reddit-scraper-skill/blob/main/LICENSE.txt",
+    "tags": [
+      "reddit",
+      "apify",
+      "scraping",
+      "social-listening",
+      "brand-monitoring",
+      "subreddit",
+      "comments"
+    ]
+  },
+  {
     "id": "apify-trend-analysis",
     "path": "skills/apify-trend-analysis",
     "category": "automation",
