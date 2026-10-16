@@ -10052,6 +10052,25 @@
       "runtime_files": []
     },
     {
+      "id": "chord-onchain-trading",
+      "path": "skills/chord-onchain-trading",
+      "targets": {
+        "codex": "supported",
+        "claude": "supported"
+      },
+      "setup": {
+        "type": "none",
+        "summary": "",
+        "docs": null
+      },
+      "reasons": [],
+      "blocked_reasons": {
+        "codex": [],
+        "claude": []
+      },
+      "runtime_files": []
+    },
+    {
       "id": "chrome-extension-developer",
       "path": "skills/chrome-extension-developer",
       "targets": {
@@ -23354,6 +23373,25 @@
       "runtime_files": []
     },
     {
+      "id": "healthcare-job-search",
+      "path": "skills/healthcare-job-search",
+      "targets": {
+        "codex": "supported",
+        "claude": "supported"
+      },
+      "setup": {
+        "type": "none",
+        "summary": "",
+        "docs": null
+      },
+      "reasons": [],
+      "blocked_reasons": {
+        "codex": [],
+        "claude": []
+      },
+      "runtime_files": []
+    },
+    {
       "id": "helium-mcp",
       "path": "skills/helium-mcp",
       "targets": {
@@ -31664,6 +31702,25 @@
     {
       "id": "modern-javascript-patterns",
       "path": "skills/modern-javascript-patterns",
+      "targets": {
+        "codex": "supported",
+        "claude": "supported"
+      },
+      "setup": {
+        "type": "none",
+        "summary": "",
+        "docs": null
+      },
+      "reasons": [],
+      "blocked_reasons": {
+        "codex": [],
+        "claude": []
+      },
+      "runtime_files": []
+    },
+    {
+      "id": "moltnode-chain-reader",
+      "path": "skills/moltnode-chain-reader",
       "targets": {
         "codex": "supported",
         "claude": "supported"
@@ -51624,10 +51681,10 @@
     }
   ],
   "summary": {
-    "total_skills": 2691,
+    "total_skills": 2694,
     "supported": {
-      "codex": 2606,
-      "claude": 2628
+      "codex": 2609,
+      "claude": 2631
     },
     "blocked": {
       "codex": 85,
