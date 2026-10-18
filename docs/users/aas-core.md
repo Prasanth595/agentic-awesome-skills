@@ -26,6 +26,8 @@ AAS MCP does not scan the repository and does not decide which skills are best. 
 > [!IMPORTANT]
 > Structural and identity validity does not certify semantic fit, compatibility, setup correctness, operational safety, or safety to apply.
 
+For independent catalog updates, explicit offline pins and rollback, see [catalog revisions](catalog-revisions.md).
+
 ## Configure the local MCP
 
 > **Release boundary:** AAS Core landed after release 14.6.0. Use an exact Core-capable release rather than an unreviewed moving tag.
