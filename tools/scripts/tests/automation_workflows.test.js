@@ -22,8 +22,8 @@ for (const command of ["distribution:verify","sync:release-state","validate:stri
   assert.ok(commands(candidate.jobs.build).includes(`npm run ${command}`),`candidate must execute ${command}`);
 assert.match(commands(candidate.jobs.build),/git merge-base --is-ancestor HEAD origin\/main/);
 assert.match(commands(candidate.jobs.build),/distribution_manifest\.cjs create/);
-assert.deepEqual(candidate.jobs.functional.strategy.matrix.os,["ubuntu-24.04","windows-2025"]);
-assert.deepEqual(candidate.jobs.functional.strategy.matrix.node,["22.23.1","24"]);
+assert.deepEqual([...new Set(candidate.jobs.functional.strategy.matrix.include.map(job => job.os))],["ubuntu-24.04","windows-2025"]);
+assert.deepEqual([...new Set(candidate.jobs.functional.strategy.matrix.include.map(job => job.node))],["22.23.1","24"]);
 assert.match(commands(candidate.jobs.functional),/distribution_manifest\.cjs verify/);
 assert.match(commands(candidate.jobs.functional),/run-installed-candidate\.mjs/);
 for (const workflow of [publish,pages]) {
