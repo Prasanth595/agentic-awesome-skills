@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [19.10.1] - 2026-10-18 - "Verified Cross-Platform Distribution"
+
+The catalog remains at **2,712 skills**, with no new skills in this patch. This corrects the distribution checks that blocked npm and Pages publication of 19.10.0; its tag is preserved unchanged.
+
+### Fixed
+
+- Linux and Windows candidate jobs now use the functional verifier's supported platform and Node identifiers.
+- Release provenance binds the committed lockfile bytes, avoiding false integrity failures caused by Windows checkout line endings. Package and site artifact integrity checks remain exact.
+
 ## [19.10.0] - 2026-10-18 - "Independent Catalog Revisions"
 
 The **2,712-skill catalog** can now be distributed independently of compatible runtime releases. Existing pinned runtimes retain their embedded catalogs; independent revisions require this compatible runtime and an explicit revision/integrity selection.

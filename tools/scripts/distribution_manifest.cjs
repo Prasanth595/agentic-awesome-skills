@@ -4,6 +4,10 @@ const fs = require("node:fs");
 const path = require("node:path");
 const { execFileSync } = require("node:child_process");
 const { digest, createManifest, verifyManifest } = require("../lib/distribution-artifact");
+function lockfileDigest(root) {
+  // Bind the immutable Git bytes, independent of checkout line-ending conversion.
+  return digest(execFileSync("git", ["show", "HEAD:package-lock.json"], { cwd: root }));
+}
 function main(argv, env = process.env) {
   const [mode, directory, runId, runAttempt] = argv;
   if (!["create", "verify"].includes(mode) || !directory || argv.length !== 4)
@@ -14,11 +18,11 @@ function main(argv, env = process.env) {
     version: JSON.parse(fs.readFileSync(path.join(root, "package.json"))).version,
     runId, runAttempt, repository: env.GITHUB_REPOSITORY,
     workflow: ".github/workflows/distribution-candidate.yml",
-    lockfileDigest: digest(fs.readFileSync(path.join(root, "package-lock.json"))),
+    lockfileDigest: lockfileDigest(root),
   };
   const manifestPath = path.join(directory, "distribution.json");
   if (mode === "create") fs.writeFileSync(manifestPath, JSON.stringify(createManifest(directory, expected), null, 2) + "\n", { flag: "wx" });
   else verifyManifest(directory, JSON.parse(fs.readFileSync(manifestPath)), expected);
 }
 if (require.main === module) { try { main(process.argv.slice(2)); } catch (error) { console.error(error.message); process.exitCode = 1; } }
-module.exports = { main };
+module.exports = { main, lockfileDigest };

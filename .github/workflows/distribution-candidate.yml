@@ -89,8 +89,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-24.04, windows-2025]
-        node: ['22.23.1', '24']
+        include:
+          - { os: ubuntu-24.04, node: '22.23.1', job-id: linux-node-22 }
+          - { os: ubuntu-24.04, node: '24', job-id: linux-node-24 }
+          - { os: windows-2025, node: '22.23.1', job-id: windows-node-22 }
+          - { os: windows-2025, node: '24', job-id: windows-node-24 }
     runs-on: ${{ matrix.os }}
     timeout-minutes: 25
     steps:
@@ -107,7 +110,7 @@ jobs:
       - name: Verify candidate bytes and identity
         run: node tools/scripts/distribution_manifest.cjs verify "${{ runner.temp }}/distribution" "${{ github.run_id }}" "${{ github.run_attempt }}"
       - name: Install and exercise exact packed product
-        run: node verification/aas-preview/run-installed-candidate.mjs --artifact-root "${{ runner.temp }}/distribution" --install-root "${{ runner.temp }}/candidate-install" --work-root "${{ runner.temp }}/candidate-work" --job-id "${{ matrix.os }}-node-${{ matrix.node }}" --out "${{ runner.temp }}/functional.json"
+        run: node verification/aas-preview/run-installed-candidate.mjs --artifact-root "${{ runner.temp }}/distribution" --install-root "${{ runner.temp }}/candidate-install" --work-root "${{ runner.temp }}/candidate-work" --job-id "${{ matrix.job-id }}" --out "${{ runner.temp }}/functional.json"
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: functional-${{ matrix.os }}-node-${{ matrix.node }}
