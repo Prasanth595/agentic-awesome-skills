@@ -23,7 +23,7 @@ function readArtifact(root, file) {
 }
 function createManifest(root, provenance) {
   identity(provenance);
-  return { schemaVersion: 1, ...provenance, artifacts: FILES.map(file => {
+  return { schemaVersion: 1, ...provenance, toolchain: { node: process.version, v8: process.versions.v8, platform: process.platform, arch: process.arch }, artifacts: FILES.map(file => {
     const bytes = readArtifact(root, file);
     return { file, size: bytes.length, sha256: digest(bytes) };
   }) };
@@ -31,6 +31,7 @@ function createManifest(root, provenance) {
 function verifyManifest(root, manifest, expected) {
   identity(manifest); identity(expected);
   if (manifest.schemaVersion !== 1) throw new Error("Unsupported distribution schema");
+  if (!/^v[0-9]+\.[0-9]+\.[0-9]+$/.test(manifest.toolchain?.node || "") || !manifest.toolchain?.v8 || !manifest.toolchain?.platform || !manifest.toolchain?.arch) throw new Error("Missing build toolchain identity");
   for (const key of ["commit", "version", "runId", "runAttempt", "repository", "workflow", "lockfileDigest"])
     if (String(manifest[key]) !== String(expected[key])) throw new Error(`Distribution identity mismatch: ${key}`);
   if (!Array.isArray(manifest.artifacts) || manifest.artifacts.length !== FILES.length) throw new Error("Incomplete distribution artifacts");

@@ -8,6 +8,8 @@ try {
   const provenance = { commit: "a".repeat(40), version: "20.0.0", runId: "12", runAttempt: "1", repository: "owner/repo", workflow: ".github/workflows/distribution-candidate.yml", lockfileDigest: "b".repeat(64) };
   const manifest = createManifest(root, provenance);
   assert(verifyManifest(root, manifest, provenance));
+  assert.equal(manifest.toolchain.node, process.version);
+  assert.throws(() => verifyManifest(root, { ...manifest, toolchain: undefined }, provenance), /toolchain/);
   for (const key of ["commit", "version", "runId", "runAttempt", "repository", "workflow", "lockfileDigest"])
     assert.throws(() => verifyManifest(root, manifest, { ...provenance, [key]: "invalid" }));
   assert.throws(() => verifyManifest(root, { ...manifest, artifacts: [] }, provenance), /Incomplete/);
