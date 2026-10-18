@@ -267,7 +267,7 @@ npm test
 
 For **any normal community PR**, keep the branch source-only and leave generated registry artifacts out of the diff. `main` canonicalizes those after merge.
 
-Complete local preflight (validation, references when needed, docs security, source-credit preview, and all local tests):
+Complete preflight for a committed candidate (validation, references when needed, docs security, source-credit preview, and all local tests). Run from a clean checkout of the selected head after committing source changes; use the individual validation commands above while editing:
 
 ```bash
 npm run pr:preflight

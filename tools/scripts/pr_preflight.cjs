@@ -460,6 +460,25 @@ function runLocalChecks(
   }
   return checks;
 }
+function assertCleanSnapshot(root, headOid, execute = spawnSync) {
+  const head = execute("git", ["rev-parse", "HEAD"], {
+    cwd: root,
+    encoding: "utf8",
+  });
+  const status = execute("git", ["status", "--porcelain"], {
+    cwd: root,
+    encoding: "utf8",
+  });
+  if (
+    head.status !== 0 ||
+    status.status !== 0 ||
+    head.stdout.trim() !== headOid ||
+    status.stdout.trim()
+  )
+    throw new Error(
+      "Full preflight requires a clean committed checkout of the selected head. Commit or stash source changes, or use --repo with a clean checkout; --no-run performs classification only.",
+    );
+}
 function main() {
   const args = parseArgs(process.argv.slice(2));
   const projectRoot = args.repo
@@ -477,6 +496,19 @@ function main() {
   );
   if (!/^[0-9a-f]{40}$/.test(baseOid) || !/^[0-9a-f]{40}$/.test(headOid))
     throw new Error("Invalid immutable preflight snapshot");
+  if (!args.noRun) {
+    try {
+      assertCleanSnapshot(projectRoot, headOid);
+    } catch (error) {
+      if (args.json)
+        process.stdout.write(
+          `${JSON.stringify({ error: "snapshot_not_clean", headOid, detail: error.message })}\n`,
+        );
+      else console.error(error.message);
+      process.exitCode = 1;
+      return;
+    }
+  }
   const changeRecords = getChangeRecords(projectRoot, baseOid, headOid);
   const changedFiles = changedFilesFromRecords(changeRecords);
   const classification = classifyChangedFiles(changedFiles, contract);
@@ -577,6 +609,7 @@ if (require.main === module) {
 }
 
 module.exports = {
+  assertCleanSnapshot,
   prepareTestPreview,
   localCheckCommands,
   runLocalChecks,
