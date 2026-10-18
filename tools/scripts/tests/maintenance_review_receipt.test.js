@@ -12,3 +12,22 @@ assert.throws(() => verifyReceipt(signed, fingerprint, key, "short"), /Invalid/)
 assert.throws(() => signReceipt({ outcome: "approved" }, key), /explicit/);
 assert.throws(() => signReceipt(signed.receipt, Buffer.alloc(0)), /256-bit/);
 console.log("review receipt reuse and invalidation tests passed");
+const fs = require("node:fs"), os = require("node:os"), path = require("node:path");
+const { execFileSync } = require("node:child_process");
+const { fingerprint: gitFingerprint } = require("../../lib/maintenance-review-receipt");
+const root = fs.mkdtempSync(path.join(os.tmpdir(), "aas-review-fingerprint-"));
+const git = (...args) => execFileSync("git",args,{cwd:root,encoding:"utf8",stdio:["ignore","pipe","pipe"]}).trim();
+try {
+  git("init","-q"); git("config","user.name","Fixture");git("config","user.email","fixture@example.invalid");
+  for(const file of ["tools/policy.json","schemas/schema.json","package.json","package-lock.json","AGENTS.md",".github/rules.md","docs/maintainers/rules.md","skills/antigravity-maintainer-batch-release/SKILL.md","skills/example/SKILL.md","skills/example/references/guide.md"]){fs.mkdirSync(path.dirname(path.join(root,file)),{recursive:true});fs.writeFileSync(path.join(root,file),"baseline\n");}
+  git("add",".");git("commit","-qm","base");const base=git("rev-parse","HEAD");
+  fs.appendFileSync(path.join(root,"skills/example/references/guide.md"),"reviewed\n");git("commit","-qam","skill");const head=git("rev-parse","HEAD");
+  const first=gitFingerprint(root,head,base,["example"]);
+  git("checkout","--detach",base);fs.writeFileSync(path.join(root,"CHANGELOG.md"),"unrelated\n");git("add",".");git("commit","-qm","base moves");const nextBase=git("rev-parse","HEAD");
+  git("cherry-pick",head);const nextHead=git("rev-parse","HEAD");
+  assert.deepEqual(gitFingerprint(root,nextHead,nextBase,["example"]),first,"unrelated base-only update reuses actual Git tree review");
+  git("update-index","--chmod=+x","skills/example/references/guide.md");git("commit","-qm","mode change");
+  assert.notEqual(gitFingerprint(root,git("rev-parse","HEAD"),nextBase,["example"]).digest,first.digest);
+  fs.writeFileSync(path.join(root,"tools/policy.json"),"changed\n");git("commit","-qam","policy change");const changed=git("rev-parse","HEAD");
+  assert.notEqual(gitFingerprint(root,changed,changed,["example"]).digest,first.digest);
+} finally { fs.rmSync(root,{recursive:true,force:true}); }

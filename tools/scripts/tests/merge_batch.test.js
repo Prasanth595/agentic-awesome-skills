@@ -414,10 +414,9 @@ function approvalDependencies(overrides = {}) {
     readRawChangeRecords() { return [supportRecord]; },
     resolveBlobSizes() { return new Map([[BASE_SHA, 100], [BLOB_SHA, 100]]); },
   });
-  assert.throws(
-    () => mergeBatch.approveActionRequiredRuns("/repo", "owner/repo", prDetails, { dependencies }),
-    /--reviewed-head/,
-    "skill support content must require an exact-head maintainer attestation",
+  assert.doesNotThrow(
+    () => mergeBatch.approveActionRequiredRuns("/repo", "owner/repo", prDetails, { dependencies, dryRun: true }),
+    "safe analysis starts before semantic review; merge review remains required",
   );
   const approved = mergeBatch.approveActionRequiredRuns("/repo", "owner/repo", prDetails, {
     dependencies,
@@ -443,10 +442,9 @@ function approvalDependencies(overrides = {}) {
     readRawChangeRecords() { return [webAppRecord]; },
     resolveBlobSizes() { return new Map([[BASE_SHA, 100], [BLOB_SHA, 100]]); },
   });
-  assert.throws(
-    () => mergeBatch.approveActionRequiredRuns("/repo", "owner/repo", prDetails, { dependencies }),
-    /--reviewed-head/,
-    "web-app browser source must require an exact-head maintainer attestation",
+  assert.doesNotThrow(
+    () => mergeBatch.approveActionRequiredRuns("/repo", "owner/repo", prDetails, { dependencies, dryRun: true }),
+    "safe browser-source analysis starts before semantic review",
   );
   const approved = mergeBatch.approveActionRequiredRuns("/repo", "owner/repo", prDetails, {
     dependencies,
@@ -469,20 +467,8 @@ function approvalDependencies(overrides = {}) {
     },
     approveWorkflowRun() { approvals += 1; },
   });
-  assert.throws(
-    () => mergeBatch.approveActionRequiredRuns("/repo", "owner/repo", prDetails, { dependencies }),
-    /--reviewed-head/,
-  );
-  assert.throws(
-    () => mergeBatch.approveActionRequiredRuns("/repo", "owner/repo", prDetails, {
-      dependencies,
-      reviewedHeads: [BASE_SHA],
-    }),
-    /--reviewed-head/,
-    "a stale but full reviewed head must fail closed",
-  );
-  assert.strictEqual(approvals, 0);
-
+  // Analysis approval carries no semantic merge authority, with or without
+  // a stale attestation. getRequiredCheckAliases tests above keep merge gated.
   const result = mergeBatch.approveActionRequiredRuns("/repo", "owner/repo", prDetails, {
     dependencies,
     reviewedHeads: [HEAD_SHA],

@@ -1,4 +1,4 @@
 interface:
   display_name: "Antigravity Maintainer Batch Release"
   short_description: "Run protected AAS maintenance and releases"
-  default_prompt: "Use $antigravity-maintainer-batch-release to run a protected AAS maintenance sweep with component validation, exact-head review, source-only merges, canonical sync, bounded batch coordination/recovery, generated source attribution, and fresh release-plan/verification reports that separate public release completion from personal client state. Never treat a report or a stdio probe as native-client confirmation."
+  default_prompt: "Use $antigravity-maintainer-batch-release for protected AAS maintenance: exact-base component checks, semantic review and private receipt reuse, resumable source-only merge batches, release-only snapshots, immutable tested publication bytes, independent compatible catalog revisions, and measured end-to-end verification. Read the canonical maintenance contract; report personal client reload separately."

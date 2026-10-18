@@ -8,7 +8,7 @@ const sha = "1".repeat(40),
   version = "1.2.3",
   skills = [{ id: "example" }];
 const index = JSON.stringify(skills);
-const workflows = ["ci", "codeql", "pages"].map((name, i) => ({
+const workflows = ["ci", "codeql", "pages", "distribution-candidate"].map((name, i) => ({
   id: i + 1,
   path: `.github/workflows/${name}.yml`,
   head_sha: sha,
@@ -40,6 +40,7 @@ let deferredCi = false,
   canonicalCalls = 0,
   hostCalls = 0;
 const deps = {
+  activeCatalogProof: async () => null,
   legacyProof: async () => ({
     sha,
     checked_redirects: 1,
@@ -86,10 +87,7 @@ const deps = {
           {
             name: "main-validation-and-sync",
             steps: [
-              "Run repo-state sync",
-              "Run tests",
-              "Run web app coverage",
-              "Run docs security checks",
+              "Validate protected source diff with ephemeral snapshots",
             ].map((name) => ({
               name,
               conclusion: latestFailed || deferredCi ? "skipped" : "success",

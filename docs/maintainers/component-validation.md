@@ -1,41 +1,18 @@
 # Component validation
 
-`tools/config/maintenance-policy.json` defines the conservative path policy.
-`maintenance_validate.cjs` resolves immutable base/head commits, classifies their
-raw Git diff and executes the complete ordered plan. A missing, failed or skipped
-required result fails the receipt. Copies affect their destination; renames affect
-both paths. Unsafe modes, unknown paths, shared dependencies, workflow changes and
-operational maintainer instructions use the full lane.
+Machine-readable classification is in `tools/config/maintenance-policy.json`; the [maintenance contract](maintenance-contract.md) specifies authority and full release verification.
 
-| Lane | Required work |
+| Profile | Work |
 | --- | --- |
-| Editorial | Repository documentation consistency and documentation security |
-| Catalog | Schema/warning budget, security, ephemeral generation, global references and catalog integrity |
-| Runtime | Catalog checks plus Core tests and installer/package regressions |
-| Web | Catalog checks plus web coverage and build |
-| Full | Catalog checks, complete repository suite, web coverage and build |
+| editorial | Documentation consistency/references and docs security |
+| catalog | Global schema, warning budget, source credits, ephemeral indexes, references, catalog integrity, docs security |
+| runtime | Catalog checks plus runtime, installer and packaging tests |
+| web | Catalog checks plus web coverage/build |
+| distribution | Exact prepared snapshot, schema/references/security/plugin/bundle/catalog integrity; full product validation on immutable candidate |
+| full | Global checks, complete script tests and web coverage/build |
 
-The four protected check names remain unchanged. `pr-policy` still controls fork
-execution, `pr-evidence` still checks the complete changed skill bundle and
-`artifact-preview` still verifies the exact-head preview. Semantic review remains
-independent. A narrow validation plan never grants approval or changes skill
-eligibility. No required workflow is skipped by a path trigger.
+Unknown, mixed, operational skill, executable/link/mode, policy, workflow, generator or shared-dependency changes are full. A complete ordered receipt must contain every planned successful check. PR workflow required names remain unchanged; no path-filtered required workflow is introduced.
 
-Use `npm run maintenance:validate -- --base <base-sha> --head <head-sha> --plan`
-to inspect the plan. Execution regenerates temporary outputs: use a disposable
-checkout, or use `pr:preflight`, which creates that checkout for you. The receipt
-includes policy digest, immutable endpoints, ordered checks, durations and outcomes.
+Use `npm run pr:preflight -- --base origin/main --head HEAD` from a committed source head. The helper validates a clean isolated copy. Direct `maintenance:validate` execution rejects a dirty checkout or different HEAD. Generated previews are temporary development state; tracked distribution snapshots may intentionally lag source main.
 
-Public release verification binds the immutable tag to protected-main ancestry;
-successor commits do not invalidate it. `publicReleaseComplete` and `complete`
-describe public distribution. `personalEnvironmentUpdated` separately describes
-configured clients and explicit session reload evidence. A successful stdio probe
-does not prove that an already-open client reloaded.
-
-## Migration status
-
-The implementation branch is not yet the production contract. Before integration,
-complete the distribution-candidate pipeline, snapshot transition, review receipts,
-resumable coordination and independent catalog identity; reconcile the release
-guides and all completion rules with that final implementation. Historical timing
-observations are not a controlled before/after benchmark.
+Measure whole cycles separately from individual command timings. See the maintenance contract for controls, raw timestamp evidence and manual intervention accounting.

@@ -89,7 +89,10 @@
     "release:plan": "node tools/scripts/release_inspect.cjs plan",
     "release:verify": "node tools/scripts/release_inspect.cjs verify",
     "maintainer:dossier": "node tools/scripts/maintainer_dossier.cjs",
-    "maintenance:validate": "node tools/scripts/maintenance_validate.cjs"
+    "maintenance:validate": "node tools/scripts/maintenance_validate.cjs",
+    "prepack": "node tools/scripts/distribution_snapshot.cjs verify",
+    "distribution:verify": "node tools/scripts/distribution_snapshot.cjs verify",
+    "maintenance:measure": "node tools/scripts/maintenance_measure.cjs"
   },
   "dependencies": {
     "ajv": "^8.20.0",

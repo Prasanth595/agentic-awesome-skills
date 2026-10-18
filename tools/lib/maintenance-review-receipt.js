@@ -13,12 +13,12 @@ function git(root, args) {
 }
 function fingerprint(root, head, protectedBase, skillIds) {
   if (![head, protectedBase].every(s => /^[a-f0-9]{40}$/.test(s))) throw new Error("Full immutable heads required");
-  if (!skillIds.length || skillIds.some(s => !/^[a-z0-9][a-z0-9-]*$/.test(s))) throw new Error("Invalid reviewed skill set");
-  const skills = [...new Set(skillIds)].sort().map(id => ({ id, tree: git(root, ["rev-parse", "--verify", `${head}:skills/${id}`]) }));
+  if (!skillIds.length || skillIds.some(s => !/^[a-z0-9][a-z0-9_-]*$/.test(s))) throw new Error("Invalid reviewed skill set");
+  const skills = [...new Set(skillIds)].sort().map(id => ({ id, tree: git(root, ["ls-tree", head, "--", `skills/${id}`]) || "absent" }));
   // The Git tree binds all nested bytes and modes. The protected context binds
   // evaluators, dependencies, schemas and operational instructions, not only text.
   const context = ["tools", "schemas", "package.json", "package-lock.json", "AGENTS.md", ".github", "docs/maintainers", "skills/antigravity-maintainer-batch-release"]
-    .map(file => ({ file, object: git(root, ["rev-parse", "--verify", `${protectedBase}:${file}`]) }));
+    .map(file => ({ file, object: git(root, ["rev-parse", "--verify", `${protectedBase}:${file}`]), headObject: git(root, ["ls-tree", head, "--", file]) }));
   const content = { schemaVersion: 1, skills, context };
   return { ...content, digest: sha256(canonicalJson(content)) };
 }
@@ -46,9 +46,11 @@ function privateStore(directory, repository) {
   // Require a pre-created private directory; never follow links or create parent
   // paths in PR-controlled locations. Parent ownership prevents replacement.
   for (let current = target; ; current = path.dirname(current)) {
+    if (fs.existsSync(path.join(current, ".git"))) throw new Error("Review store must not be inside any Git checkout");
     const stat = fs.lstatSync(current);
     if (!stat.isDirectory() || stat.isSymbolicLink()) throw new Error("Unsafe review-store ancestry");
     if (current === target && ((stat.mode & 0o077) || (process.getuid && stat.uid !== process.getuid()))) throw new Error("Review store must be privately owned");
+    if (process.getuid && stat.uid !== process.getuid() && stat.uid !== 0) throw new Error("Untrusted review-store parent owner");
     if (current !== target && (stat.mode & 0o022) && !(stat.mode & 0o1000)) throw new Error("Replaceable review-store parent");
     if (current === path.dirname(current)) break;
   }

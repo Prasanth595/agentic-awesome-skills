@@ -53,7 +53,8 @@ function classifyImpact(records, loaded = loadPolicy()) {
 }
 
 function checkPlan(profile) {
-  if (!["editorial", "catalog", "runtime", "web", "full"].includes(profile)) throw new Error("Unknown impact profile");
+  if (!["editorial", "catalog", "runtime", "web", "full", "distribution"].includes(profile)) throw new Error("Unknown impact profile");
+  if (profile === "distribution") return ["distribution:verify", "validate", "validate:references", "security:docs", "plugin-compat:check", "bundles:check", "check:aas-v1-catalog"];
   if (profile === "editorial") return ["documentation", "security:docs"];
   const checks = ["validate", "check:warning-budget", "security:docs", "source-credits", "preview", "validate:references", "check:aas-v1-catalog"];
   if (profile === "catalog") return checks;

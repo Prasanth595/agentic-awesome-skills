@@ -7,6 +7,6 @@
   "operationalSkills": ["antigravity-maintainer-batch-release", "antigravity-workflows"],
   "runtimePrefixes": ["tools/bin/", "tools/lib/aas-v1/"],
   "webPrefixes": ["apps/web-app/src/"],
-  "snapshotPolicy": "canonical-until-migration",
+  "snapshotPolicy": "release-only",
   "personalClientsBlockPublicRelease": false
 }

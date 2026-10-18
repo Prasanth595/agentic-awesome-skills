@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [19.10.0] - 2026-10-18 - "Independent Catalog Revisions"
+
+The **2,712-skill catalog** can now be distributed independently of compatible runtime releases. Existing pinned runtimes retain their embedded catalogs; independent revisions require this compatible runtime and an explicit revision/integrity selection.
+
+### Added
+
+- Independent catalog archives with source commit, schema, runtime compatibility, content digest and archive integrity. Offline import, explicit catalog rollback, cached stack planning and read-only MCP startup support the pinned catalog.
+- Complete support-file verification before catalog promotion or installation; imported archives never execute skill content.
+
+### Changed
+
+- Maintenance validates the affected component, persists authenticated review/evidence receipts and resumes independent PRs after interruptions.
+- Ordinary source merges no longer require a generated-state PR. Prepared releases refresh distribution snapshots together and publish the exact package/site bytes tested by the immutable candidate across Linux/Windows and Node 22/24.
+- The maintainer skill uses a short operating sequence with bundled detailed references. Public release completion is separate from personal MCP client reload status.
+
+### Compatibility
+
+- Existing embedded catalogs keep their exact runtime-version checks. Independent catalogs require an explicitly compatible cached runtime; stack apply retains its experimental approval gate.
+- No new catalog skills are introduced in this release. Performance claims are reported separately from measured maintenance runs.
+
 ## [19.9.0] - 2026-10-18 - "Seven Reviewed Additions And A Safer Maintainer Flow"
 
 > Installable skill library update for Claude Code, Cursor, Codex CLI, Gemini CLI, Antigravity, and related AI coding assistants. Adds **7** catalog skills, ships **2,712** skills, and hardens the protected maintainer and release flow.

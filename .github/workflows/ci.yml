@@ -444,208 +444,36 @@ jobs:
   main-validation-and-sync:
     if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.canonical_sync_pr != true && github.ref == 'refs/heads/main')
     runs-on: ubuntu-latest
-    concurrency:
-      group: canonical-main-sync
-      cancel-in-progress: false
     permissions:
-      deployments: read
-      actions: write
-      contents: write
-      pull-requests: write
+      contents: read
     steps:
       - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
         with:
           fetch-depth: 0
           persist-credentials: false
-
-      - name: Check current main and batch lease
-        id: batch_guard
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: node tools/scripts/canonical_batch.cjs check
-
-      - name: Set up Python
-        if: steps.batch_guard.outputs.should_run == 'true'
-        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: "3.10"
-
-      - name: Install Python dependencies
-        if: steps.batch_guard.outputs.should_run == 'true'
-        run: pip install -r tools/requirements.txt
-
-      - name: Set up Node
-        if: steps.batch_guard.outputs.should_run == 'true'
-        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
-          node-version: "lts/*"
-
-      - name: Install npm dependencies
-        if: steps.batch_guard.outputs.should_run == 'true'
-        run: npm ci --audit=false
-
-      - name: Classify protected main diff
-        id: main_impact
-        if: steps.batch_guard.outputs.should_run == 'true'
+          node-version: "24"
+      - name: Install validation dependencies
+        run: |
+          npm ci --ignore-scripts --audit=false
+          pip install -r tools/requirements.txt
+      - name: Validate protected source diff with ephemeral snapshots
         env:
           BEFORE_SHA: ${{ github.event.before }}
           HEAD_SHA: ${{ github.sha }}
+        shell: bash
         run: |
-          node - <<'NODE'
-          const fs = require('node:fs');
-          const { planFor } = require('./tools/scripts/maintenance_validate.cjs');
-          const before = process.env.BEFORE_SHA;
-          const profile = /^[a-f0-9]{40}$/.test(before || '') && !/^0+$/.test(before)
-            ? planFor(process.cwd(), before, process.env.HEAD_SHA).profile : 'full';
-          fs.appendFileSync(process.env.GITHUB_OUTPUT, `profile=${profile}\n`);
-          NODE
-
-      - name: Validate editorial main diff
-        if: steps.batch_guard.outputs.should_run == 'true' && steps.main_impact.outputs.profile == 'editorial'
-        env:
-          BEFORE_SHA: ${{ github.event.before }}
-          HEAD_SHA: ${{ github.sha }}
-        run: node tools/scripts/maintenance_validate.cjs --base "$BEFORE_SHA" --head "$HEAD_SHA" --output .tmp/component-validation.json
-
-      - name: Verify directory structure
-        if: steps.batch_guard.outputs.should_run == 'true'
-        run: |
-          test -d skills/
-          test -d apps/web-app/
-          test -d tools/scripts/
-          test -d tools/lib/
-          test -f README.md
-          test -f CONTRIBUTING.md
-
-      - name: Run repo-state sync
-        if: steps.batch_guard.outputs.should_run == 'true' && steps.main_impact.outputs.profile != 'editorial'
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: npm run sync:repo-state
-
-      - name: Validate references
-        if: steps.batch_guard.outputs.should_run == 'true' && steps.main_impact.outputs.profile != 'editorial'
-        run: npm run validate:references
-
-      - name: Audit npm dependencies
-        if: steps.batch_guard.outputs.should_run == 'true' && steps.main_impact.outputs.profile != 'editorial'
-        run: |
-          set -euo pipefail
-          for attempt in 1 2 3; do
-            if npm audit --audit-level=high --fetch-timeout=60000 --fetch-retries=0; then
-              exit 0
-            fi
-            if [ "$attempt" -eq 3 ]; then
-              exit 1
-            fi
-            echo "npm audit attempt $attempt failed; retrying after a bounded delay."
-            sleep "$((attempt * 10))"
-          done
-
-      - name: Run tests
-        if: steps.batch_guard.outputs.should_run == 'true' && steps.main_impact.outputs.profile != 'editorial'
-        run: npm run test
-
-      - name: Install web-app dependencies
-        if: steps.batch_guard.outputs.should_run == 'true' && steps.main_impact.outputs.profile != 'editorial'
-        run: npm run app:install
-
-      - name: Run web app coverage
-        if: steps.batch_guard.outputs.should_run == 'true' && steps.main_impact.outputs.profile != 'editorial'
-        run: npm run app:test:coverage
-
-      - name: Run docs security checks
-        if: steps.batch_guard.outputs.should_run == 'true' && steps.main_impact.outputs.profile != 'editorial'
-        run: npm run security:docs
-
-      - name: Recheck canonical publication lease
-        if: steps.batch_guard.outputs.should_run == 'true' && steps.main_impact.outputs.profile != 'editorial'
-        id: publication_guard
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: node tools/scripts/canonical_batch.cjs check
-
-      - name: Validate canonical artifact boundary
-        if: steps.publication_guard.outputs.should_run == 'true' && (github.ref == 'refs/heads/main')
-        run: |
-          set -euo pipefail
-          mapfile -t managed_files < <(node tools/scripts/generated_files.js --include-mixed)
-          if [ "${#managed_files[@]}" -eq 0 ]; then
-            echo "No managed files resolved from generated_files contract."
-            exit 1
-          fi
-
-          if git diff --quiet && [ -z "$(git ls-files --others --exclude-standard)" ]; then
-            echo "No canonical repo-state drift detected."
-            exit 0
-          fi
-
-          git add -- "${managed_files[@]}" || true
-
-          if git diff --cached --quiet; then
-            echo "Repo-state sync produced unmanaged drift only."
-            git status --short
-            exit 1
-          fi
-
-          if [ -n "$(git diff --name-only)" ] || [ -n "$(git ls-files --others --exclude-standard)" ]; then
-            echo "Repo-state sync produced unmanaged drift alongside canonical changes."
-            git status --short
-            exit 1
-          fi
-
-      - name: Reject stale canonical-sync publication
-        if: steps.publication_guard.outputs.should_run == 'true' && (github.ref == 'refs/heads/main')
-        run: |
-          git fetch origin main
-          test "$GITHUB_SHA" = "$(git rev-parse origin/main)"
-
-      - name: Create or update canonical-sync PR
-        id: canonical_pr
-        if: steps.publication_guard.outputs.should_run == 'true' && (github.ref == 'refs/heads/main')
-        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8
+          base="$BEFORE_SHA"
+          if [[ ! "$base" =~ ^[a-f0-9]{40}$ || "$base" =~ ^0+$ ]]; then base="$HEAD_SHA"; fi
+          node tools/scripts/maintenance_validate.cjs --base "$base" --head "$HEAD_SHA" --output .tmp/component-validation.json
+      - name: Upload source validation receipt
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          token: ${{ github.token }}
-          branch: automation/canonical-repo-state
-          base: main
-          delete-branch: true
-          commit-message: "chore: synchronize canonical repository state"
-          title: "chore: synchronize canonical repository state"
-          body: |
-            Automated canonical artifacts regenerated from `main` by the trusted repository workflow.
-
-            <!-- canonical-sync-bot -->
-
-            ## Quality Bar Checklist
-
-            - [x] Contains only files declared by the generated-files contract.
-            - [x] Reproducibility is verified byte-for-byte by required CI.
-            - [x] No source or workflow changes are included.
-
-      - name: Merge canonical-sync PR after exact required checks
-        if: steps.publication_guard.outputs.should_run == 'true' && (steps.canonical_pr.outputs.pull-request-number != '')
-        env:
-          GH_TOKEN: ${{ github.token }}
-          PR_NUMBER: ${{ steps.canonical_pr.outputs.pull-request-number }}
-          PR_HEAD: ${{ steps.canonical_pr.outputs.pull-request-head-sha }}
-        run: |
-          node tools/scripts/merge_canonical_sync_pr.cjs \
-            --repo "$GITHUB_REPOSITORY" \
-            --pr "$PR_NUMBER" \
-            --head "$PR_HEAD" \
-            --skip-pages
-
-      - name: Check for uncommitted drift
-        if: steps.publication_guard.outputs.should_run == 'true' && (github.ref == 'refs/heads/main')
-        run: |
-          if ! git diff --quiet || [ -n "$(git ls-files --others --exclude-standard)" ]; then
-            echo "❌ Detected leftover drift after preparing the canonical-sync PR."
-            echo
-            echo "The bot may only publish managed canonical files and must leave a clean tree."
-            echo "To fix locally, run the canonical maintainer flow:"
-            echo "  npm run release:preflight"
-            echo "  npm run sync:repo-state"
-            echo "  git status"
-            git status --short
-            exit 1
-          fi
+          name: main-component-validation
+          path: .tmp/component-validation.json
+          if-no-files-found: error

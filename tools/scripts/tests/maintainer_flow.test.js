@@ -356,19 +356,8 @@ const ci = yaml.parse(
   fs.readFileSync(path.join(root, ".github/workflows/ci.yml"), "utf8"),
 );
 const mainSteps = ci.jobs["main-validation-and-sync"].steps;
-assert.ok(
-  mainSteps.findIndex((s) => s.id === "batch_guard") <
-    mainSteps.findIndex((s) => s.run === "npm run sync:repo-state"),
-);
-assert.ok(
-  mainSteps.findIndex((s) => s.id === "publication_guard") <
-    mainSteps.findIndex((s) => s.id === "canonical_pr"),
-);
-for (const step of mainSteps.slice(2))
-  assert.match(
-    step.if,
-    /steps\.(?:batch_guard|publication_guard)\.outputs.should_run/,
-  );
+assert.ok(mainSteps.some(step => (step.run || "").includes("maintenance_validate.cjs")));
+assert.ok(!mainSteps.some(step => ["batch_guard", "publication_guard", "canonical_pr"].includes(step.id)));
 const checkout = ci.jobs["artifact-preview"].steps[0];
 assert.equal(checkout.with["fetch-depth"], 1);
 assert.match(checkout.if, /!=/);
@@ -376,12 +365,6 @@ const canonicalCheckout = ci.jobs["artifact-preview"].steps[1];
 assert.equal(canonicalCheckout.with["fetch-depth"], 0);
 assert.match(canonicalCheckout.if, /==/);
 assert.equal(checkout.with["sparse-checkout-cone-mode"], false);
-const recovery = yaml.parse(
-  fs.readFileSync(
-    path.join(root, ".github/workflows/maintainer-batch-recovery.yml"),
-    "utf8",
-  ),
-);
-assert.equal(recovery.on.schedule.length, 1);
-assert.equal(recovery.permissions.deployments, "write");
+assert.equal(fs.existsSync(path.join(root, ".github/workflows/maintainer-batch-recovery.yml")), false,
+  "retired canonical leases must not keep dispatching full main checks");
 console.log("maintainer flow regressions passed");
