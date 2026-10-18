@@ -36,10 +36,10 @@ jobs:
           REVISION: ${{ inputs.revision }}
         run: |
           git merge-base --is-ancestor "$GITHUB_SHA" origin/main
+          npm ci --ignore-scripts --audit=false
           node -e 'require("./tools/lib/aas-v1/cache/identity").validatePackageVersion(process.env.REVISION)'
           node -e 'const {compatible}=require("./tools/lib/aas-v1/cache/catalog-release"); const v=require("./package.json").version; if(!compatible({schemaVersion:1,runtimeMajor:Number(v.split(".")[0]),minimumRuntime:Number(v.split(".")[0]) === 19 ? "19.10.0" : String(Number(v.split(".")[0]))+".0.0"},v)) throw new Error("Publish the compatible runtime before catalog distribution")'
           test "$(npm view "agentic-awesome-skills@$(node -p "require('./package.json').version")" version)" = "$(node -p "require('./package.json').version")"
-          npm ci --ignore-scripts --audit=false
           pip install -r tools/requirements.txt
           npm run chain
           npm run validate:references

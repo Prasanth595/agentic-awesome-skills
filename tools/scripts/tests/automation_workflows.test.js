@@ -61,3 +61,7 @@ for (const job of ["candidate","workbench"]) {
   assert.equal(previewPrepared.jobs[job].needs,"plan");
   assert.match(previewPrepared.jobs[job].if,/run-preview == 'true'/);
 }
+
+const catalogBootstrap = catalog.jobs.candidate.steps.find(step => step.name === "Verify immutable protected source and catalog compatibility").run;
+assert(catalogBootstrap.indexOf("npm ci --ignore-scripts") >= 0);
+assert(catalogBootstrap.indexOf("npm ci --ignore-scripts") < catalogBootstrap.indexOf("catalog-release"), "install dependencies before loading the schema-backed compatibility verifier");
