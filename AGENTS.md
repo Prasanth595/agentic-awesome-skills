@@ -15,7 +15,7 @@ This repository publishes an installable library of agent skills and plugin bund
 - `npm run app:dev`: start the local Vite catalog app.
 - `npm run app:build`: build and prerender the catalog app.
 
-Before PRs, run `npm run validate && npm run test && npm run security:docs`.
+Before PRs, run `npm run pr:preflight -- --base origin/main --head HEAD` from the clean committed source head. It runs the component policy in an isolated checkout; unknown and policy changes require the full suite.
 
 ## Coding Style & Naming Conventions
 
@@ -47,7 +47,7 @@ Treat `main` as pull-request-only. Perform maintainer edits on a topic branch or
 
 Use the skill's end-to-end sequence: complete triage, repair mergeable source PRs, run checks in parallel, merge source PRs in conflict-aware order, perform one canonical synchronization after the source batch, use the scripted protected-release flow when requested, and verify final `main`, tag, GitHub Release, npm package, CI, and live public surfaces. For changed `SKILL.md` files, distinguish a real Tessl `review` from `manual-review-required`; the latter means Tessl was unavailable or did not produce a passing result and requires a maintainer review attested to the exact full head SHA. If neither an installed skill nor the repository-canonical copy is available and readable, stop before making repository changes and report that blocker explicitly.
 
-Every stable or prerelease version must finish with the full-release-alignment gate in the maintainer skill. Do not declare a release complete until clean local `main` equals `origin/main`; canonical generated state is drift-free; every Codex and Claude plugin mirror, editorial bundle, manifest, compatibility report, and marketplace is regenerated and version-aligned; the tag, GitHub Release, npm version and intended dist-tag agree; CI, CodeQL, and the release-tag Pages deployment for the exact released commit are green; live catalog and legacy-bridge surfaces match; and every already-configured local AAS MCP host is pinned to and actually running the released version. A release request authorizes updating existing AAS host entries only, never creating an absent host configuration.
+Every stable or prerelease version must finish with the full-release-alignment gate in the maintainer skill. Verify public releases at their immutable commit, which must remain an ancestor of protected main; current main may advance. Do not declare a public release complete until canonical generated state at that commit is drift-free; every Codex and Claude plugin mirror, editorial bundle, manifest, compatibility report, and marketplace is regenerated and version-aligned; the tag, GitHub Release, npm version and intended dist-tag agree; CI, CodeQL, and the release-tag Pages deployment for the exact released commit are green; live catalog and legacy-bridge surfaces match. Report personal MCP configuration and actual session reload separately; they do not block public release completion. Client updates may change authorized existing entries only, never create an absent host configuration.
 
 #### Skill Content Review Gate
 

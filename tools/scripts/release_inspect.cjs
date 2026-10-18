@@ -560,23 +560,13 @@ async function verifyRelease(options, dependencies = {}) {
   }
   await Promise.all([
     check(
-      "local-and-remote-main",
+      "release-ancestry",
       sha,
       () => {
-        const local = execute("git", ["rev-parse", "main"]),
-          remote = gh("commits/main").sha;
-        if (
-          local !== sha ||
-          remote !== sha ||
-          execute("git", ["rev-parse", "HEAD"]) !== sha ||
-          execute("git", ["status", "--porcelain"])
-        )
-          throw new Error(
-            "Checkout must be clean and main, HEAD, remote main and tag must agree",
-          );
-        return { local, remote };
+        if (provenanceError) throw new Error(provenanceError);
+        return report.provenance.evidence;
       },
-      "Refresh clean maintainer main; reconcile any successor commits before claiming alignment.",
+      "Verify immutable release ancestry on protected main; successor commits are allowed.",
     ),
     check(
       "github-release",
@@ -787,7 +777,14 @@ async function verifyRelease(options, dependencies = {}) {
   report.machineChecksPassed = report.checks
     .filter((c) => c.component !== "client-session-reload")
     .every((c) => c.status === "passed");
-  report.complete = report.checks.every((c) => c.status === "passed");
+  const personal = new Set(["local-mcp-hosts", "client-session-reload"]);
+  report.publicReleaseComplete = report.provenance.status === "passed" && report.checks
+    .filter((c) => !personal.has(c.component))
+    .every((c) => c.status === "passed");
+  report.personalEnvironmentUpdated = report.checks
+    .filter((c) => personal.has(c.component))
+    .every((c) => c.status === "passed");
+  report.complete = report.publicReleaseComplete;
   report.completionLimit =
     "Machine checks do not attest editorial approval or that already-open native clients reloaded their MCP process.";
   return report;

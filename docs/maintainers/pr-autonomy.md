@@ -79,7 +79,7 @@ For an ordinary source PR, `source-validation` runs validation, tests, security 
 
 For the protected canonical-sync PR, `pr-policy` already reproduces the exact expected tree from trusted `main`. `source-validation` is therefore a lightweight boundary record, while `artifact-preview` regenerates and confirms that the canonical head has no drift. After protected merge, explicitly dispatched final CI and CodeQL validate the resulting `main` commit.
 
-The test runner emits per-test and summary timing telemetry so maintainers can measure before changing the DAG. Deterministic sharding is available only through an explicit `npm run test:local -- --shard-index N --shard-count M` invocation. Required CI uses the complete unsharded `npm run test` path; neither timing, sharding, nor `impact_profile` removes assurance.
+The test runner emits per-test and summary timing telemetry so maintainers can measure before changing the DAG. Deterministic sharding is available only through an explicit `npm run test:local -- --shard-index N --shard-count M` invocation. Required CI follows the component policy and uses the complete unsharded `npm run test` path for the full lane; neither timing, sharding, nor `impact_profile` removes assurance.
 
 ## Protected Canonical Sync
 

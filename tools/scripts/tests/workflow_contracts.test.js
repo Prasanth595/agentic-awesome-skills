@@ -157,14 +157,14 @@ for (const contractText of [maintainerSkill, maintenanceGuide, mergeBatchGuide])
 assert.doesNotMatch(mergingGuide, /Rare exception: local squash|`gh pr merge <PR_NUMBER>/);
 assert.match(maintainerSkillUi, /\$antigravity-maintainer-batch-release/);
 assert.doesNotMatch(maintainerSkillUi, /frozen matrix|product, verifier, and gold|recommend|rank/i);
-assert.match(maintainerSkill, /discover every already-configured local AAS MCP host from its real configuration and update each one to the exact same package version/);
+assert.match(maintainerSkill, /personal environment alignment separately/);
 assert.match(maintainerSkill, /Pin `agentic-awesome-skills@X\.Y\.Z` and `--version X\.Y\.Z`; never use `latest`/);
 assert.match(maintainerSkill, /real MCP `initialize` plus `tools\/list` handshake reports catalog package version `X\.Y\.Z`/);
 assert.match(maintainerSkill, /Every stable or prerelease version requires full release alignment/);
 assert.match(maintainerSkill, /npm run sync:release-state`, `npm run plugin-compat:check`, and `npm run bundles:check`/);
 assert.match(maintainerSkill, /every published Codex\/Claude plugin mirror, and every eligible Agent Plugins editorial-bundle manifest/);
 assert.match(maintainerSkill, /release-tag Pages build from the exact immutable `vX\.Y\.Z` tag using `deployment_target=release`/);
-assert.match(maintainerSkill, /final generator pass must be idempotent/);
+assert.match(maintainerSkill, /release checkout must remain idempotent/);
 assert.match(agentInstructions, /Every stable or prerelease version must finish with the full-release-alignment gate/);
 assert.match(maintenanceGuide, /Run the mandatory full-release-alignment gate/);
 const releaseProcess = fs.readFileSync(
@@ -172,7 +172,7 @@ const releaseProcess = fs.readFileSync(
   "utf8",
 );
 assert.match(releaseProcess, /Complete the mandatory full-release-alignment gate/);
-assert.match(releaseProcess, /Any mismatch, inaccessible configured host, or stale public surface keeps the release incomplete/);
+assert.match(releaseProcess, /A public artifact mismatch or stale public surface keeps the public release incomplete/);
 
 const publishWorkflow = fs.readFileSync(
   path.resolve(__dirname, "..", "..", "..", ".github", "workflows", "publish-npm.yml"),
@@ -275,8 +275,8 @@ assert.ok(
 );
 assert.match(
   ciWorkflow,
-  /source-validation:[\s\S]*?- name: Refresh ephemeral derived sources for tests\n\s+if: env\.IS_TRUSTED_CANONICAL_SYNC_PR != 'true'\n\s+run: npm run plugin-compat:sync && npm run index && npm run bundles:sync && npm run sync:metadata && npm run catalog && npm run build:aas-v1-catalog && npm run sync:web-assets\n[\s\S]*?- name: Run tests\n\s+if: env\.IS_TRUSTED_CANONICAL_SYNC_PR != 'true'\n\s+run: npm run test/,
-  "source-only skill PRs must refresh uncommitted mirrors and indexes before tests read them",
+  /source-validation:[\s\S]*?- name: Run component validation[\s\S]*?maintenance_validate\.cjs --base "\$BASE_SHA" --head "\$HEAD_SHA"/,
+  "source validation must execute an exact-diff component plan",
 );
 assert.doesNotMatch(
   ciWorkflow,
@@ -311,14 +311,10 @@ assert.match(
 const sourceValidationJob = ciWorkflow.match(/^  source-validation:\n([\s\S]*?)(?=^  [a-z][a-z0-9-]*:)/m)?.[0] || "";
 assert.match(sourceValidationJob, /needs: pr-policy/, "source validation should not wait for independent PR evidence");
 assert.doesNotMatch(sourceValidationJob, /needs:.*pr-evidence/);
-const sourceRefreshIndex = sourceValidationJob.indexOf("- name: Refresh ephemeral derived sources for tests");
-const sourceReferenceValidationIndex = sourceValidationJob.indexOf("- name: Validate references");
-assert.ok(
-  sourceRefreshIndex >= 0 &&
-    sourceReferenceValidationIndex >= 0 &&
-    sourceRefreshIndex < sourceReferenceValidationIndex,
-  "source validation must refresh source-derived bundle data before validating cross-references",
-);
+const componentPlan = require("../../lib/maintenance-impact").checkPlan("catalog");
+assert.ok(componentPlan.indexOf("preview") < componentPlan.indexOf("validate:references"),
+  "source validation must refresh source-derived bundle data before validating cross-references");
+
 assert.match(
   sourceValidationJob,
   /actions\/checkout@[0-9a-f]{40}[\s\S]*?ref: \$\{\{ github\.event\.pull_request\.head\.sha \}\}/,

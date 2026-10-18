@@ -88,7 +88,8 @@
     "check:source-credits": "npm run sync:source-credits -- --check",
     "release:plan": "node tools/scripts/release_inspect.cjs plan",
     "release:verify": "node tools/scripts/release_inspect.cjs verify",
-    "maintainer:dossier": "node tools/scripts/maintainer_dossier.cjs"
+    "maintainer:dossier": "node tools/scripts/maintainer_dossier.cjs",
+    "maintenance:validate": "node tools/scripts/maintenance_validate.cjs"
   },
   "dependencies": {
     "ajv": "^8.20.0",

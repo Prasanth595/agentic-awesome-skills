@@ -1,0 +1,14 @@
+const assert = require("node:assert/strict");
+const { signReceipt, verifyReceipt } = require("../../lib/maintenance-review-receipt");
+const key = Buffer.alloc(32, 1);
+const fingerprint = { digest: "a".repeat(64), skills: [{ id: "example", tree: "b".repeat(40) }], context: [{ policy: "1" }] };
+const signed = signReceipt({ reviewedHead: "1".repeat(40), fingerprint, reviewer: "maintainer", outcome: "approved", evidence: "Complete bundle inspected" }, key);
+assert.equal(verifyReceipt(signed, fingerprint, key, "2".repeat(40)).reviewedHead, "2".repeat(40));
+assert.throws(() => verifyReceipt(signed, { ...fingerprint, context: [] }, key, "2".repeat(40)), /context changed/);
+assert.throws(() => verifyReceipt(signed, { ...fingerprint, skills: [] }, key, "2".repeat(40)), /context changed/);
+assert.throws(() => verifyReceipt(signed, fingerprint, Buffer.alloc(32, 2), "2".repeat(40)), /authentication/);
+assert.throws(() => verifyReceipt({ ...signed, receipt: { ...signed.receipt, reviewer: "attacker" } }, fingerprint, key, "2".repeat(40)), /authentication/);
+assert.throws(() => verifyReceipt(signed, fingerprint, key, "short"), /Invalid/);
+assert.throws(() => signReceipt({ outcome: "approved" }, key), /explicit/);
+assert.throws(() => signReceipt(signed.receipt, Buffer.alloc(0)), /256-bit/);
+console.log("review receipt reuse and invalidation tests passed");

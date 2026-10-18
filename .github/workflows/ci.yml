@@ -35,6 +35,7 @@ jobs:
       has_quality_checklist: ${{ steps.intake.outputs.has_quality_checklist }}
       has_issue_link: ${{ steps.intake.outputs.has_issue_link }}
       fork_approval_safe: ${{ steps.intake.outputs.fork_approval_safe }}
+      validation_profile: ${{ steps.intake.outputs.validation_profile }}
       impact_profile: ${{ steps.intake.outputs.impact_profile }}
       impact_reasons: ${{ steps.intake.outputs.impact_reasons }}
     steps:
@@ -186,33 +187,16 @@ jobs:
           test -f README.md
           test -f CONTRIBUTING.md
 
-      - name: Validate source changes
+      - name: Run component validation
         if: env.IS_TRUSTED_CANONICAL_SYNC_PR != 'true'
-        run: npm run validate
-
-      - name: Enforce validation warning budget
-        if: env.IS_TRUSTED_CANONICAL_SYNC_PR != 'true'
-        run: npm run check:warning-budget
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: node tools/scripts/maintenance_validate.cjs --base "$BASE_SHA" --head "$HEAD_SHA" --output .tmp/component-validation.json
 
       - name: Verify README source credits for changed skills
         if: github.event_name == 'pull_request' && env.IS_TRUSTED_CANONICAL_SYNC_PR != 'true'
-        run: npm run check:readme-credits -- --base "origin/${{ github.base_ref }}" --head HEAD
-
-      - name: Refresh ephemeral derived sources for tests
-        if: env.IS_TRUSTED_CANONICAL_SYNC_PR != 'true'
-        run: npm run plugin-compat:sync && npm run index && npm run bundles:sync && npm run sync:metadata && npm run catalog && npm run build:aas-v1-catalog && npm run sync:web-assets
-
-      - name: Validate references
-        if: env.IS_TRUSTED_CANONICAL_SYNC_PR != 'true' && needs.pr-policy.outputs.requires_references == 'true'
-        run: npm run validate:references
-
-      - name: Run tests
-        if: env.IS_TRUSTED_CANONICAL_SYNC_PR != 'true'
-        run: npm run test
-
-      - name: Run docs security checks
-        if: env.IS_TRUSTED_CANONICAL_SYNC_PR != 'true'
-        run: npm run security:docs
+        run: npm run check:readme-credits -- --base "${{ github.event.pull_request.base.sha }}" --head "${{ github.event.pull_request.head.sha }}"
 
       - name: Create exact-head artifact preview manifest
         id: preview_manifest
@@ -500,6 +484,29 @@ jobs:
         if: steps.batch_guard.outputs.should_run == 'true'
         run: npm ci --audit=false
 
+      - name: Classify protected main diff
+        id: main_impact
+        if: steps.batch_guard.outputs.should_run == 'true'
+        env:
+          BEFORE_SHA: ${{ github.event.before }}
+          HEAD_SHA: ${{ github.sha }}
+        run: |
+          node - <<'NODE'
+          const fs = require('node:fs');
+          const { planFor } = require('./tools/scripts/maintenance_validate.cjs');
+          const before = process.env.BEFORE_SHA;
+          const profile = /^[a-f0-9]{40}$/.test(before || '') && !/^0+$/.test(before)
+            ? planFor(process.cwd(), before, process.env.HEAD_SHA).profile : 'full';
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, `profile=${profile}\n`);
+          NODE
+
+      - name: Validate editorial main diff
+        if: steps.batch_guard.outputs.should_run == 'true' && steps.main_impact.outputs.profile == 'editorial'
+        env:
+          BEFORE_SHA: ${{ github.event.before }}
+          HEAD_SHA: ${{ github.sha }}
+        run: node tools/scripts/maintenance_validate.cjs --base "$BEFORE_SHA" --head "$HEAD_SHA" --output .tmp/component-validation.json
+
       - name: Verify directory structure
         if: steps.batch_guard.outputs.should_run == 'true'
         run: |
@@ -511,17 +518,17 @@ jobs:
           test -f CONTRIBUTING.md
 
       - name: Run repo-state sync
-        if: steps.batch_guard.outputs.should_run == 'true'
+        if: steps.batch_guard.outputs.should_run == 'true' && steps.main_impact.outputs.profile != 'editorial'
         env:
           GH_TOKEN: ${{ github.token }}
         run: npm run sync:repo-state
 
       - name: Validate references
-        if: steps.batch_guard.outputs.should_run == 'true'
+        if: steps.batch_guard.outputs.should_run == 'true' && steps.main_impact.outputs.profile != 'editorial'
         run: npm run validate:references
 
       - name: Audit npm dependencies
-        if: steps.batch_guard.outputs.should_run == 'true'
+        if: steps.batch_guard.outputs.should_run == 'true' && steps.main_impact.outputs.profile != 'editorial'
         run: |
           set -euo pipefail
           for attempt in 1 2 3; do
@@ -536,23 +543,23 @@ jobs:
           done
 
       - name: Run tests
-        if: steps.batch_guard.outputs.should_run == 'true'
+        if: steps.batch_guard.outputs.should_run == 'true' && steps.main_impact.outputs.profile != 'editorial'
         run: npm run test
 
       - name: Install web-app dependencies
-        if: steps.batch_guard.outputs.should_run == 'true'
+        if: steps.batch_guard.outputs.should_run == 'true' && steps.main_impact.outputs.profile != 'editorial'
         run: npm run app:install
 
       - name: Run web app coverage
-        if: steps.batch_guard.outputs.should_run == 'true'
+        if: steps.batch_guard.outputs.should_run == 'true' && steps.main_impact.outputs.profile != 'editorial'
         run: npm run app:test:coverage
 
       - name: Run docs security checks
-        if: steps.batch_guard.outputs.should_run == 'true'
+        if: steps.batch_guard.outputs.should_run == 'true' && steps.main_impact.outputs.profile != 'editorial'
         run: npm run security:docs
 
       - name: Recheck canonical publication lease
-        if: steps.batch_guard.outputs.should_run == 'true'
+        if: steps.batch_guard.outputs.should_run == 'true' && steps.main_impact.outputs.profile != 'editorial'
         id: publication_guard
         env:
           GH_TOKEN: ${{ github.token }}

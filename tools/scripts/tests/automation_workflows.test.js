@@ -272,7 +272,7 @@ assert.match(
 );
 assert.match(
   ciWorkflow,
-  /- name: Verify README source credits for changed skills[\s\S]*?run: npm run check:readme-credits -- --base "origin\/\$\{\{ github\.base_ref \}\}" --head HEAD/,
+  /- name: Verify README source credits for changed skills[\s\S]*?run: npm run check:readme-credits -- --base "\$\{\{ github\.event\.pull_request\.base\.sha \}\}" --head "\$\{\{ github\.event\.pull_request\.head\.sha \}\}"/,
   "PR CI should verify README source credits for changed skills",
 );
 assert.match(

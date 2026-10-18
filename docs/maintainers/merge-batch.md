@@ -35,7 +35,7 @@ Use `--dry-run` to exercise local classification without approving a run or merg
 - `impact_profile` is shadow-only telemetry. It never skips a required job, test, review, or merge gate.
 - Normal source PRs generate derived preview state once in `source-validation`; `artifact-preview` verifies the exact-head manifest and digest instead of generating the tree again.
 - Canonical-sync PRs use the complementary path: `pr-policy` proves the exact reproduced tree, lightweight `source-validation` records that boundary, and `artifact-preview` confirms no generated drift. Final CI and CodeQL still run on the resulting `main` commit.
-- Test timing is observational. Local deterministic sharding requires the explicit `npm run test:local -- --shard-index N --shard-count M` opt-in; required CI remains complete and unsharded.
+- Test timing is observational. Local deterministic sharding requires the explicit `npm run test:local -- --shard-index N --shard-count M` opt-in; required CI follows the component policy; its full lane remains complete and unsharded.
 
 ## Happy Path
 
