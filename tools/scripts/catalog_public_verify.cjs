@@ -32,7 +32,7 @@ async function activeCatalogProof(runtimeVersion, dependencies = {}) {
   if (!provenance || provenance.repository !== REPOSITORY || provenance.workflow !== ".github/workflows/catalog-distribution.yml" || !/^\d+$/.test(String(provenance.runId))) throw new Error("Catalog workflow provenance missing");
   const run = api(`actions/runs/${provenance.runId}`);
   if (run.head_sha !== commit || run.path !== provenance.workflow || run.event !== "workflow_dispatch" || run.head_branch !== "main"
-      || run.repository?.full_name !== REPOSITORY || run.status !== "completed" || run.conclusion !== "success" || run.run_attempt !== Number(provenance.runAttempt))
+      || run.repository?.full_name !== REPOSITORY || run.head_repository?.full_name !== REPOSITORY || run.status !== "completed" || run.conclusion !== "success" || run.run_attempt !== Number(provenance.runAttempt))
     throw new Error("Catalog distribution workflow is not a complete trusted run");
   const archive = await (dependencies.fetchReleaseBytes || fetchReleaseBytes)(`https://github.com/${REPOSITORY}/releases/download/${tag}/catalog.tgz`,64*1024*1024);
   verifySri(archive, descriptor.integrity);

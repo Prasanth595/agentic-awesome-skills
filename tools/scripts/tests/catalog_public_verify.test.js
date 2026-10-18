@@ -23,7 +23,7 @@ const {sha256}=require("../../lib/aas-v1/canonical-json");
    else if(endpoint.includes("releases/tags"))result={draft:false,published_at:"2026-10-18"};
    else if(endpoint.endsWith("branches/main"))result={protected:true,commit:{sha:commit}};
    else if(endpoint.includes("compare/"))result={merge_base_commit:{sha:commit},status:"identical"};
-   else result={head_sha:commit,path:descriptor.provenance.workflow,event:"workflow_dispatch",head_branch:"main",repository:{full_name:descriptor.provenance.repository},status:"completed",conclusion,run_attempt:1};
+   else result={head_sha:commit,path:descriptor.provenance.workflow,event:"workflow_dispatch",head_branch:"main",repository:{full_name:descriptor.provenance.repository},head_repository:{full_name:descriptor.provenance.repository},status:"completed",conclusion,run_attempt:1};
    return JSON.stringify(result);
   }};
   const proof=await activeCatalogProof("19.10.0",deps);assert.equal(proof.skills.length,1);

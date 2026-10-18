@@ -74,7 +74,7 @@ function build(root, revision, output) {
     const tarball = path.join(output, "catalog.tgz");
     execFileSync("tar", ["-czf", tarball, "-C", temporary, "package"], { stdio: "inherit" });
     const integrity = `sha512-${crypto.createHash("sha512").update(fs.readFileSync(tarball)).digest("base64")}`;
-    const descriptor = { schemaVersion: 1, revision, sourceCommit, runtimeMajor: release.catalogRelease.runtimeMajor,
+    const descriptor = { schemaVersion: 1, revision, sourceCommit, minimumRuntime: release.catalogRelease.minimumRuntime, runtimeMajor: release.catalogRelease.runtimeMajor,
       catalogSchemaVersion: manifest.catalogSchemaVersion, catalogDigest: release.catalogDigest, integrity,
       skillsIndexDigest: sha256(fs.readFileSync(path.join(stage, "skills_index.json"))),
       ...(process.env.GITHUB_RUN_ID ? { provenance: { repository: process.env.GITHUB_REPOSITORY,
