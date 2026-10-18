@@ -30,6 +30,8 @@ Merged main validates its source diff and discards generated changes. Ordinary m
 
 ## Semantic review and receipts
 
+Git copy records bind the changed destination; copying an unchanged canonical file into a generated release mirror does not create a new canonical-content review. Renames and deletions still bind the old canonical tree.
+
 Review the entire tracked `skills/<skill-id>/**` subtree, including references, scripts, licenses, modes and links. Inspect purpose, semantics, safety, provenance, declared risk, limitations, and all bundled files. Changes under `apps/web-app/src/**` that require human review still need exact-head maintainer attestation. A real Tessl `review` is distinct from `manual-review-required`; the latter is not a passing Tessl review.
 
 Safe, unprivileged analysis can start before review. Sensitive workflow/code changes still require the existing owner authorization: same-repository PR authored by the repository owner and exact full-head review. Protected-base `tools/config/reviewed-fork-skills.json` is the only reviewed-fork bundle exception; no PR-controlled ledger or general executable allowlist is permitted.

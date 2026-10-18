@@ -925,3 +925,9 @@ function approvalDependencies(overrides = {}) {
 }
 
 console.log("ok");
+
+// Release mirrors may be detected as copies from an unchanged canonical tree.
+assert.equal(mergeBatch.isSkillContentRecord({status:"C",old_path:"skills/example/references/guide.md",new_path:"plugins/bundle/skills/example/references/guide.md"}),false);
+assert.equal(mergeBatch.isSkillContentRecord({status:"C",old_path:"plugins/bundle/skills/example/SKILL.md",new_path:"skills/new-example/SKILL.md"}),true);
+assert.equal(mergeBatch.isSkillContentRecord({status:"R",old_path:"skills/example/SKILL.md",new_path:"docs/example.md"}),true);
+assert.equal(mergeBatch.isSkillContentRecord({status:"D",old_path:"skills/example/SKILL.md",new_path:null}),true);

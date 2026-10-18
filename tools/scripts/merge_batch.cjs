@@ -203,7 +203,10 @@ function normalizeEvidenceRecord(record) {
 }
 
 function isSkillContentRecord(record) {
-  return [record?.old_path, record?.new_path]
+  // A copy leaves its origin unchanged. Only its destination belongs to the
+  // content diff; renames and deletions still bind the old canonical tree.
+  const changedPaths = record?.status === "C" ? [record?.new_path] : [record?.old_path, record?.new_path];
+  return changedPaths
     .filter((filePath) => typeof filePath === "string" && filePath)
     .some((filePath) => (
       filePath.startsWith("skills/")
