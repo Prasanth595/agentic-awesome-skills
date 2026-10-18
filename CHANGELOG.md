@@ -7,13 +7,49 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [Unreleased]
+## [19.9.0] - 2026-10-18 - "Seven Reviewed Additions And A Safer Maintainer Flow"
+
+> Installable skill library update for Claude Code, Cursor, Codex CLI, Gemini CLI, Antigravity, and related AI coding assistants. Adds **7** catalog skills, ships **2,712** skills, and hardens the protected maintainer and release flow.
+
+### Start here
+
+- Install: `npx agentic-awesome-skills@19.9.0`
+- [Choose your tool](README.md#choose-your-tool)
+- [Best skills by tool](README.md#best-skills-by-tool)
+- [Bundles](docs/users/bundles.md)
+- [Workflows](docs/users/workflows.md)
+
+### Added
+
+- **curlshot** - capture a public web page as a PNG/JPEG/WebP screenshot, a PDF, or a scrolling video, or render your own HTML/Markdown to an image, through the hosted CurlShot API or MCP server. Requires a `CURLSHOT_API_KEY`; local and private addresses are refused.
+- **aident-loadout** - search the apps a user connected in Aident Loadout, read live action schemas, check connections and cost, and require acknowledgement before any side effect, through the hosted Aident MCP server.
+- **outreachgenie-list-audit** - read-only audit of saved OutreachGenie prospect lists against a saved flow, reporting missing template values, text-limit problems and incomplete collection with local Python reports. Ships an offline fictional fixture and all 26 bundled tests.
+- **krexa** - turn a trading idea, post or video into fixed rules, backtest and paper-trade them, and request a user-approved live agent through Krexa's MCP server. The key cannot move funds; every deploy needs the owner's wallet approval.
+- **project-memory-log** - keep long-running local projects traceable with one operation log and one deduplicated document catalog, reusing the current canonical document before creating another. Instruction-only; no background hook or external service.
+- **solidping** - run SolidPing uptime monitoring through its hosted MCP server: list and diagnose checks, read results and incidents, and create checks across 40+ types, confirming every write first.
+- **pangolinfo-amazon-data-research** - plan and run read-only Amazon product, review, category, seller and market research through Pangolinfo's documented MCP bridge, with marketplace, provenance and retrieval-time evidence.
 
 ### Changed
 
-- Maintainer flow now distinguishes actionable PR blockers, prepares selected exact-head workflows before ordered merges, and coordinates canonical synchronization through a bounded batch lease with recovery.
-- Local preflight includes docs security and source attribution; text-only skill-root LICENSE files receive bounded blob validation, while bundle dossiers preserve explicit review requirements.
-- Source attribution is generated from reviewed metadata plus a legacy-preserving editorial ledger. Release plans and fresh verification reports expose stale candidates, publication drift and native-client confirmation boundaries.
+- **antigravity-maintainer-batch-release** now documents exact-head batch preparation, bounded one-hour convergence leases with scheduled recovery, the textual skill-root `LICENSE` contract, generated source attribution, complete local preflight, review dossiers, and fresh release-plan/verification reports.
+- Maintainer flow now distinguishes failed, missing, running, approval-wait and manual-review states, prepares selected exact-head workflows before ordered merges, and stops if evaluator policy changes mid-batch.
+- Local preflight includes docs security and source attribution; source-only PRs no longer fail against stale generated indexes, and text-only skill-root `LICENSE` files receive bounded blob validation while bundle dossiers preserve explicit review requirements.
+- README **Official Sources** and **Community Contributors** are generated from reviewed frontmatter plus the editorial `data/source-credits.json` ledger, converging through the protected canonical PR instead of hand-edited source diffs.
+- Raised `@supabase/supabase-js` to `2.117.2` in the catalog app.
+
+### Fixed
+
+- Release completion now requires fresh observations bound to the exact released commit, including publication identity, exact-commit CI/CodeQL, release-tag Pages, live catalog, the full legacy redirect set, and every already-configured local AAS MCP host.
+- Local preflight includes docs security and immutable-head attribution, and generates preview state in an isolated checkout so source-only PRs no longer fail against stale generated indexes.
+- README source-credit repairs are source changes in `data/source-credits.json` or skill provenance; generated README output stays with canonical sync.
+
+### Review scope
+
+Each new skill was reviewed in full at its exact content, including bundled scripts, references and assets. Every external contribution in this release went through an individual maintainer review bound to its exact head. The new skills declare their own provider, cost, credential and host limits; none was exercised against a live third-party paid service during review. The broader catalog audit remains unfinished.
+
+### Thanks
+
+Thanks to **@SergiuPogor** for `curlshot`, **@ljhskyso** for `aident-loadout`, **@moez552** for `outreachgenie-list-audit`, **@evadsh3ll** for `krexa`, **@JaclynFitzpatrick** for `project-memory-log`, **@fclairamb** for `solidping`, and **@Pangolin-spg** for `pangolinfo-amazon-data-research`, and to the upstream authors whose licensed material is included.
 
 ## [19.8.0] - 2026-10-16 - "Fifteen Reviewed Additions And A Healthier Review Lane"
 
