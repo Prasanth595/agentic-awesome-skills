@@ -38,4 +38,3 @@ Calibrate raw finding counts against the repository's own corpus shape before tr
 When a real executable defect is confirmed, fix it in the source skill with the normal validation and PR path, and treat the scanner as advisory input. A near-total reduction in headline findings after calibration is expected and is not an unexplained gap.
 
 The official skill-content review remains Tessl or exact-head maintainer attestation.
-

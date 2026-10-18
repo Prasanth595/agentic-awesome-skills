@@ -18,4 +18,3 @@ For AAS CLI, MCP, stack, catalog-cache, or Workbench changes:
 6. Treat apply and recovery as experimental opt-ins outside the supported preview claim. Do not add apply/recovery, benchmark, fuzz, crash/race, or synthetic verifier work unless the user explicitly places it in scope.
 7. When the task asks for end-to-end client proof, use a real supported client that discovers and invokes the local AAS MCP tools; direct stdio probes and automated tests do not substitute for that evidence.
 8. Do not tag, publish npm, deploy Pages, or write real user MCP configuration without the separately required publication approval.
-
