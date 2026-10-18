@@ -54,3 +54,10 @@ assert.match(pkg.scripts.prepack,/distribution_snapshot/);
 assert.match(pkg.scripts["sync:release-state"],/chain.*sync:web-assets.*audit:consistency.*check:warning-budget/);
 assert.match(read("tools/scripts/release_workflow.js"),/distribution_snapshot\.cjs.*seal/);
 console.log("Component, snapshot and immutable publication workflow contracts passed");
+
+const previewPrepared = yaml.parse(fs.readFileSync(path.join(root,".github/workflows/aas-agent-first-preview.yml"),"utf8"));
+assert.match(commands(previewPrepared.jobs.plan),/distribution_snapshot.cjs verify/);
+for (const job of ["candidate","workbench"]) {
+  assert.equal(previewPrepared.jobs[job].needs,"plan");
+  assert.match(previewPrepared.jobs[job].if,/run-preview == 'true'/);
+}
