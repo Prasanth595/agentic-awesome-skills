@@ -467,6 +467,43 @@ async function hostProof(host, config, version) {
     requiresClientReconnect: true,
   };
 }
+function verifyTagExecutionProvenance(repo, version, sha, gh) {
+  const branch = gh("branches/main");
+  if (
+    branch?.protected !== true ||
+    !/^[0-9a-f]{40}$/.test(branch.commit?.sha || "")
+  )
+    throw new Error("Protected main identity is unavailable");
+  const tag = `v${version}`;
+  const ref = gh(`git/ref/tags/${tag}`);
+  const target =
+    ref.object?.type === "tag"
+      ? gh(`git/tags/${ref.object.sha}`).object
+      : ref.object;
+  if (target?.type !== "commit" || target.sha !== sha)
+    throw new Error(
+      "Local tag does not match the immutable remote release tag",
+    );
+  const release = gh(`releases/tags/${tag}`);
+  if (release?.draft || !release?.published_at || release?.tag_name !== tag)
+    throw new Error("Published release provenance is missing");
+  if (sha !== branch.commit.sha) {
+    const comparison = gh(`compare/${sha}...${branch.commit.sha}`);
+    if (
+      !["ahead", "identical"].includes(comparison.status) ||
+      comparison.merge_base_commit?.sha !== sha
+    )
+      throw new Error(
+        "Release tag is not an ancestor of current protected main",
+      );
+  }
+  return {
+    sha,
+    mainSha: branch.commit.sha,
+    release: release.html_url,
+    protected: true,
+  };
+}
 async function verifyRelease(options, dependencies = {}) {
   const execute = dependencies.run || run,
     fetchText = dependencies.fetch || fetchBounded;
@@ -490,6 +527,17 @@ async function verifyRelease(options, dependencies = {}) {
   };
   const gh = (endpoint) =>
     JSON.parse(execute("gh", ["api", `repos/${repo}/${endpoint}`]));
+  let provenanceError = null;
+  try {
+    report.provenance = {
+      status: "passed",
+      evidence: verifyTagExecutionProvenance(repo, version, sha, gh),
+    };
+  } catch (error) {
+    provenanceError = error.message;
+    report.provenance = { status: "blocked", observed: provenanceError };
+  }
+
   async function check(component, expected, observe, action) {
     try {
       const observed = await observe();
@@ -618,7 +666,11 @@ async function verifyRelease(options, dependencies = {}) {
     check(
       "canonical-regeneration",
       sha,
-      () => (dependencies.canonicalProof || canonicalProof)(sha),
+      () => {
+        if (provenanceError)
+          throw new Error(`Tag execution refused: ${provenanceError}`);
+        return (dependencies.canonicalProof || canonicalProof)(sha);
+      },
       "Repair generator drift through the protected source/canonical lanes.",
     ),
     check(
@@ -677,6 +729,8 @@ async function verifyRelease(options, dependencies = {}) {
       "local-mcp-hosts",
       version,
       async () => {
+        if (provenanceError)
+          throw new Error(`Runtime execution refused: ${provenanceError}`);
         const hosts = options.hosts || [
           {
             host: "codex",
@@ -801,6 +855,7 @@ if (require.main === module)
     process.exitCode = 1;
   });
 module.exports = {
+  verifyTagExecutionProvenance,
   buildPlan,
   comparePlan,
   workflowProof,

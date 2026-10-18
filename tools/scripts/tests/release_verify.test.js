@@ -1,6 +1,9 @@
 const assert = require("node:assert/strict");
 const crypto = require("node:crypto");
-const { verifyRelease } = require("../release_inspect.cjs");
+const {
+  verifyRelease,
+  verifyTagExecutionProvenance,
+} = require("../release_inspect.cjs");
 const sha = "1".repeat(40),
   version = "1.2.3",
   skills = [{ id: "example" }];
@@ -31,7 +34,11 @@ let badNpm = false,
   drift = false,
   configured = false,
   latestFailed = false;
-let deferredCi = false;
+let deferredCi = false,
+  remoteTagMoved = false,
+  unprotected = false,
+  canonicalCalls = 0,
+  hostCalls = 0;
 const deps = {
   legacyProof: async () => ({
     sha,
@@ -46,13 +53,17 @@ const deps = {
         ? index
         : JSON.stringify({ bundles: [{}] }),
   canonicalProof: async () => {
+    canonicalCalls++;
     if (drift) throw new Error("generated drift");
     return { sha, regeneration: "no-drift" };
   },
-  hostProof: async () => ({
-    status: configured ? "verified" : "not-configured",
-    requiresClientReconnect: configured,
-  }),
+  hostProof: async () => (
+    hostCalls++,
+    {
+      status: configured ? "verified" : "not-configured",
+      requiresClientReconnect: configured,
+    }
+  ),
   run: (command, args) => {
     if (command === "git") {
       if (args.includes("--porcelain")) return "";
@@ -61,10 +72,14 @@ const deps = {
     const url = args.at(-1);
     let result;
     if (url.endsWith("commits/main")) result = { sha };
+    else if (url.endsWith("branches/main"))
+      result = { protected: !unprotected, commit: { sha } };
     else if (url.includes("releases/tags/"))
       result = { tag_name: "v1.2.3", published_at: "2026-10-18", draft: false };
     else if (url.includes("git/ref/tags/"))
-      result = { object: { type: "commit", sha } };
+      result = {
+        object: { type: "commit", sha: remoteTagMoved ? "2".repeat(40) : sha },
+      };
     else if (url.includes("/jobs?"))
       result = {
         jobs: [
@@ -113,6 +128,20 @@ const deps = {
     return '<meta name="description" content="Explore 1+ reusable skills">AAS Core | Your agent chooses. You stay in control. SoftwareSourceCode';
   },
 };
+assert.throws(
+  () =>
+    verifyTagExecutionProvenance("owner/repo", version, sha, (endpoint) => {
+      if (endpoint === "branches/main")
+        return { protected: true, commit: { sha: "2".repeat(40) } };
+      if (endpoint.startsWith("git/ref/"))
+        return { object: { type: "commit", sha } };
+      if (endpoint.startsWith("releases/"))
+        return { tag_name: "v1.2.3", published_at: "2026-10-18", draft: false };
+      return { status: "diverged", merge_base_commit: { sha: "3".repeat(40) } };
+    }),
+  /ancestor/,
+  "tag ancestry must be verified before executing its code",
+);
 (async () => {
   let result = await verifyRelease({ version, hosts: [] }, deps);
   assert.equal(result.complete, true, JSON.stringify(result));
@@ -125,6 +154,22 @@ const deps = {
     "deferred main CI cannot attest release tests",
   );
   deferredCi = false;
+  canonicalCalls = 0;
+  hostCalls = 0;
+  remoteTagMoved = true;
+  result = await verifyRelease(
+    { version, hosts: [{ host: "codex", config: "/fixture" }] },
+    deps,
+  );
+  assert.equal(result.provenance.status, "blocked");
+  assert.equal(canonicalCalls, 0, "unverified tag code must never run");
+  assert.equal(hostCalls, 0, "unverified release must not launch a runtime");
+  remoteTagMoved = false;
+  unprotected = true;
+  result = await verifyRelease({ version, hosts: [] }, deps);
+  assert.equal(result.provenance.status, "blocked");
+  assert.equal(canonicalCalls, 0);
+  unprotected = false;
   badNpm = true;
   drift = true;
   latestFailed = true;
