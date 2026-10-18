@@ -1,6 +1,6 @@
 # Skill Catalog
 
-Generated at: 2026-10-18T09:21:50.000Z
+Generated at: 2026-10-18T21:29:53.000Z
 
 Total skills: 2712
 
@@ -1598,7 +1598,7 @@ Total skills: 2712
 | `ai-pipeline-orchestration` | Orchestrate AI/ML pipelines for data ingestion, model training, batch inference, and RAG indexing using Prefect, Airflow, or Dagster. | critical | BagelHole/DevOps-Security-Agent-Skills | ai, pipeline | ai, pipeline, orchestration, orchestrate, ml, pipelines, data, ingestion, model, training, batch, inference |
 | `ai-sre-incident-response` | Build AI-focused SRE incident response practices for LLM outages, degraded quality, runaway cost events, and safety regressions. | critical | BagelHole/DevOps-Security-Agent-Skills | ai, sre, incident, response | ai, sre, incident, response, llm, outages, degraded, quality, runaway, cost, events, safety |
 | `alerting-oncall` | Set up alerting rules, configure on-call rotations, and manage incident response workflows. | critical | BagelHole/DevOps-Security-Agent-Skills | alerting, oncall | alerting, oncall, set, up, rules, configure, call, rotations, incident, response |
-| `antigravity-maintainer-batch-release` | Run protected AAS maintainer sweeps, PR merge batches, canonical sync, Core preview checks, and scripted releases. Use for repository maintenance, main align... | critical | self | antigravity, maintainer, batch, release | antigravity, maintainer, batch, release, run, protected, aas, sweeps, pr, merge, batches, canonical |
+| `antigravity-maintainer-batch-release` | Run protected AAS maintainer sweeps, PR merge batches, resumable review, immutable distribution, Core checks, and scripted releases. Use for repository maint... | critical | self | antigravity, maintainer, batch, release | antigravity, maintainer, batch, release, run, protected, aas, sweeps, pr, merge, batches, resumable |
 | `apple-container` | Build, run, and manage OCI/Linux containers as lightweight per-container VMs on Apple-silicon macOS using Apple's open-source container CLI, no Docker daemon... | critical | sanjay3290/ai-skills | macos, containers, oci, apple-silicon | macos, containers, oci, apple-silicon, apple, container, run, linux, lightweight, per, vms, silicon |
 | `argocd-gitops` | Implement GitOps with ArgoCD for declarative Kubernetes deployments. | critical | BagelHole/DevOps-Security-Agent-Skills | argocd, gitops | argocd, gitops, declarative, kubernetes, deployments |
 | `arm-templates` | Deploy Azure resources with ARM templates and Bicep. Create modular deployments and manage dependencies. Use when deploying Azure-native IaC. | critical | BagelHole/DevOps-Security-Agent-Skills | arm | arm, deploy, azure, resources, bicep, modular, deployments, dependencies, deploying, native, iac |
