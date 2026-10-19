@@ -17,3 +17,5 @@ Mandatory tools must exist on the current task base. Never import missing proced
 - Report public completion and personal environment alignment separately. Measure real whole-cycle times, not inferred percentage gains.
 
 Warning limits remain in `tools/config/validation-budget.json`; never raise the budget to hide regressions.
+
+Use `maintenance:cycle start/intake/merge/verify` for a measured source batch; read `docs/maintainers/maintenance-cycle.md`. Record blockers once, continue independent PRs and reuse the existing host verifier. Do not run release steps when no release was requested.
