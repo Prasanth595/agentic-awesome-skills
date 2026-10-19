@@ -19,3 +19,9 @@ const results=batch.prepareBatch('/unused','owner/repo',[1,2],{dryRun:true}, {
 });
 assert.equal(results[0].status,'blocked');assert.equal(results[1].prepared,true);
 console.log('maintenance cycle fail-closed completion and independent intake passed');
+
+const behind=batch.prepareBatch('/unused','owner/repo',[1,2],{dryRun:true},{
+ load:(_,__,n)=>({number:n,headRefOid:sha,mergeStateStatus:n===1?'BEHIND':'CLEAN'}),
+ approve:(_,__,pr)=>{assert.equal(pr.number,2,'do not approve/wait on stale head');return {approvedRuns:[]};}
+});
+assert.equal(behind[0].status,'blocked');assert.match(behind[0].reason,/BEHIND/);assert.equal(behind[1].prepared,true);

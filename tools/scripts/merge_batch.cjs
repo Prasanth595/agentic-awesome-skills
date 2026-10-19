@@ -1256,6 +1256,9 @@ async function mergePullRequest(projectRoot, repoSlug, prNumber, options) {
     throw new Error(`PR #${prNumber} is in conflict state; resolve conflicts on the PR branch before merging.`);
   }
 
+  if (String(prDetails.mergeStateStatus).toUpperCase() === "BEHIND")
+    throw new Error(`PR #${prNumber} is BEHIND main; explicitly align its observed head before waiting for checks.`);
+
   const approval = approveActionRequiredRuns(projectRoot, repoSlug, prDetails, {
     dryRun: options.dryRun,
     stateStore: options.stateStore,
@@ -1358,6 +1361,7 @@ function prepareBatch(projectRoot, repoSlug, prNumbers, options, dependencies = 
     try {
     const details = load(projectRoot, repoSlug, prNumber);
     if (mergeableIsConflict(details)) throw new Error(`PR #${prNumber} has conflicts`);
+    if (String(details.mergeStateStatus).toUpperCase() === "BEHIND") throw new Error(`PR #${prNumber} is BEHIND main; align the observed head once before checks`);
     const approval = approve(projectRoot, repoSlug, details, {
       dryRun: options.dryRun, evaluatorOid: options.evaluatorOid,
       reviewedHeads: options.reviewedHeads, dependencies: options.approvalDependencies,
