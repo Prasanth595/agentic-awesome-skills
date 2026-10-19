@@ -530,14 +530,11 @@ function parsePrList(prs) {
     throw new Error("Usage: merge_batch.cjs --prs 450,449,446,451");
   }
 
-  const parsed = prs
-    .split(/[\s,]+/)
-    .map((value) => Number.parseInt(value, 10))
-    .filter((value) => Number.isInteger(value) && value > 0);
-
-  if (!parsed.length) {
-    throw new Error("No valid PR numbers were provided.");
+  const tokens = String(prs).trim().split(/[\s,]+/);
+  if (!tokens.length || tokens.some(value => !/^[1-9][0-9]*$/.test(value) || !Number.isSafeInteger(Number(value)))) {
+    throw new Error("PR numbers must be complete positive safe integers; no partial or invalid IDs.");
   }
+  const parsed = tokens.map(Number);
 
   return [...new Set(parsed)];
 }
@@ -1184,9 +1181,10 @@ async function waitForRequiredChecks(
   pollSeconds,
   maxAttempts = 180,
   onPending = null,
+  dependencies = {},
 ) {
   for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
-    const checkRuns = listCheckRuns(projectRoot, repoSlug, headSha);
+    const checkRuns = (dependencies.listCheckRuns || listCheckRuns)(projectRoot, repoSlug, headSha);
     const summaries = summarizeRequiredCheckRuns(checkRuns, requiredAliases);
     const pending = summaries.filter((summary) => summary.state === "pending" || summary.state === "missing");
     const failed = summaries.filter((summary) => summary.state === "failed");
@@ -1204,10 +1202,18 @@ async function waitForRequiredChecks(
     }
 
     if (onPending) await onPending();
-    await new Promise((resolve) => setTimeout(resolve, pollSeconds * 1000));
+    if (attempt < maxAttempts) await (dependencies.sleep || (ms => new Promise(resolve => setTimeout(resolve, ms))))(pollSeconds * 1000);
   }
 
   throw new Error(`Timed out waiting for required checks on ${headSha}.`);
+}
+
+function assertPendingPullRequest(current, expected, prNumber) {
+  assertUnchangedTuple(current, expected, "while waiting for checks", prNumber);
+  if (current.state !== "OPEN") throw new Error(`PR #${prNumber} is no longer open; refresh its state before resuming.`);
+  if (mergeableIsConflict(current)) throw new Error(`PR #${prNumber} has conflicts while waiting; repair before resuming.`);
+  if (String(current.mergeStateStatus).toUpperCase() === "BEHIND")
+    throw new Error(`PR #${prNumber} is BEHIND main while waiting; align the observed head before resuming.`);
 }
 
 function mergePullRequestImmediately(projectRoot, repoSlug, prDetails, dependencies = {}) {
@@ -1305,8 +1311,9 @@ async function mergePullRequest(projectRoot, repoSlug, prNumber, options) {
   });
   if (!options.dryRun) {
     await waitForRequiredChecks(projectRoot, repoSlug, headSha, requiredCheckAliases, options.pollSeconds, 180, () => {
+      const current = loadPullRequestDetails(projectRoot, repoSlug, prNumber);
+      assertPendingPullRequest(current, approval.tuple, prNumber);
       if (!listActionRequiredRuns(projectRoot, repoSlug, headSha).length) return;
-      assertUnchangedTuple(loadPullRequestDetails(projectRoot, repoSlug, prNumber), approval.tuple, "before delayed run approval", prNumber);
       approveActionRequiredRuns(projectRoot, repoSlug, loadPullRequestDetails(projectRoot, repoSlug, prNumber), {
         evaluatorOid: options.evaluatorOid, reviewedHeads: options.reviewedHeads, stateStore: options.stateStore,
         dependencies: options.approvalDependencies,
@@ -1494,6 +1501,7 @@ module.exports = {
   assertEffectiveMainProtection,
   assertFullSha,
   assertUnchangedTuple,
+  assertPendingPullRequest,
   buildSquashMergeBody,
   buildSquashMergeSubject,
   checkRunMatchesAliases,

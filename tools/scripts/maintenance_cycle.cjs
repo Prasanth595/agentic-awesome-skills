@@ -8,8 +8,7 @@ const batch = require('./merge_batch.cjs');
 const {openStore} = require('../lib/maintenance-state');
 const ROOT = path.resolve(__dirname, '../..');
 const REPO = 'sickn33/agentic-awesome-skills';
-function run(command, args) { return execFileSync(command, args, {cwd:ROOT, encoding:'utf8', timeout:120000, maxBuffer:16*1024*1024}).trim(); }
-const gh = args => JSON.parse(run('gh', args));
+function moduleRun(command, args) { return execFileSync(command, args, {cwd:ROOT, encoding:'utf8', timeout:120000, maxBuffer:16*1024*1024}).trim(); }
 function parse(argv) {
   const command=argv.shift(), options={command, reviewedHeads:[]};
   if(!['start','intake','merge','align','verify','status','hosts'].includes(command)) throw Error('Use start, intake, merge, align, verify, status or hosts');
@@ -37,18 +36,27 @@ function proofForRuns(runs, sha) {
     return latest;
   });
 }
-async function main(argv) {
-  const o=parse(argv), store=openStore(o['state-dir'], ROOT);
+async function main(argv, dependencies = {}) {
+  const batch = dependencies.batch || require('./merge_batch.cjs');
+  const run = dependencies.run || ((...args) => moduleRun(...args));
+  const gh = dependencies.gh || (args => JSON.parse(run('gh', args)));
+  const readVersion = dependencies.readVersion || (() => JSON.parse(fs.readFileSync(path.join(ROOT,'package.json'))).version);
+  const o=parse(argv), store=(dependencies.openStore || openStore)(o['state-dir'], ROOT);
   let state=store.readBatch('cycle');
   if(o.command==='start') {
     if(state) throw Error('Cycle already exists; use status/resume, never reset its timer');
     const prs=batch.parsePrList(o.prs);
-    state={schemaVersion:1,repository:REPO,scope:'source-maintenance-no-release',startedAt:new Date().toISOString(),prs,attempts:[],baselineMain:run('git',['rev-parse','HEAD']), baselineVersion:JSON.parse(fs.readFileSync(path.join(ROOT,'package.json'))).version};
+    const startedAt=new Date().toISOString();
+    if(batch.readRepositorySlug(ROOT)!==REPO) throw Error('Repository mismatch');
+    const baselineMain=batch.ensureTrustedMain(ROOT);
+    state={schemaVersion:1,repository:REPO,scope:'source-maintenance-no-release',startedAt,prs,attempts:[],baselineMain,baselineVersion:readVersion()};
     store.writeBatch('cycle', state);
   } else if(!state) throw Error('Run start before analysis/review to include their elapsed time');
   if(o.prs && o.command!=='start' && batch.parsePrList(o.prs).some(n=>!state.prs.includes(n))) throw Error('PR outside the recorded cycle');
   if(state.repository!==REPO) throw Error('Repository mismatch');
   if(o.command==='status' || o.command==='start') { console.log(JSON.stringify(state,null,2)); return; }
+  // A new action invalidates prior completion; history retains the old proof.
+  for(const key of ['completedAt','elapsedMs','measurement','limitations']) delete state[key];
   const attempt={stage:o.command,startedAt:new Date().toISOString()};state.attempts.push(attempt);store.writeBatch('cycle',state);
   try {
     if(o.command==='intake' || o.command==='merge') {
@@ -71,7 +79,7 @@ async function main(argv) {
       if(!attempt.success) throw Error('Host not verified');
     } else if(o.command==='verify') {
       const sha=batch.ensureTrustedMain(ROOT);batch.assertEffectiveMainProtection(ROOT, REPO);
-      const version=JSON.parse(fs.readFileSync(path.join(ROOT,'package.json'))).version;
+      const version=readVersion();
       if(version!==state.baselineVersion) throw Error('Runtime version changed during no-release maintenance');
       const pulls=state.prs.map(n=>gh(['api',`repos/${REPO}/pulls/${n}`]));
       for(const pr of pulls) {
@@ -90,5 +98,5 @@ async function main(argv) {
   } catch(error) {attempt.success=false;attempt.error=error.message;process.exitCode=1;}
   finally {attempt.completedAt=new Date().toISOString();attempt.elapsedMs=Date.parse(attempt.completedAt)-Date.parse(attempt.startedAt);store.writeBatch('cycle',state);console.log(JSON.stringify({startedAt:state.startedAt,completedAt:state.completedAt,elapsedMs:state.elapsedMs,attempt},null,2));}
 }
-module.exports={parse,nextAction,proofForRuns};
+module.exports={parse,nextAction,proofForRuns,main};
 if(require.main===module)main(process.argv.slice(2)).catch(e=>{console.error(e.message);process.exitCode=1;});

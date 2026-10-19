@@ -18,4 +18,4 @@ Mandatory tools must exist on the current task base. Never import missing proced
 
 Warning limits remain in `tools/config/validation-budget.json`; never raise the budget to hide regressions.
 
-Use `maintenance:cycle start/intake/merge/verify` for a measured source batch; read `docs/maintainers/maintenance-cycle.md`. Record blockers once, continue independent PRs and reuse the existing host verifier. Do not run release steps when no release was requested.
+Use `maintenance:cycle start/intake/merge/verify` for a measured source batch (its merge delegates to `merge:batch`); finish this no-release cycle before any authorized release preparation; read `docs/maintainers/maintenance-cycle.md`. Record blockers once, continue independent PRs and reuse the existing host verifier. Do not run release steps when no release was requested.
