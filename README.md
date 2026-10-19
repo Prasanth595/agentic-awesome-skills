@@ -221,6 +221,8 @@ Key source families include:
 
 ### Official Sources
 
+- **[Taasky](https://docs.taasky.ai/agents/skill)**: MIT-0 official source for the `taasky` skill - negotiate meeting times, prices and dates with another person or their agent through the hosted Taasky MCP server (no account or key). Offers and counters run on their own; every accept, reject or withdraw is confirmed by the person in Telegram first.
+
 - **[fclairamb/solidping-plugin](https://github.com/fclairamb/solidping-plugin/tree/main/skills/solidping-monitoring)**: MIT official source for the `solidping` skill - uptime checks across 40+ types, results, incidents, diagnosis and status pages through the hosted SolidPing MCP server, with every write confirmed by the person first. SolidPing itself is AGPL-3.0.
 
 - **[Outreachgenie/outreachgenie-linkedin-mcp](https://github.com/Outreachgenie/outreachgenie-linkedin-mcp)**: MIT source for `outreachgenie-list-audit`, a read-only saved-list and template audit with local Python reports. Connected use requires an OutreachGenie workspace and compatible MCP host.
