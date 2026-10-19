@@ -49,8 +49,9 @@ mcp_servers:
   "headers": { "Authorization": "Bearer ${KREXA_AGENT_KEY}" } } } }
 ```
 
-Or: `claude mcp add --transport http krexa https://www.krexa.xyz/mcp --header "Authorization: Bearer $KREXA_AGENT_KEY"`
-(the shell writes the key into the config as text).
+Use your client's supported environment/secret reference mechanism. Verify
+that it resolves the variable without writing its value into shared config;
+do not substitute the secret into command-line arguments.
 
 ## Revoke a key
 

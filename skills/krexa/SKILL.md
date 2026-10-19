@@ -40,9 +40,8 @@ report what they return. You never trade, sign or hold wallet keys yourself.
    [references/setup.md](references/setup.md) says how to keep it private.
    - Ask the user to save it there themselves. Do not ask them to paste it to
      you: a chat keeps the key in its history.
-   - If they paste it anyway, in a **private** chat with you only, write it to
-     that env file, do not repeat it anywhere, and tell them they can make a
-     fresh key at `https://krexa.xyz/mcp/link` later.
+   - If they paste it into any chat, do not repeat or persist it. Ask them to
+     revoke it and store a fresh key privately at `https://krexa.xyz/mcp/link`.
    - If the chat is a group or shared chat, do not use the key. Tell the user
      to revoke it at `https://krexa.xyz/mcp/link` and make a new one in private.
 3. **Add the MCP server** if it is not there:
@@ -77,7 +76,9 @@ a prefix, for example Hermes shows `mcp_krexa_krexa_whoami`.
    pretend money. Share the `watchUrl`. Check it with `krexa_paper_status`;
    stop it with `krexa_paper_stop`.
 6. **Deploy.** Only when the user asks to go live. Ask for the limits if not
-   given: max per trade (USDC), daily budget (USDC), daily loss cap (USD).
+   given: venue and daily loss cap (USD); for Solana spot also max per trade
+   and daily budget (USDC), for perps the leverage and funded account size.
+   Perps have no per-trade or daily notional cap; do not promise those caps.
    Call `krexa_deploy_request`. Send the `approvalUrl` exactly as returned and
    say: "Approve it in Krexa with your wallet. It does not trade until you
    approve and fund it."
@@ -173,8 +174,8 @@ scripts and sends nothing to any other place.
   for a deploy. It cannot withdraw, transfer, fund, resume or raise a limit.
 - A live agent starts only after the user opens the approval link and signs
   with their own wallet in Krexa.
-- Krexa's servers enforce a hard ceiling on every deploy (per trade and
-  leverage) and the user's limits on every order.
+- Verify the returned limits for the selected venue. Spot and perps use
+  different exposure controls; see [references/limits.md](references/limits.md).
 - Never send money, sign a transaction or ask for a seed phrase, private key
   or exchange key.
 
@@ -193,8 +194,8 @@ scripts and sends nothing to any other place.
 - Decoding is limited to 5 new decodes per 15 minutes. Reuse `decodeId`.
 - Deep tests are limited to 20 a day. A cached result comes back at once.
 - A deploy needs a decode that states both an entry and an exit
-  (`deployable: true`) and your own finished deep test on `solana` whose
-  report passed its checks.
+  (`deployable: true`) and a qualifying finished test or paper run on the
+  same venue. A Solana result does not qualify a perps deployment.
 - Daily limits (deep tests, research) return `limit_exceeded`; they reset the
   next day. Do not retry the same day.
 - A refusal is a normal result, not an error to hide.
@@ -212,3 +213,9 @@ scripts and sends nothing to any other place.
 
 More: [references/tools.md](references/tools.md) ·
 [references/limits.md](references/limits.md)
+
+## Catalog adaptation
+
+Adapted from the pinned MIT-0 upstream source. Catalog guidance requires
+rotation after chat exposure and reconciles the venue-specific limits. Hosted
+financial operations were not executed during catalog review.
