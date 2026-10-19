@@ -1380,6 +1380,9 @@ function assertEvaluatorCompatible(projectRoot, loadedOid, currentOid, execute =
     throw new Error("Trusted evaluator contract changed during the batch; restart from refreshed protected main");
 }
 async function runBatch(projectRoot, prNumbers, options = {}) {
+  // Programmatic callers bypass parseArgs; retain the same bounded polling cadence.
+  options = { ...options, pollSeconds: Number.isFinite(options.pollSeconds) && options.pollSeconds > 0
+    ? options.pollSeconds : DEFAULT_POLL_SECONDS };
   const dependencies = options.batchDependencies || {};
   const readRepo = dependencies.readRepositorySlug || readRepositorySlug;
   const trustedMain = dependencies.ensureTrustedMain || ensureTrustedMain;

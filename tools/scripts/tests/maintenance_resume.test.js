@@ -16,7 +16,8 @@ const { runBatch } = require("../merge_batch.cjs");
     assertEvaluatorCompatible: () => {},
     loadPullRequestDetails: (_root,_repo,id) => ({ baseRefName: "main", state: merged.has(id) ? "MERGED" : "OPEN", mergeCommit: {oid:"b".repeat(40)} }),
     runCommand: (_cmd,args) => assert.deepEqual(args, ["merge-base", "--is-ancestor", "b".repeat(40), "a".repeat(40)]),
-    mergePullRequest: async (_root,_repo,id) => {
+    mergePullRequest: async (_root,_repo,id,mergeOptions) => {
+      assert.equal(mergeOptions.pollSeconds, 20, "programmatic callers inherit the CLI polling interval");
       attempted.push(id);
       if (id === 1 && failed) throw new Error("PR conflict");
       merged.add(id); return { prNumber: id, merged: true };
