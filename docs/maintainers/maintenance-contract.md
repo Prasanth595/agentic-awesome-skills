@@ -40,6 +40,10 @@ For persistent review reuse, create a private mode-0700 state directory outside 
 
 Reuse is limited to skill-only changes with identical complete skill trees and identical protected/head evaluator, schemas, dependency and operational context. Changes to any bound content or mode invalidate reuse. A base-only update can reuse content review, but the helper still authorizes only the exact current full SHA and requires current checks/protection. Missing or invalid receipts cannot authorize merge. Deterministic evidence is also authenticated and reusable only for the same repository, evaluator, merge base, head and raw diff. A valid receipt never authorizes new unrelated web/runtime changes.
 
+## Guided complete cycle
+
+Follow [the complete cycle](maintenance-cycle.md) from timed start through final exact-main verification. Record blockers once and continue independent PRs; no repeated history investigation without changed evidence. Reuse the supplied host verifier, never ad-hoc MCP scripts.
+
 ## Resumable batch
 
 Use `npm run merge:batch -- --prs 123,124 --state-dir /absolute/private/state` with necessary review arguments. `--prepare-only` starts safe analyses without merging. The journal preserves attempts, timings and blocked results. Every resume fetches current GitHub state; saved green checks are not authority. Already merged PRs must have a merge commit reachable from current protected main. Independent PRs continue after one is blocked. Any blocked result gives a failing command status. If the evaluator contract changes, refresh the protected checkout before resuming.

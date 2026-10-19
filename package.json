@@ -92,7 +92,8 @@
     "maintenance:validate": "node tools/scripts/maintenance_validate.cjs",
     "prepack": "node tools/scripts/distribution_snapshot.cjs verify",
     "distribution:verify": "node tools/scripts/distribution_snapshot.cjs verify",
-    "maintenance:measure": "node tools/scripts/maintenance_measure.cjs"
+    "maintenance:measure": "node tools/scripts/maintenance_measure.cjs",
+    "maintenance:cycle": "node tools/scripts/maintenance_cycle.cjs"
   },
   "dependencies": {
     "ajv": "^8.20.0",
