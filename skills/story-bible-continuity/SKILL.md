@@ -58,17 +58,21 @@ planted/payoff chapters. Full schema, field-by-field, with a worked example:
 }
 ```
 
-If no bible exists, build one first: `sbc.py init bible.json --title ... --period ...`,
+If no bible exists, build one first: `python3 sbc.py init bible.json --title ... --period ...`,
 then fill characters and the foreshadowing ledger **from the chapters that
 already exist**, not from what the story is supposed to be. A bible written
 from intent hides exactly the drift you are looking for.
 
 ## The check
 
+The checker is shipped as source, not as a committed script: copy the Python
+block in `references/sbc-checker.md` to `sbc.py` beside the bible (stdlib only,
+Python 3.8+), then:
+
 ```bash
-python3 scripts/sbc.py check bible.json manuscript/          # human report
-python3 scripts/sbc.py check bible.json manuscript/ --json   # machine report
-python3 scripts/sbc.py check bible.json manuscript/ --fail-on warn
+python3 sbc.py check bible.json manuscript/          # human report
+python3 sbc.py check bible.json manuscript/ --json   # machine report
+python3 sbc.py check bible.json manuscript/ --fail-on warn
 ```
 
 Exit 0 = clean or warnings only, 1 = errors, 2 = usage. Chapter files are
@@ -117,14 +121,12 @@ by rewriting evidence is worthless.
 
 ## Verification
 
-Before reporting a manuscript as clean, run the skill's own evals and show the
-result, not a claim:
+Before reporting a manuscript as clean, prove the checker runs: make a
+throwaway two-chapter fixture (`ch01.md`, `ch02.md`) with one deliberate
+name-drift and one missing payoff, run `python3 sbc.py check`, and confirm it
+reports exactly those two issues and exits 1 (deterministic, ~1s, no model).
 
-```bash
-python3 evals/story-bible-continuity/test_sbc.py     # deterministic, ~1s, no model
-```
-
-Then run `sbc.py check` on the real manuscript and paste the summary line
+Then run `python3 sbc.py check` on the real manuscript and paste the summary line
 (`N error(s), M warning(s)`) with the verdicts you assigned. A clean run on an
 empty folder, or a run whose only output is "0 errors" on a bible with no
 characters, proves nothing — check that the bible actually has entries and the
