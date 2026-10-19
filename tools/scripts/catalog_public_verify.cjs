@@ -13,6 +13,18 @@ async function activeCatalogProof(runtimeVersion, dependencies = {}) {
   if (!response.ok) throw new Error(`Live catalog descriptor returned ${response.status}`);
   const text = await response.text();
   if (Buffer.byteLength(text) > 128 * 1024) throw new Error("Oversized catalog descriptor");
+  // Static SPA hosts may serve the exact app shell with HTTP 200 for a missing
+  // optional descriptor. Only that byte-identical HTML response is absence;
+  // malformed JSON and unrelated HTML remain failures. Callers still verify
+  // the embedded runtime catalog and sitemap when this returns null.
+  if (/^text\/html(?:;|$)/i.test(response.headers?.get("content-type") || "")) {
+    const home = await fetch("https://aaskills.tech/", { redirect: "error", signal: AbortSignal.timeout(30000) });
+    const homeText = home.ok ? await home.text() : "";
+    if (!home.ok || !/^text\/html(?:;|$)/i.test(home.headers?.get("content-type") || "")
+        || Buffer.byteLength(homeText) > 128 * 1024 || homeText !== text)
+      throw new Error("Unexpected HTML catalog descriptor");
+    return null;
+  }
   const descriptor = JSON.parse(text);
   const gh = dependencies.gh || (args => execFileSync("gh", args, { encoding: "utf8", maxBuffer: 2 * 1024 * 1024 }));
   const api = endpoint => JSON.parse(gh(["api", `repos/${REPOSITORY}/${endpoint}`]));

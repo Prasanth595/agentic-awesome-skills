@@ -1,8 +1,8 @@
 # Pin a catalog revision independently of the runtime
 
-Starting with runtime 19.10.0, AAS can load a compatible catalog revision without installing a new CLI or MCP release. Existing installations continue to use their embedded catalog until you explicitly select another one. Nothing updates automatically.
+Starting with runtime 19.10.1, AAS can load a compatible catalog revision without installing a new CLI or MCP release. Existing installations continue to use their embedded catalog until you explicitly select another one. Nothing updates automatically.
 
-A runtime has a software version, such as `19.10.0`. An independent catalog has its own revision, source commit and content digest. Read `catalog-release.json` attached to the corresponding `catalog-vREVISION` GitHub release. It identifies the exact archive integrity and minimum compatible runtime; do not substitute an integrity value from an untrusted message.
+A runtime has a software version, such as `19.10.1`. An independent catalog has its own revision, source commit and content digest. Read `catalog-release.json` attached to the corresponding `catalog-vREVISION` GitHub release. It identifies the exact archive integrity and minimum compatible runtime; do not substitute an integrity value from an untrusted message.
 
 ## Import verified catalog data
 
@@ -21,7 +21,7 @@ For an archive already downloaded from the release, add `--archive /absolute/cat
 Preview a configuration patch using the catalog digest returned by the import:
 
 ```sh
-aas mcp configure --host codex --scope user --config /absolute/codex/config.toml --cache-root /absolute/aas-cache --version 19.10.0 --catalog-digest 'EXACT_CATALOG_DIGEST'
+aas mcp configure --host codex --scope user --config /absolute/codex/config.toml --cache-root /absolute/aas-cache --version 19.10.1 --catalog-digest 'EXACT_CATALOG_DIGEST'
 ```
 
 Replace the paths and digest with your own values. Use `--host claude` for Claude. Inspect the proposed patch and the exact runtime identity before supplying the approval digest returned by the command. Importing a catalog alone never approves a host change. A configuration update and a running client's session reload are separate actions.

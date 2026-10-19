@@ -72,7 +72,7 @@ function build(root, revision, output) {
     fs.writeFileSync(path.join(stage, CATALOG_MANIFEST_PATH), canonicalJson(release) + "\n");
     loadBundledCatalog({ root: stage });
     const tarball = path.join(output, "catalog.tgz");
-    execFileSync("tar", ["-czf", tarball, "-C", temporary, "package"], { stdio: "inherit" });
+    execFileSync(process.execPath, [path.join(__dirname, "run-python.js"), path.join(__dirname, "catalog_archive.py"), stage, tarball], { stdio: "inherit" });
     const integrity = `sha512-${crypto.createHash("sha512").update(fs.readFileSync(tarball)).digest("base64")}`;
     const descriptor = { schemaVersion: 1, revision, sourceCommit, minimumRuntime: release.catalogRelease.minimumRuntime, runtimeMajor: release.catalogRelease.runtimeMajor,
       catalogSchemaVersion: manifest.catalogSchemaVersion, catalogDigest: release.catalogDigest, integrity,
