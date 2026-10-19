@@ -24,6 +24,7 @@ function parse(argv) {
 function nextAction(result) {
   if(result.nextAction && result.failureCode!=='UNKNOWN_STOP') return result.nextAction;
   if(result.merged) return 'Verify protected-main ancestry and exact-main CI.';
+  if(result.prepared && result.reviewAttested) return 'Proceed to merge with the existing exact-head attestation; required checks and protection are still enforced. Re-review only if content/context changes.';
   if(!result.reason) return 'Review the complete immutable skill tree once; then merge with exact-head attestation.';
   if(/BEHIND|behind|base.*drift/i.test(result.reason)) return 'Use align once with the observed --expected-head, then re-intake; never loop or bypass strict protection.';
   if(/provenance|unapproved_path|approval-safe/.test(result.reason)) return 'Record this blocker once. A reviewed protected-base policy PR or source repair is required; continue other PRs.';

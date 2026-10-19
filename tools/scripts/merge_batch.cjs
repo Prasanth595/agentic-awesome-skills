@@ -1362,7 +1362,7 @@ function prepareBatch(projectRoot, repoSlug, prNumbers, options, dependencies = 
       reviewedHeads: options.reviewedHeads, dependencies: options.approvalDependencies,
     });
     return { prNumber, merged: false, approvedRuns: approval.approvedRuns.map((run) => run.id),
-      headSha: details.headRefOid, prepared: true };
+      headSha: details.headRefOid, prepared: true, reviewAttested: (options.reviewedHeads || []).includes(details.headRefOid) };
     } catch (error) {
       return { prNumber, merged: false, status: "blocked", reason: error.message, ...describeFailure(error) };
     }

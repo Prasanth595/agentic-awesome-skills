@@ -88,7 +88,8 @@ cannot authorize. Neither outcome grants approval. Read-only
 PR/check/workflow helper reads and cycle GitHub reads retry transient network
 errors at most three times, with 1-second
 and 3-second backoff. Authentication failures, rate limits and malformed responses
-stop immediately. Individual merge-runner commands have a 120-second timeout.
+stop immediately. Git/gh commands through the merge runner’s command helpers have a 120-second
+timeout; the isolated evidence evaluator retains its separate 300-second limit.
 A failed or timed-out CI wait never reruns CI automatically or authorizes a merge.
 Check-run pagination is complete; only the newest eligible run across a check's
 aliases counts, from the required GitHub app. Old green results cannot mask a

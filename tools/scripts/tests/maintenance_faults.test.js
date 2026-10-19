@@ -9,6 +9,7 @@ const sha='a'.repeat(40), app={id:15368};
 const spec=[{label:'ci',aliases:['ci','legacy-ci'],appId:15368}];
 const old={id:1,name:'legacy-ci',app,status:'completed',conclusion:'success',created_at:'2026-01-01T00:00:00Z'};
 let cases=0;
+assert.match(require('../maintenance_cycle.cjs').nextAction({prepared:true,reviewAttested:true}),/existing exact-head attestation/);cases++;
 for(const [status,conclusion,expected] of [['completed','failure','failed'],['completed','cancelled','failed'],['completed','timed_out','failed'],['completed','skipped','failed'],['completed',null,'failed'],['in_progress',null,'pending'],['queued',null,'pending'],['completed','success','success']]) {
   const newer={...old,id:2,name:'ci',status,conclusion,created_at:'2026-01-01T00:01:00Z'};
   for(const order of [[old,newer],[newer,old]]) {assert.equal(batch.summarizeRequiredCheckRuns(order,spec)[0].state,expected);cases++;}
