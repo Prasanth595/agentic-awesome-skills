@@ -87,6 +87,7 @@ async function mainUnlocked(argv, dependencies = {}) {
       if(pr.state!=='open' || pr.base.ref!=='main' || pr.head.sha!==expected) throw failure('PR_CHANGED','PR identity changed; re-intake');
       // One explicit request; never force push or retry automatically.
       attempt.result=gh(['api','--method','PUT',`repos/${REPO}/pulls/${prs[0]}/update-branch`,'-f',`expected_head_sha=${expected}`]);
+      if(!attempt.result || typeof attempt.result.message!=='string' || typeof attempt.result.url!=='string') throw failure('WRITE_UNCERTAIN','Branch-update response is incomplete; read current PR state before resuming');
       attempt.success=true;
     } else if(o.command==='hosts') {
       if(!o.version || !o.config) throw Error('hosts requires --version and --config (existing Codex/Atlas config)');

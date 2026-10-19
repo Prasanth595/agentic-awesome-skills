@@ -1226,6 +1226,7 @@ function mergePullRequestImmediately(projectRoot, repoSlug, prDetails, dependenc
     throw failure("WRITE_UNCERTAIN", `PR #${prDetails.number} merge endpoint returned invalid JSON: ${error.message}`);
   }
   if (response?.merged !== true || !FULL_SHA_PATTERN.test(String(response?.sha || ""))) {
+    if(response?.merged !== false) throw failure("WRITE_UNCERTAIN", `PR #${prDetails.number} merge endpoint returned incomplete evidence; read current PR state before resuming.`);
     throw new Error(
       `PR #${prDetails.number} was not merged immediately: ${response?.message || "merge endpoint returned merged=false"}.`,
     );

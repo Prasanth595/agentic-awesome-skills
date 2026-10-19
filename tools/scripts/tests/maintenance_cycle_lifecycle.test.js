@@ -1,7 +1,7 @@
 const assert = require('node:assert/strict');
 const {main} = require('../maintenance_cycle.cjs');
 const sha = 'a'.repeat(40);
-let saved, pending = false, trusted = true, rerun = false, newRun = false, collected = false, alignment = false, writes = 0;
+let saved, pending = false, trusted = true, rerun = false, newRun = false, collected = false, alignment = false, writes = 0, incomplete = false;
 const store = {readBatch: () => saved && structuredClone(saved), writeBatch: (_, state) => {saved=structuredClone(state);}};
 const dependencies = {
   openStore: () => store, readVersion: () => '19.11.0', run: () => '',
@@ -13,7 +13,7 @@ const dependencies = {
   },
   gh: args => {
     const endpoint = args.at(-1);
-    if(alignment && args.includes('--method')) {writes++;throw Error('ECONNRESET');}
+    if(alignment && args.includes('--method')) {writes++;if(incomplete)return null;throw Error('ECONNRESET');}
     if(alignment && endpoint.endsWith('/pulls/1')) return {state:'open',base:{ref:'main'},head:{sha}};
     if (endpoint.endsWith('/pulls/1')) return {number:1, merged:true, base:{ref:'main'}, head:{sha}, merge_commit_sha:sha};
     if (endpoint.includes('/jobs?')) {collected=true;return [{jobs:[]}];}
@@ -57,6 +57,10 @@ const dependencies = {
     await main(['align','--state-dir','/unused','--prs','1','--expected-head',sha],dependencies);
     assert.equal(saved.attempts.at(-1).failureCode,'WRITE_UNCERTAIN');
     assert.equal(writes,1,'lost branch-update response must not trigger another write');
+    incomplete=true;
+    await main(['align','--state-dir','/unused','--prs','1','--expected-head',sha],dependencies);
+    assert.equal(saved.attempts.at(-1).failureCode,'WRITE_UNCERTAIN');
+    assert.equal(writes,2,'incomplete response must not trigger a retry');
     assert.equal(saved.completedAt,undefined);
     await assert.rejects(main(['start','--state-dir','/unused','--prs','1'],dependencies),/already exists/);
   } finally {console.log=oldLog;process.exitCode=oldExit;}

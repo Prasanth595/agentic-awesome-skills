@@ -29,9 +29,9 @@ for(const [message,code,retries] of [['HTTP 503','NETWORK_UNAVAILABLE',3],['ECON
 }
 let transient=0;
 assert.equal(readWithRetry(()=>{if(++transient<3)throw Error('HTTP 502');return 'recovered';},{sleep:()=>{}}),'recovered');cases++;
-for(const outcome of ['lost','bad-json']) {
+for(const outcome of ['lost','bad-json','null','{}','{"merged":true}']) {
   let writes=0;
-  assert.throws(()=>batch.mergePullRequestImmediately('/unused','o/r',{number:1,title:'fix: example',body:'test',headRefOid:sha},{runCommand:(_cmd,_args,_root,o)=>{writes++;assert.equal(JSON.parse(o.input).sha,sha);if(outcome==='lost')throw Error('ECONNRESET');return '{';}}),e=>e.failureCode==='WRITE_UNCERTAIN');
+  assert.throws(()=>batch.mergePullRequestImmediately('/unused','o/r',{number:1,title:'fix: example',body:'test',headRefOid:sha},{runCommand:(_cmd,_args,_root,o)=>{writes++;assert.equal(JSON.parse(o.input).sha,sha);if(outcome==='lost')throw Error('ECONNRESET');return outcome==='bad-json'?'{':outcome;}}),e=>e.failureCode==='WRITE_UNCERTAIN');
   assert.equal(writes,1,'an uncertain merge is never blindly retried');cases++;
 }
 assert.throws(()=>batch.runCommand(process.execPath,['-e','setTimeout(()=>{},10000)'],process.cwd(),{capture:true,timeoutMs:50}),e=>e.code==='ETIMEDOUT');cases++;
