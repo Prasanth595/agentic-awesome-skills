@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 const fs = require("fs");
+const { classifyImpact } = require("../lib/maintenance-impact");
 const { resolveLicenseContents } = require("../lib/skill-license");
 const path = require("path");
 const os = require("os");
@@ -296,6 +297,7 @@ function appendGithubOutput(result) {
     `fork_approval_safe=${String(result.forkSafety.approvalSafe)}`,
     `fork_safety_reasons=${JSON.stringify(result.forkSafety.reasons)}`,
     `impact_profile=${result.shadowImpact.profile}`,
+    `validation_profile=${result.validationImpact?.profile || "full"}`,
     `impact_reasons=${JSON.stringify(result.shadowImpact.reasons)}`,
   ];
 
@@ -335,6 +337,7 @@ function appendStepSummary(result) {
 }
 
 function localCheckCommands(result, base, head) {
+  if (result.validationImpact) return [["maintenance:validate", ["--base", base, "--head", head]]];
   return [
     ["validate", []],
     ...(result.requiresReferencesValidation
@@ -345,7 +348,7 @@ function localCheckCommands(result, base, head) {
     ["test", []],
   ];
 }
-function prepareTestPreview(root, head, execute = spawnSync) {
+function prepareTestPreview(root, head, execute = spawnSync, generate = true) {
   if (!/^[0-9a-f]{40}$/.test(head))
     throw new Error("Preview requires an immutable head SHA");
   const temporary = fs.mkdtempSync(path.join(os.tmpdir(), "aas-preflight-"));
@@ -367,8 +370,8 @@ function prepareTestPreview(root, head, execute = spawnSync) {
         ],
         temporary,
       ],
-      ["npm", ["run", "chain"], temporary],
-      ["npm", ["run", "sync:web-assets"], temporary],
+      ...(generate ? [["npm", ["run", "chain"], temporary],
+      ["npm", ["run", "sync:web-assets"], temporary]] : []),
     ]) {
       const invocation = resolveCommandInvocation(command, args);
       const result = execute(invocation.command, invocation.args, {
@@ -419,8 +422,8 @@ function runLocalChecks(
   for (const [script, extra] of localCheckCommands(result, base, head)) {
     let preview = null;
     try {
-      if (script === "test") {
-        preview = prepare(root, head, execute);
+      if (script === "test" || script === "maintenance:validate") {
+        preview = prepare(root, head, execute, script === "test");
         checks.push(preview.preparation);
         if (preview.preparation.exitCode !== 0) {
           checks.push({
@@ -538,6 +541,7 @@ function main() {
     ),
     forkSafety,
     shadowImpact,
+    validationImpact: classifyImpact(changeRecords),
     prBody: {
       available: pullRequestBody !== null,
       hasQualityChecklist: hasQualityChecklist(pullRequestBody),

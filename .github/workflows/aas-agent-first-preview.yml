@@ -23,7 +23,26 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
+  plan:
+    runs-on: ubuntu-24.04
+    outputs:
+      run-preview: ${{ steps.profile.outputs.run-preview }}
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+        with:
+          persist-credentials: false
+      - name: Defer prepared distributions to their immutable candidate
+        id: profile
+        run: |
+          if node tools/scripts/distribution_snapshot.cjs verify; then
+            echo "run-preview=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "run-preview=true" >> "$GITHUB_OUTPUT"
+          fi
+
   candidate:
+    needs: plan
+    if: needs.plan.outputs.run-preview == 'true'
     name: preview candidate
     runs-on: ubuntu-24.04
     timeout-minutes: 25
@@ -110,6 +129,8 @@ jobs:
           retention-days: 7
 
   workbench:
+    needs: plan
+    if: needs.plan.outputs.run-preview == 'true'
     name: preview Workbench
     runs-on: ubuntu-24.04
     timeout-minutes: 20

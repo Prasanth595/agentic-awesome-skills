@@ -165,7 +165,7 @@ function workflowProof(runs, workflowPath, sha, tag) {
         item.head_sha === sha &&
         item.path === workflowPath &&
         (!tag ||
-          (item.head_branch === tag && item.event === "workflow_dispatch")),
+          (item.head_branch === tag && (item.event === "workflow_dispatch" || (workflowPath === ".github/workflows/distribution-candidate.yml" && item.event === "push")))),
     )
     .sort((a, b) => b.id - a.id || b.run_attempt - a.run_attempt);
   const latest = matches[0];
@@ -233,53 +233,26 @@ async function canonicalProof(sha) {
       temp,
     );
     run("git", ["checkout", "--detach", sha], temp);
-    const npm = "npm";
-    await commandAsync(
-      npm,
-      [
-        "ci",
-        "--ignore-scripts",
-        "--audit=false",
-        "--cache",
-        path.join(temp, ".tmp", "npm-cache"),
-      ],
-      temp,
-    );
-    await commandAsync(
-      npm,
-      [
-        "run",
-        "app:install",
-        "--",
-        "--cache",
-        path.join(temp, ".tmp", "npm-cache"),
-        "--audit=false",
-      ],
-      temp,
-    );
-    for (const script of [
-      "sync:release-state",
-      "plugin-compat:check",
-      "bundles:check",
-      "check:aas-v1-catalog",
-      ...(JSON.parse(fs.readFileSync(path.join(temp, "package.json"))).scripts[
-        "check:source-credits"
-      ]
-        ? ["check:source-credits"]
-        : []),
-    ])
-      await commandAsync(npm, ["run", script], temp);
-    await commandAsync(npm, ["run", "sync:repo-state"], temp);
-    await commandAsync(npm, ["run", "sync:repo-state"], temp);
-    const drift = run("git", ["status", "--porcelain"], temp);
-    if (drift)
-      throw new Error(`Release regeneration drift: ${drift.slice(0, 1500)}`);
-    return { sha, regeneration: "no-drift", isolated: true, passes: 2 };
+    run("git", ["fetch", "origin", "main:refs/remotes/origin/main"], temp);
+    await commandAsync(process.execPath, ["tools/scripts/distribution_snapshot.cjs", "verify"], temp);
+    const artifactRoot = path.join(temp, ".tmp", "distribution");
+    await commandAsync(process.execPath, ["-e",
+      "require('./tools/scripts/distribution_fetch.cjs').main([process.argv[1]], {...process.env, GITHUB_REPOSITORY:'sickn33/agentic-awesome-skills'}).catch(e=>{console.error(e);process.exitCode=1})", artifactRoot], temp);
+    const manifest = JSON.parse(fs.readFileSync(path.join(artifactRoot, "distribution.json")));
+    const expectedIntegrity = "sha512-" + crypto.createHash("sha512").update(fs.readFileSync(path.join(artifactRoot, "package.tgz"))).digest("base64");
+    const observedIntegrity = run("npm", ["view", `agentic-awesome-skills@${manifest.version}`, "dist.integrity", "--cache", path.join(temp, ".tmp", "npm-cache")], temp);
+    if (observedIntegrity !== expectedIntegrity) throw new Error("Published npm bytes differ from the tested candidate");
+    const installRoot = path.join(temp, ".tmp", "fresh-install");
+    await commandAsync("npm", ["install", "--ignore-scripts", "--audit=false", "--prefix", installRoot,
+      "--cache", path.join(temp, ".tmp", "npm-cache"), `agentic-awesome-skills@${manifest.version}`], temp);
+    await commandAsync(process.execPath, [path.join(installRoot, "node_modules", "agentic-awesome-skills", "tools", "bin", "aas.js"), "--help"], temp);
+    return { sha, snapshot: "verified", candidateRun: manifest.runId, candidateAttempt: manifest.runAttempt,
+      npmIntegrity: expectedIntegrity, freshInstall: "passed", regeneration: "verified-by-immutable-candidate" };
   } finally {
     fs.rmSync(temp, { recursive: true, force: true });
   }
 }
-async function legacyProof(sha) {
+async function legacyProof(sha, activeCatalog = null) {
   const { generateBridge } = require("./generate-pages-redirect-bridge");
   const { verifyLiveDeployment } = require("./verify-pages-redirect-bridge");
   const temporary = fs.mkdtempSync(
@@ -292,7 +265,11 @@ async function legacyProof(sha) {
       "apps/web-app/public/google5815fd8827d2319c.html",
     ];
     const paths = sources.map((file, index) => {
-      const result = spawnSync("git", ["show", `${sha}:${file}`], {
+      const result = file === "skills_index.json" && activeCatalog
+        ? { status: 0, stdout: activeCatalog.skillsIndexBytes }
+        : file.endsWith("sitemap.xml") && activeCatalog
+        ? { status: 0, stdout: activeCatalog.sitemapBytes }
+        : spawnSync("git", ["show", `${sha}:${file}`], {
         cwd: ROOT,
         maxBuffer: 16 * 1024 * 1024,
       });
@@ -558,25 +535,22 @@ async function verifyRelease(options, dependencies = {}) {
       });
     }
   }
+  let activeCatalog = null, activeCatalogError = null;
+  try { activeCatalog = await (dependencies.activeCatalogProof || require("./catalog_public_verify.cjs").activeCatalogProof)(version); }
+  catch (error) { activeCatalogError = error.message; }
   await Promise.all([
+    check("active-catalog-provenance", version, () => {
+      if (activeCatalogError) throw new Error(activeCatalogError);
+      return activeCatalog?.descriptor || { embeddedRelease: version };
+    }, "Verify the independently published catalog descriptor and immutable workflow."),
     check(
-      "local-and-remote-main",
+      "release-ancestry",
       sha,
       () => {
-        const local = execute("git", ["rev-parse", "main"]),
-          remote = gh("commits/main").sha;
-        if (
-          local !== sha ||
-          remote !== sha ||
-          execute("git", ["rev-parse", "HEAD"]) !== sha ||
-          execute("git", ["status", "--porcelain"])
-        )
-          throw new Error(
-            "Checkout must be clean and main, HEAD, remote main and tag must agree",
-          );
-        return { local, remote };
+        if (provenanceError) throw new Error(provenanceError);
+        return report.provenance.evidence;
       },
-      "Refresh clean maintainer main; reconcile any successor commits before claiming alignment.",
+      "Verify immutable release ancestry on protected main; successor commits are allowed.",
     ),
     check(
       "github-release",
@@ -641,22 +615,12 @@ async function verifyRelease(options, dependencies = {}) {
         const mainJob = jobs?.find(
           (job) => job.name === "main-validation-and-sync",
         );
-        for (const name of [
-          "Run repo-state sync",
-          "Run tests",
-          "Run web app coverage",
-          "Run docs security checks",
-        ])
-          if (
-            !mainJob?.steps?.some(
-              (step) => step.name === name && step.conclusion === "success",
-            )
-          )
-            throw new Error(
-              `Exact main CI did not execute ${name}; a deferred batch is not final validation`,
-            );
+        for (const name of ["Validate protected source diff with ephemeral snapshots"])
+          if (!mainJob?.steps?.some(step => step.name === name && step.conclusion === "success"))
+            throw new Error(`Exact main CI did not execute ${name}`);
         return [
           ciProof,
+          workflowProof(runs, ".github/workflows/distribution-candidate.yml", sha, tag),
           workflowProof(runs, ".github/workflows/codeql.yml", sha),
           workflowProof(runs, ".github/workflows/pages.yml", sha, tag),
         ];
@@ -671,7 +635,7 @@ async function verifyRelease(options, dependencies = {}) {
           throw new Error(`Tag execution refused: ${provenanceError}`);
         return (dependencies.canonicalProof || canonicalProof)(sha);
       },
-      "Repair generator drift through the protected source/canonical lanes.",
+      "Repair distribution drift in a new protected release; never rebuild inside a publisher.",
     ),
     check(
       "live-catalog-and-seo",
@@ -688,7 +652,8 @@ async function verifyRelease(options, dependencies = {}) {
         const values = await Promise.all(
           urls.map((url) => fetchText(`https://aaskills.tech${url}`)),
         );
-        const expectedSkills = JSON.parse(
+        if (activeCatalogError) throw new Error(activeCatalogError);
+        const expectedSkills = activeCatalog?.skills || JSON.parse(
           (dependencies.snapshot || snapshot)(sha, "skills_index.json"),
         );
         if (digest(JSON.parse(values[5])) !== digest(expectedSkills))
@@ -703,7 +668,7 @@ async function verifyRelease(options, dependencies = {}) {
           {
             countLabel: `${expectedSkills.length.toLocaleString("en-US")}+`,
             releaseLabel: `V${version}`,
-            pluginCount: JSON.parse(
+            pluginCount: activeCatalog?.descriptor.pluginCount || JSON.parse(
               (dependencies.snapshot || snapshot)(
                 sha,
                 "data/editorial-bundles.json",
@@ -722,7 +687,7 @@ async function verifyRelease(options, dependencies = {}) {
     check(
       "legacy-bridge",
       sha,
-      () => (dependencies.legacyProof || legacyProof)(sha),
+      () => (dependencies.legacyProof || legacyProof)(sha, activeCatalog),
       "Run protected bridge synchronization and full live verification, including webmaster verification.",
     ),
     check(
@@ -787,7 +752,14 @@ async function verifyRelease(options, dependencies = {}) {
   report.machineChecksPassed = report.checks
     .filter((c) => c.component !== "client-session-reload")
     .every((c) => c.status === "passed");
-  report.complete = report.checks.every((c) => c.status === "passed");
+  const personal = new Set(["local-mcp-hosts", "client-session-reload"]);
+  report.publicReleaseComplete = report.provenance.status === "passed" && report.checks
+    .filter((c) => !personal.has(c.component))
+    .every((c) => c.status === "passed");
+  report.personalEnvironmentUpdated = report.checks
+    .filter((c) => personal.has(c.component))
+    .every((c) => c.status === "passed");
+  report.complete = report.publicReleaseComplete;
   report.completionLimit =
     "Machine checks do not attest editorial approval or that already-open native clients reloaded their MCP process.";
   return report;

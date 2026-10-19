@@ -54,7 +54,7 @@ npm run maintainer:sweep -- --benchmark
 1. `npm run maintainer:sweep`
 2. Deep-read / Tessl / attestation only on Jev **Inspect first** and non-ready checks
 3. `npm run merge:batch -- --prs … --reviewed-head <sha>` for accepted PRs
-4. Wait for `automation/canonical-repo-state` once after the source batch
+4. Verify the source-component main receipt; defer tracked distribution snapshots to the next release PR
 
 See also [`jev-hints.md`](jev-hints.md) and [`merge-batch.md`](merge-batch.md).
 

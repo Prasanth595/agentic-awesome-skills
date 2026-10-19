@@ -8,7 +8,7 @@ const sha = "1".repeat(40),
   version = "1.2.3",
   skills = [{ id: "example" }];
 const index = JSON.stringify(skills);
-const workflows = ["ci", "codeql", "pages"].map((name, i) => ({
+const workflows = ["ci", "codeql", "pages", "distribution-candidate"].map((name, i) => ({
   id: i + 1,
   path: `.github/workflows/${name}.yml`,
   head_sha: sha,
@@ -40,6 +40,7 @@ let deferredCi = false,
   canonicalCalls = 0,
   hostCalls = 0;
 const deps = {
+  activeCatalogProof: async () => null,
   legacyProof: async () => ({
     sha,
     checked_redirects: 1,
@@ -86,10 +87,7 @@ const deps = {
           {
             name: "main-validation-and-sync",
             steps: [
-              "Run repo-state sync",
-              "Run tests",
-              "Run web app coverage",
-              "Run docs security checks",
+              "Validate protected source diff with ephemeral snapshots",
             ].map((name) => ({
               name,
               conclusion: latestFailed || deferredCi ? "skipped" : "success",
@@ -142,6 +140,12 @@ assert.throws(
   /ancestor/,
   "tag ancestry must be verified before executing its code",
 );
+assert.equal(verifyTagExecutionProvenance("owner/repo", version, sha, endpoint => {
+  if (endpoint === "branches/main") return { protected: true, commit: { sha: "2".repeat(40) } };
+  if (endpoint.startsWith("git/ref/")) return { object: { type: "commit", sha } };
+  if (endpoint.startsWith("releases/")) return { tag_name: "v1.2.3", published_at: "2026-10-18", draft: false };
+  return { status: "ahead", merge_base_commit: { sha } };
+}).sha, sha, "protected main may advance beyond an immutable release");
 (async () => {
   let result = await verifyRelease({ version, hosts: [] }, deps);
   assert.equal(result.complete, true, JSON.stringify(result));
@@ -190,10 +194,11 @@ assert.throws(
   );
   assert.equal(result.machineChecksPassed, true);
   assert.equal(
-    result.complete,
+    result.personalEnvironmentUpdated,
     false,
     "stdio alone cannot establish native session reload",
   );
+  assert.equal(result.complete, true, "personal sessions do not block public release");
   result = await verifyRelease(
     {
       version,
