@@ -79,6 +79,37 @@ exact source, type, repository, before/after identity and complete tree must mat
 Hosted additions also require their reviewed credit URL in README. Changed bytes
 or modes invalidate the exception. Other regression blockers remain active.
 
+## Deterministic failure handling
+
+Use the emitted `failureCode` and `nextAction`; do not improvise a bypass. Read-only
+PR/check/workflow helper reads and cycle GitHub reads retry transient network
+errors at most three times, with 1-second
+and 3-second backoff. Authentication failures, rate limits and malformed responses
+stop immediately. Individual merge-runner commands have a 120-second timeout.
+A failed or timed-out CI wait never reruns CI automatically or authorizes a merge.
+Check-run pagination is complete; only the newest eligible run across a check's
+aliases counts, from the required GitHub app. Old green results cannot mask a
+new failure, cancellation, skipped result or pending run.
+
+Merge and branch-update writes are sent once. A lost or malformed response means
+`WRITE_UNCERTAIN`: inspect current PR state before any further write. On merge
+resume, the runner recognizes already-merged PRs and verifies their ancestry;
+it does not merge them again. Head/base changes invalidate old evidence and
+require fresh intake. The GitHub merge request remains bound to the reviewed head
+and strict protection; concurrent changes must not be bypassed.
+
+A private state directory permits one cycle writer and one delegated merge writer
+at a time. `STATE_LOCKED` stops a second writer without changing the journal.
+Do not steal a lock: after a crash, verify the recorded PID has stopped before
+removing its lock file. Different directories are not a distributed lock; GitHub
+head matching and branch protection still arbitrate concurrent clients.
+
+Final verification rechecks both selected run attempts and the latest workflow
+list after collecting job evidence. A rerun, newly superseding run, pending/failed
+run or main change invalidates completion. This is a point-in-time observation,
+not a guarantee against a later external change. Fault-injection regressions use
+controlled fixtures; never interrupt live CI or contributor PRs for testing.
+
 ## Release work only when requested
 
 The source runner deliberately requires an unchanged runtime version. Complete

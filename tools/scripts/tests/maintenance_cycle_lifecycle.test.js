@@ -1,7 +1,7 @@
 const assert = require('node:assert/strict');
 const {main} = require('../maintenance_cycle.cjs');
 const sha = 'a'.repeat(40);
-let saved, pending = false, trusted = true;
+let saved, pending = false, trusted = true, rerun = false, newRun = false, collected = false;
 const store = {readBatch: () => saved && structuredClone(saved), writeBatch: (_, state) => {saved=structuredClone(state);}};
 const dependencies = {
   openStore: () => store, readVersion: () => '19.11.0', run: () => '',
@@ -14,8 +14,10 @@ const dependencies = {
   gh: args => {
     const endpoint = args.at(-1);
     if (endpoint.endsWith('/pulls/1')) return {number:1, merged:true, base:{ref:'main'}, head:{sha}, merge_commit_sha:sha};
-    if (endpoint.includes('/jobs?')) return [{jobs:[]}];
-    return [{workflow_runs:['ci.yml','codeql.yml'].map((name,i)=>({id:i+1,path:'.github/workflows/'+name,head_sha:sha,head_branch:'main',event:'push',status:pending?'in_progress':'completed',conclusion:pending?null:'success'}))}];
+    if (endpoint.includes('/jobs?')) {collected=true;return [{jobs:[]}];}
+    const rows=[{workflow_runs:['ci.yml','codeql.yml'].map((name,i)=>({id:i+1+(newRun&&collected?10:0),path:'.github/workflows/'+name,head_sha:sha,head_branch:'main',event:'push',status:pending?'in_progress':'completed',conclusion:pending?null:'success'}))}];
+    if(/\/runs\/\d+$/.test(endpoint)) return {...rows[0].workflow_runs.find(r=>r.id===Number(endpoint.split('/').at(-1))), ...(rerun?{run_attempt:2}: {})};
+    return rows;
   },
 };
 (async () => {
@@ -30,6 +32,16 @@ const dependencies = {
     const start=saved.startedAt;
     await main(['verify','--state-dir','/unused'],dependencies);
     assert.ok(saved.completedAt); assert.equal(saved.attempts.at(-1).success,true);
+    rerun=true;
+    await main(['verify','--state-dir','/unused'],dependencies);
+    assert.equal(saved.completedAt,undefined,'a concurrently restarted workflow invalidates completion');
+    assert.equal(saved.attempts.at(-1).failureCode,'CI_WAIT_TIMEOUT');
+    rerun=false;
+    newRun=true;collected=false;
+    await main(['verify','--state-dir','/unused'],dependencies);
+    assert.equal(saved.completedAt,undefined,'a newer workflow run cannot be ignored');
+    assert.equal(saved.attempts.at(-1).success,false);
+    newRun=false;
     pending=true;
     await main(['verify','--state-dir','/unused'],dependencies);
     assert.equal(process.exitCode,1);

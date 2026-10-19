@@ -17,6 +17,7 @@ const {
 const { resolveReviewedSkillRoots, resolveReviewedSupportPaths } = require("../lib/reviewed-fork-skills");
 
 const { openStore } = require("../lib/maintenance-state");
+const {failure, describeFailure, readWithRetry} = require("../lib/maintenance-failures");
 const { fingerprint } = require("../lib/maintenance-review-receipt");
 const crypto = require("node:crypto");
 const DEFAULT_POLL_SECONDS = 20;
@@ -141,6 +142,7 @@ function runCommand(command, args, cwd, options = {}) {
   const result = spawnSync(command, args, {
     cwd,
     encoding: "utf8",
+    timeout: options.timeoutMs ?? 120000,
     input: options.input,
     stdio: options.capture
       ? ["pipe", "pipe", "pipe"]
@@ -165,6 +167,7 @@ function runCommandBuffer(command, args, cwd, options = {}) {
   const result = spawnSync(command, args, {
     cwd,
     encoding: null,
+    timeout: options.timeoutMs ?? 120000,
     input: options.input,
     maxBuffer: options.maxBuffer || 64 * 1024 * 1024,
     stdio: ["pipe", "pipe", "pipe"],
@@ -451,12 +454,13 @@ function emptyChangePolicy() {
 }
 
 function runGhJson(projectRoot, args, options = {}) {
-  const stdout = runCommand(
+  if(args[0]!=="pr" || args[1]!=="view" || options.input!==undefined) throw new Error("Read-only PR helper cannot perform writes");
+  const stdout = readWithRetry(() => runCommand(
     "gh",
     [...args, "--json", options.jsonFields || ""].filter(Boolean),
     projectRoot,
     { capture: true, input: options.input },
-  );
+  ));
   return JSON.parse(stdout || "null");
 }
 
@@ -468,7 +472,9 @@ function runGhApiJson(projectRoot, args, options = {}) {
   if (options.slurp) {
     ghArgs.push("--slurp");
   }
-  const stdout = runCommand("gh", ghArgs, projectRoot, { capture: true, input: options.input });
+  // This helper is read-only; mutation endpoints use the explicit one-shot path.
+  if (args.some(arg => ["-X", "--method", "-f", "-F", "--field", "--raw-field", "--input"].includes(arg)) || options.input !== undefined) throw new Error("Read-only API helper cannot perform writes");
+  const stdout = readWithRetry(() => runCommand("gh", ghArgs, projectRoot, { capture: true }));
   return JSON.parse(stdout || "null");
 }
 
@@ -658,7 +664,7 @@ function rulesetAppliesToMain(ruleset) {
 function assertUnchangedTuple(prDetails, expected, phase, prNumber) {
   const actual = pullRequestTuple(prDetails);
   if (actual.baseOid !== expected.baseOid || actual.headOid !== expected.headOid) {
-    throw new Error(
+    throw failure("PR_CHANGED",
       `PR #${prNumber} base/head changed ${phase}: expected ${expected.baseOid}/${expected.headOid}, ` +
       `received ${actual.baseOid}/${actual.headOid}. Rerun merge:batch.`,
     );
@@ -826,51 +832,24 @@ function summarizeCheckCandidate(latestRuns, aliases, acceptedConclusions, appId
     return { state: "missing", conclusion: null, run: null };
   }
 
-  const successful = candidates.find((run) => (
-    String(run?.status || "").toLowerCase() === "completed" &&
-    acceptedConclusions.includes(String(run?.conclusion || "").toLowerCase())
-  ));
-  if (successful) {
-    return {
-      state: "success",
-      conclusion: String(successful.conclusion || "").toLowerCase(),
-      run: successful,
-    };
-  }
-
-  const pending = candidates.find((run) => String(run?.status || "").toLowerCase() !== "completed");
-  if (pending) {
-    return {
-      state: "pending",
-      conclusion: String(pending.conclusion || "").toLowerCase(),
-      run: pending,
-    };
-  }
-
-  const failed = candidates.find((run) => {
-    const conclusion = String(run?.conclusion || "").toLowerCase();
-    return conclusion && conclusion !== "skipped";
+  // Aliases identify one logical check. An older success never overrides a
+  // newer failure/pending run, even when the workflow renamed the job.
+  const run = candidates.reduce((previous, current) => {
+    const key = item => item.created_at || item.started_at || item.completed_at || "";
+    return key(current) > key(previous) || (key(current) === key(previous) && Number(current.id || 0) > Number(previous.id || 0)) ? current : previous;
   });
-  if (failed) {
-    return {
-      state: "failed",
-      conclusion: String(failed.conclusion || "").toLowerCase(),
-      run: failed,
-    };
-  }
-
-  return {
-    state: "missing",
-    conclusion: "skipped",
-    run: candidates[0],
-  };
+  const conclusion = String(run.conclusion || "").toLowerCase();
+  if (String(run.status || "").toLowerCase() !== "completed") return {state:"pending", conclusion, run};
+  if (acceptedConclusions.includes(conclusion)) return {state:"success", conclusion, run};
+  if (conclusion === "skipped") return {state:"missing", conclusion, run};
+  return {state:"failed", conclusion:conclusion || "unknown", run};
 }
 
 function summarizeRequiredCheckRuns(checkRuns, requiredAliases) {
-  const latestByName = selectLatestCheckRuns(checkRuns);
   const summaries = [];
-
-  const latestRuns = [...latestByName.values()];
+  // Filter by app before selecting the newest alias, so another app cannot
+  // shadow the genuine check with a same-name run.
+  const latestRuns = checkRuns;
   for (const requiredCheck of requiredAliases) {
     const spec = normalizeRequiredCheckSpec(requiredCheck);
     const blocker = summarizeCheckCandidate(latestRuns, spec.blockingAliases, [], spec.appId);
@@ -1166,11 +1145,14 @@ function approveActionRequiredRuns(projectRoot, repoSlug, prDetails, options = {
   };
 }
 
-function listCheckRuns(projectRoot, repoSlug, headSha) {
-  const payload = runGhApiJson(projectRoot, [
+function listCheckRuns(projectRoot, repoSlug, headSha, dependencies = {}) {
+  const pages = (dependencies.runGhApiJson || runGhApiJson)(projectRoot, [
     `repos/${repoSlug}/commits/${headSha}/check-runs?per_page=100`,
-  ]);
-  return Array.isArray(payload?.check_runs) ? payload.check_runs : [];
+  ], {paginate:true, slurp:true});
+  if (!Array.isArray(pages) || !pages.length || pages.some(page => !Array.isArray(page?.check_runs))) {
+    throw failure("INVALID_RESPONSE", "Invalid check-runs response; stop and fetch fresh evidence, never assume an empty CI queue.");
+  }
+  return pages.flatMap(page => page.check_runs);
 }
 
 async function waitForRequiredChecks(
@@ -1192,7 +1174,7 @@ async function waitForRequiredChecks(
     console.log(`[merge-batch] Checks for ${headSha}: ${formatCheckSummary(summaries)}`);
 
     if (failed.length) {
-      throw new Error(
+      throw failure("CI_FAILED",
         `Required checks failed for ${headSha}: ${failed.map((item) => `${item.label} (${item.conclusion || "failed"})`).join(", ")}`,
       );
     }
@@ -1205,7 +1187,7 @@ async function waitForRequiredChecks(
     if (attempt < maxAttempts) await (dependencies.sleep || (ms => new Promise(resolve => setTimeout(resolve, ms))))(pollSeconds * 1000);
   }
 
-  throw new Error(`Timed out waiting for required checks on ${headSha}.`);
+  throw failure("CI_WAIT_TIMEOUT", `Timed out waiting for required checks on ${headSha}.`);
 }
 
 function assertPendingPullRequest(current, expected, prNumber) {
@@ -1225,17 +1207,22 @@ function mergePullRequestImmediately(projectRoot, repoSlug, prDetails, dependenc
     commit_title: buildSquashMergeSubject(prDetails),
     commit_message: buildSquashMergeBody(prDetails),
   });
-  const stdout = execute(
-    "gh",
-    ["api", `repos/${repoSlug}/pulls/${prDetails.number}/merge`, "-X", "PUT", "--input", "-"],
-    projectRoot,
-    { capture: true, input: payload },
-  );
+  let stdout;
+  try {
+    stdout = execute(
+      "gh",
+      ["api", `repos/${repoSlug}/pulls/${prDetails.number}/merge`, "-X", "PUT", "--input", "-"],
+      projectRoot,
+      { capture: true, input: payload },
+    );
+  } catch (error) {
+    throw failure("WRITE_UNCERTAIN", `PR #${prDetails.number} merge response unavailable: ${error.message}. Read back the PR before resuming; the request is never retried automatically.`);
+  }
   let response;
   try {
     response = JSON.parse(stdout || "null");
   } catch (error) {
-    throw new Error(`PR #${prDetails.number} merge endpoint returned invalid JSON: ${error.message}`);
+    throw failure("WRITE_UNCERTAIN", `PR #${prDetails.number} merge endpoint returned invalid JSON: ${error.message}`);
   }
   if (response?.merged !== true || !FULL_SHA_PATTERN.test(String(response?.sha || ""))) {
     throw new Error(
@@ -1376,7 +1363,7 @@ function prepareBatch(projectRoot, repoSlug, prNumbers, options, dependencies = 
     return { prNumber, merged: false, approvedRuns: approval.approvedRuns.map((run) => run.id),
       headSha: details.headRefOid, prepared: true };
     } catch (error) {
-      return { prNumber, merged: false, status: "blocked", reason: error.message };
+      return { prNumber, merged: false, status: "blocked", reason: error.message, ...describeFailure(error) };
     }
   });
 }
@@ -1387,6 +1374,12 @@ function assertEvaluatorCompatible(projectRoot, loadedOid, currentOid, execute =
     throw new Error("Trusted evaluator contract changed during the batch; restart from refreshed protected main");
 }
 async function runBatch(projectRoot, prNumbers, options = {}) {
+  const release = options.stateDir ? openStore(options.stateDir, projectRoot).acquireLock('merge') : () => {};
+  try { return await runBatchUnlocked(projectRoot, prNumbers, options); }
+  finally { release(); }
+}
+
+async function runBatchUnlocked(projectRoot, prNumbers, options = {}) {
   // Programmatic callers bypass parseArgs; retain the same bounded polling cadence.
   options = { ...options, pollSeconds: Number.isFinite(options.pollSeconds) && options.pollSeconds > 0
     ? options.pollSeconds : DEFAULT_POLL_SECONDS };
@@ -1445,7 +1438,7 @@ async function runBatch(projectRoot, prNumbers, options = {}) {
           result.status = "merged";
         }
       } catch (error) {
-        result = { prNumber, merged: false, status: "blocked", reason: error.message };
+        result = { prNumber, merged: false, status: "blocked", reason: error.message, ...describeFailure(error) };
         console.error(`[merge-batch] PR #${prNumber}: ${error.message}; continuing independent PRs.`);
       }
       results.push(result);

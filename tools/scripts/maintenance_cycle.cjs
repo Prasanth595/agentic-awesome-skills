@@ -6,6 +6,7 @@ const path = require('node:path');
 const {execFileSync} = require('node:child_process');
 const batch = require('./merge_batch.cjs');
 const {openStore} = require('../lib/maintenance-state');
+const {failure,describeFailure,readWithRetry} = require('../lib/maintenance-failures');
 const ROOT = path.resolve(__dirname, '../..');
 const REPO = 'sickn33/agentic-awesome-skills';
 function moduleRun(command, args) { return execFileSync(command, args, {cwd:ROOT, encoding:'utf8', timeout:120000, maxBuffer:16*1024*1024}).trim(); }
@@ -21,6 +22,7 @@ function parse(argv) {
   return options;
 }
 function nextAction(result) {
+  if(result.nextAction && result.failureCode!=='UNKNOWN_STOP') return result.nextAction;
   if(result.merged) return 'Verify protected-main ancestry and exact-main CI.';
   if(!result.reason) return 'Review the complete immutable skill tree once; then merge with exact-head attestation.';
   if(/BEHIND|behind|base.*drift/i.test(result.reason)) return 'Use align once with the observed --expected-head, then re-intake; never loop or bypass strict protection.';
@@ -32,14 +34,27 @@ function proofForRuns(runs, sha) {
   return ['.github/workflows/ci.yml','.github/workflows/codeql.yml'].map(workflow=>{
     const candidates=runs.filter(r=>r.head_sha===sha && r.head_branch==='main' && r.event==='push' && r.path===workflow).sort((a,b)=>b.id-a.id);
     const latest=candidates[0];
-    if(!latest || latest.status!=='completed' || latest.conclusion!=='success') throw Error(`${workflow}: missing, pending or failed on exact main ${sha}`);
+    if(!latest || latest.status!=='completed' || latest.conclusion!=='success') throw failure(latest?.status==='completed'?'CI_FAILED':'CI_WAIT_TIMEOUT',`${workflow}: missing, pending or failed on exact main ${sha}`);
     return latest;
   });
 }
 async function main(argv, dependencies = {}) {
+  const options=parse([...argv]);
+  const store=(dependencies.openStore || openStore)(options['state-dir'], ROOT);
+  const release=options.command==='status' ? () => {} : store.acquireLock?.('cycle') || (() => {});
+  try {return await mainUnlocked(argv, {...dependencies,openStore:()=>store});}
+  finally {release();}
+}
+async function mainUnlocked(argv, dependencies = {}) {
   const batch = dependencies.batch || require('./merge_batch.cjs');
   const run = dependencies.run || ((...args) => moduleRun(...args));
-  const gh = dependencies.gh || (args => JSON.parse(run('gh', args)));
+  const rawGh = dependencies.gh || (args => JSON.parse(run('gh', args)));
+  const gh = args => {
+    if(args.includes('--method') || args.includes('-X')) {
+      try{return rawGh(args);} catch(error) {throw failure('WRITE_UNCERTAIN', 'Write response unavailable; read current PR state before resuming: '+error.message);}
+    }
+    return readWithRetry(()=>rawGh(args),dependencies);
+  };
   const readVersion = dependencies.readVersion || (() => JSON.parse(fs.readFileSync(path.join(ROOT,'package.json'))).version);
   const o=parse(argv), store=(dependencies.openStore || openStore)(o['state-dir'], ROOT);
   let state=store.readBatch('cycle');
@@ -68,7 +83,7 @@ async function main(argv, dependencies = {}) {
       const prs=batch.parsePrList(o.prs); if(prs.length!==1) throw Error('Align one exact PR deliberately');
       const expected=batch.assertFullSha(o['expected-head'],'Expected head');
       const pr=gh(['api',`repos/${REPO}/pulls/${prs[0]}`]);
-      if(pr.state!=='open' || pr.base.ref!=='main' || pr.head.sha!==expected) throw Error('PR identity changed; re-intake');
+      if(pr.state!=='open' || pr.base.ref!=='main' || pr.head.sha!==expected) throw failure('PR_CHANGED','PR identity changed; re-intake');
       // One explicit request; never force push or retry automatically.
       attempt.result=gh(['api','--method','PUT',`repos/${REPO}/pulls/${prs[0]}/update-branch`,'-f',`expected_head_sha=${expected}`]);
       attempt.success=true;
@@ -89,13 +104,21 @@ async function main(argv, dependencies = {}) {
       const runs=gh(['api','--paginate','--slurp',`repos/${REPO}/actions/runs?head_sha=${sha}&per_page=100`]).flatMap(p=>p.workflow_runs);
       const proofs=proofForRuns(runs,sha);
       const raw=proofs.map(r=>({run:r,jobs:gh(['api','--paginate','--slurp',`repos/${REPO}/actions/runs/${r.id}/jobs?per_page=100`]).flatMap(p=>p.jobs)}));
+      // Re-read after collecting jobs: a rerun can invalidate a previously green run.
+      for(const proof of proofs) {
+        const current=gh(['api',`repos/${REPO}/actions/runs/${proof.id}`]);
+        proofForRuns([current,...proofs.filter(p=>p.id!==proof.id)],sha);
+        if(current.id!==proof.id || current.run_attempt!==proof.run_attempt || current.path!==proof.path) throw failure('CI_WAIT_TIMEOUT','Workflow attempt changed during verification; collect fresh evidence');
+      }
+      const latestProofs=proofForRuns(gh(['api','--paginate','--slurp',`repos/${REPO}/actions/runs?head_sha=${sha}&per_page=100`]).flatMap(p=>p.workflow_runs),sha);
+      if(latestProofs.some((current,index)=>current.id!==proofs[index].id || current.run_attempt!==proofs[index].run_attempt)) throw failure('CI_WAIT_TIMEOUT','A newer workflow run appeared during verification; collect fresh evidence');
       if(batch.ensureTrustedMain(ROOT)!==sha) throw Error('Main changed during final verification');
       attempt.result={main:sha,pulls:pulls.map(p=>({number:p.number,head:p.head.sha,merge:p.merge_commit_sha,mergedAt:p.merged_at})),workflows:raw};
       attempt.success=true;state.completedAt=new Date().toISOString();state.elapsedMs=Date.parse(state.completedAt)-Date.parse(state.startedAt);
       state.measurement='observed-source-maintenance-through-final-verification';
       state.limitations=['Includes review, agent gaps, blocked attempts and branch updates since start.','Not comparable to a release cycle or CI-only timing.','No runtime/catalog publication or native-client restart is performed.'];
     }
-  } catch(error) {attempt.success=false;attempt.error=error.message;process.exitCode=1;}
+  } catch(error) {attempt.success=false;attempt.error=error.message;Object.assign(attempt,describeFailure(error));process.exitCode=1;}
   finally {attempt.completedAt=new Date().toISOString();attempt.elapsedMs=Date.parse(attempt.completedAt)-Date.parse(attempt.startedAt);store.writeBatch('cycle',state);console.log(JSON.stringify({startedAt:state.startedAt,completedAt:state.completedAt,elapsedMs:state.elapsedMs,attempt},null,2));}
 }
 module.exports={parse,nextAction,proofForRuns,main};
