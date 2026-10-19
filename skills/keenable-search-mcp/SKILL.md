@@ -96,7 +96,7 @@ when the answer depends on exact wording or numbers.
 Check tool errors before using the output. An empty result is not evidence that a
 claim is false. On rate limits or service failures, report the limitation and wait
 before retrying; do not silently switch to another provider. An API key sent in an
-`X-API-Key` header removes the hourly limit and raises the rate limit. If the user
+`X-API-Key` header removes the hourly cap; the per-second limit still applies. If the user
 adds one, reference it through the host's secret mechanism; never ask the user to
 paste a key into chat.
 
