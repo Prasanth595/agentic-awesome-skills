@@ -81,7 +81,10 @@ or modes invalidate the exception. Other regression blockers remain active.
 
 ## Deterministic failure handling
 
-Use the emitted `failureCode` and `nextAction`; do not improvise a bypass. Read-only
+Use the emitted `failureCode` and `nextAction`; do not improvise a bypass.
+`REVIEW_REQUIRED` identifies missing exact-head review for a same-repository owner
+change; `POLICY_BLOCKED` identifies a contributor change that an attestation alone
+cannot authorize. Neither outcome grants approval. Read-only
 PR/check/workflow helper reads and cycle GitHub reads retry transient network
 errors at most three times, with 1-second
 and 3-second backoff. Authentication failures, rate limits and malformed responses

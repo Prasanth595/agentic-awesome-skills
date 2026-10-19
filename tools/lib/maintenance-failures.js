@@ -1,6 +1,8 @@
 "use strict";
 // Failure handling is deliberately conservative: retries are only for reads.
 const ACTIONS = {
+  REVIEW_REQUIRED: 'Review this exact full head and complete changed bundle/code, then supply --reviewed-head. This does not waive any required checks or protection.',
+  POLICY_BLOCKED: 'Repair the source or use a separately reviewed protected-base policy change; an attestation alone cannot authorize this contributor change.',
   NETWORK_UNAVAILABLE: 'Resume after connectivity recovers; refresh PR identity, protection and checks. Do not repeat a write whose outcome is unknown.',
   AUTH_REQUIRED: 'Restore GitHub authentication/permissions, then resume with fresh evidence.',
   RATE_LIMITED: 'Wait for the GitHub rate-limit reset, then resume; do not poll or repeat writes.',

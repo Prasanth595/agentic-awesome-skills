@@ -1045,9 +1045,8 @@ function approveActionRequiredRuns(projectRoot, repoSlug, prDetails, options = {
   const sameRepository = isSameRepositoryPullRequest(repoSlug, prDetails);
   const reviewedHeads = new Set(options.reviewedHeads || []);
   const repositoryOwner = String(repoSlug || "").split("/")[0].toLowerCase();
-  const ownerAuthorizedSensitiveChange = sameRepository
-    && String(prDetails?.author?.login || "").toLowerCase() === repositoryOwner
-    && reviewedHeads.has(headOid);
+  const ownerIdentity = sameRepository && String(prDetails?.author?.login || "").toLowerCase() === repositoryOwner;
+  const ownerAuthorizedSensitiveChange = ownerIdentity && reviewedHeads.has(headOid);
   const reviewedIdentity = {
     pr: prNumber, baseRepository: repoSlug,
     headRepository: prDetails?.headRepository?.nameWithOwner, head: headOid,
@@ -1062,7 +1061,8 @@ function approveActionRequiredRuns(projectRoot, repoSlug, prDetails, options = {
     const reasons = Array.isArray(preliminaryPolicy?.reasons) && preliminaryPolicy.reasons.length
       ? preliminaryPolicy.reasons.slice(0, 12).join(", ")
       : "unclassified local diff";
-    throw new Error(`PR #${prNumber} local base-to-head diff is not fork-approval-safe: ${reasons}.`);
+    throw failure(ownerIdentity ? "REVIEW_REQUIRED" : "POLICY_BLOCKED", `PR #${prNumber} local base-to-head diff is not fork-approval-safe: ${reasons}.` +
+      (ownerIdentity ? ` Owner review of --reviewed-head ${headOid} is required before this sensitive change can proceed.` : ""));
   }
   const blobSizes = records.length === 0 ? new Map() : getSizes(projectRoot, records, dependencies);
   const policy = records.length === 0 ? emptyChangePolicy() : classifyRecords(records, { blobSizes, licenseContents: (dependencies.resolveLicenseContents || resolveLicenseContents)(projectRoot, records), ...policyOptions });
@@ -1070,7 +1070,8 @@ function approveActionRequiredRuns(projectRoot, repoSlug, prDetails, options = {
     const reasons = Array.isArray(policy?.reasons) && policy.reasons.length
       ? policy.reasons.slice(0, 12).join(", ")
       : "unclassified local diff";
-    throw new Error(`PR #${prNumber} local base-to-head diff is not fork-approval-safe: ${reasons}.`);
+    throw failure(ownerIdentity ? "REVIEW_REQUIRED" : "POLICY_BLOCKED", `PR #${prNumber} local base-to-head diff is not fork-approval-safe: ${reasons}.` +
+      (ownerIdentity ? ` Owner review of --reviewed-head ${headOid} is required before this sensitive change can proceed.` : ""));
   }
 
   const evaluatorOid = assertFullSha(
