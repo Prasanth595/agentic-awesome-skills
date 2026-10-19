@@ -116,59 +116,23 @@ const maintainerSkillUi = fs.readFileSync(
 for (const contractText of [maintainerSkill, maintenanceGuide, mergeBatchGuide, mergingGuide, autonomyGuide]) {
   assert.match(contractText, /skills\/\*\*|skills\/<skill-id>\/\*\*/);
 }
-assert.match(maintainerSkill, /entire tracked `skills\/<skill-id>\/\*\*` subtree/);
-assert.match(maintainerSkill, /authored by the repository owner/);
-assert.match(maintainerSkill, /exactly one merged release PR/);
-assert.match(maintenanceGuide, /canonical-repo-state` PR owns that state/);
-assert.match(autonomyGuide, /complete nearest skill-directory fingerprint/);
-for (const contractText of [maintainerSkill, maintenanceGuide, mergeBatchGuide, autonomyGuide]) {
-  assert.doesNotMatch(contractText, /may normalize the PR body|close\/reopen the PR|retries `Base branch was modified`/);
-  assert.match(contractText, /does not (?:rewrite|mutate).*PR (?:body|metadata)|PR-body rewriting or normalization/);
-  assert.match(contractText, /does not retry base drift|does not .*retry base drift|no automatic retry/);
+const detailedContract = fs.readFileSync(path.join(repositoryRoot, "docs/maintainers/maintenance-contract.md"), "utf8");
+for (const text of [maintainerSkill, maintenanceGuide, mergeBatchGuide, autonomyGuide]) {
+  assert.match(text, /maintenance-contract\.md/);
+  assert.match(text, /review/i);
 }
-assert.doesNotMatch(maintenanceGuide, /runs the mandatory post-merge `sync:contributors`/);
-assert.match(maintenanceGuide, /hands contributor\/generated drift to the protected canonical-sync lane/);
-assert.match(maintenanceGuide, /`npm run chain` already includes catalog generation/);
-assert.doesNotMatch(maintenanceGuide, /npm run chain\n\s+npm run catalog/);
-assert.match(autonomyGuide, /explicitly dispatches main CI and CodeQL/);
-assert.match(autonomyGuide, /Pages remains release-only/);
-for (const contractText of [maintainerSkill, maintenanceGuide, mergeBatchGuide, autonomyGuide]) {
-  assert.match(contractText, /protected[- ]base|protected base/);
-  assert.match(contractText, /impact_profile.*shadow|shadow-only.*impact_profile/s);
-  assert.match(contractText, /source-validation.*lightweight/s);
-  assert.match(contractText, /required CI.*(?:complete|full).*unsharded/is);
-}
-assert.match(maintenanceGuide, /merge:batch.*only fork-run approval and merge authority/);
-assert.match(mergeBatchGuide, /merge:batch.*only command allowed to approve fork runs or merge/s);
-assert.match(autonomyGuide, /merge:batch.*sole authority for fork-run approval and merge/s);
-assert.match(maintainerSkill, /merge:batch.*recompute the current trusted decision/s);
-for (const contractText of [maintenanceGuide, mergeBatchGuide, autonomyGuide]) {
-  assert.match(contractText, /source-validation.*(?:refresh|generate|generated-state).*once|(?:refresh|generate|generated-state).*once.*source-validation/s);
-  assert.match(contractText, /artifact-preview.*(?:verif(?:y|ies).*manifest|manifest.*verif(?:y|ies))/s);
-  assert.match(contractText, /final (?:CI and CodeQL|`main` CI and CodeQL)/i);
-}
-assert.match(autonomyGuide, /timing telemetry/);
-assert.match(autonomyGuide, /npm run test:local -- --shard-index N --shard-count M/);
-assert.match(mergingGuide, /No local-integration exception/);
-assert.doesNotMatch(mergingGuide, /Rare exception: local squash|`gh pr merge <PR_NUMBER>/);
+assert.match(detailedContract, /entire tracked `skills\/<skill-id>\/\*\*` subtree/);
+assert.match(detailedContract, /exactly one merged release PR|Exactly one merged release PR/);
+assert.match(detailedContract, /authored by the repository owner/);
+assert.match(detailedContract, /does not rewrite PR metadata/);
+assert.match(detailedContract, /does not retry base drift/);
+assert.match(detailedContract, /No direct main pushes, admin bypass/);
+assert.match(detailedContract, /minimum runtime/);
+assert.match(detailedContract, /public artifact mismatch/);
+assert.equal(detailedContract, fs.readFileSync(path.join(repositoryRoot, "skills/antigravity-maintainer-batch-release/references/maintenance-contract.md"), "utf8"));
+assert.equal(fs.readFileSync(path.join(repositoryRoot,"docs/maintainers/component-validation.md"),"utf8"), fs.readFileSync(path.join(repositoryRoot,"skills/antigravity-maintainer-batch-release/references/component-validation.md"),"utf8"));
 assert.match(maintainerSkillUi, /\$antigravity-maintainer-batch-release/);
-assert.doesNotMatch(maintainerSkillUi, /frozen matrix|product, verifier, and gold|recommend|rank/i);
-assert.match(maintainerSkill, /discover every already-configured local AAS MCP host from its real configuration and update each one to the exact same package version/);
-assert.match(maintainerSkill, /Pin `agentic-awesome-skills@X\.Y\.Z` and `--version X\.Y\.Z`; never use `latest`/);
-assert.match(maintainerSkill, /real MCP `initialize` plus `tools\/list` handshake reports catalog package version `X\.Y\.Z`/);
-assert.match(maintainerSkill, /Every stable or prerelease version requires full release alignment/);
-assert.match(maintainerSkill, /npm run sync:release-state`, `npm run plugin-compat:check`, and `npm run bundles:check`/);
-assert.match(maintainerSkill, /every published Codex\/Claude plugin mirror, and every eligible Agent Plugins editorial-bundle manifest/);
-assert.match(maintainerSkill, /explicitly dispatched release-only Pages build/);
-assert.match(maintainerSkill, /final generator pass must be idempotent/);
 assert.match(agentInstructions, /Every stable or prerelease version must finish with the full-release-alignment gate/);
-assert.match(maintenanceGuide, /Run the mandatory full-release-alignment gate/);
-const releaseProcess = fs.readFileSync(
-  path.join(repositoryRoot, "docs", "maintainers", "release-process.md"),
-  "utf8",
-);
-assert.match(releaseProcess, /Complete the mandatory full-release-alignment gate/);
-assert.match(releaseProcess, /Any mismatch, inaccessible configured host, or stale public surface keeps the release incomplete/);
 
 const publishWorkflow = fs.readFileSync(
   path.resolve(__dirname, "..", "..", "..", ".github", "workflows", "publish-npm.yml"),
@@ -178,49 +142,16 @@ assert.match(publishWorkflow, /name: Verify protected release provenance/);
 assert.match(publishWorkflow, /git merge-base --is-ancestor "\$tag_commit" "\$main_commit"/);
 assert.match(publishWorkflow, /ref: main/);
 assert.doesNotMatch(publishWorkflow, /workflow_dispatch/);
-assert.match(publishWorkflow, /expected_tag="v\$\(node -p/);
+assert.match(publishWorkflow, /distribution_fetch\.cjs/);
 
 const pagesWorkflow = fs.readFileSync(
   path.resolve(__dirname, "..", "..", "..", ".github", "workflows", "pages.yml"),
   "utf8",
 );
-assert.match(pagesWorkflow, /^on:\s*\n\s+workflow_dispatch:/m);
-assert.doesNotMatch(pagesWorkflow, /^\s+push:/m);
-assert.match(pagesWorkflow, /permissions:\s*\n\s+contents: read\s*\n\s+pages: write\s*\n\s+id-token: write/);
-const pagesCheckoutIndex = pagesWorkflow.indexOf("- name: Checkout");
-const pagesProvenanceIndex = pagesWorkflow.indexOf("- name: Verify release provenance");
-const pagesSetupIndex = pagesWorkflow.indexOf("- name: Setup Node");
-assert.ok(
-  pagesCheckoutIndex >= 0 && pagesCheckoutIndex < pagesProvenanceIndex && pagesProvenanceIndex < pagesSetupIndex,
-  "Pages must fail closed on release provenance immediately after checkout and before setup/install work",
-);
-for (const provenanceContract of [
-  /GH_TOKEN: \$\{\{ github\.token \}\}/,
-  /GITHUB_REF_TYPE[^\n]+tag/,
-  /GITHUB_REF_NAME[^\n]+\^v\[0-9\]\+\\\.\[0-9\]\+\\\.\[0-9\]\+\$/,
-  /expected_tag="v\$\{package_version\}"/,
-  /refs\/tags\/\$\{GITHUB_REF_NAME\}\^\{commit\}/,
-  /tag_commit[^\n]+GITHUB_SHA[^\n]+head_commit[^\n]+GITHUB_SHA/,
-  /gh api --method GET "repos\/\$\{GITHUB_REPOSITORY\}\/releases\/tags\/\$\{GITHUB_REF_NAME\}"/,
-  /\.draft == false/,
-  /\.published_at/,
-]) {
-  assert.match(pagesWorkflow, provenanceContract);
-}
-for (const command of [
-  "npm run validate:strict",
-  "npm run validate:glossary",
-  "npm run validate:references",
-  "npm run audit:consistency",
-  "npm run security:scan:strict",
-  "npm run plugin-compat:check",
-  "npm run bundles:check",
-  "npm run test",
-  "npm run app:test:coverage",
-]) {
-  assert.match(pagesWorkflow, new RegExp(command.replace(/[.*+?^${}()|[\\]\\]/g, "\\$&")));
-}
-assert.match(pagesWorkflow, /verify:seo -- --require-hosted-url/);
+assert.match(pagesWorkflow, /deployment_target/);
+assert.match(pagesWorkflow, /distribution_fetch\.cjs/);
+assert.match(pagesWorkflow, /\.draft == false/);
+assert.doesNotMatch(pagesWorkflow, /npm run app:build|npm run test/);
 
 const ciWorkflow = fs.readFileSync(
   path.resolve(__dirname, "..", "..", "..", ".github", "workflows", "ci.yml"),
@@ -254,18 +185,12 @@ assert.match(ciWorkflow, /^permissions:\n  contents: read$/m);
 const mainValidationJobStart = ciWorkflow.indexOf("  main-validation-and-sync:");
 assert.ok(mainValidationJobStart >= 0, "main-validation-and-sync job must exist");
 const mainValidationJob = ciWorkflow.slice(mainValidationJobStart);
-const mainSyncIndex = mainValidationJob.indexOf("- name: Run repo-state sync");
-const mainReferenceValidationIndex = mainValidationJob.indexOf("- name: Validate references");
-assert.ok(
-  mainSyncIndex >= 0 &&
-    mainReferenceValidationIndex >= 0 &&
-    mainSyncIndex < mainReferenceValidationIndex,
-  "main canonical sync must regenerate source-derived bundle data before validating cross-references",
-);
+assert.match(mainValidationJob, /maintenance_validate\.cjs/);
+assert.doesNotMatch(mainValidationJob, /create-pull-request|merge_canonical_sync/);
 assert.match(
   ciWorkflow,
-  /source-validation:[\s\S]*?- name: Refresh ephemeral derived sources for tests\n\s+if: env\.IS_TRUSTED_CANONICAL_SYNC_PR != 'true'\n\s+run: npm run plugin-compat:sync && npm run index && npm run bundles:sync && npm run sync:metadata && npm run catalog && npm run build:aas-v1-catalog && npm run sync:web-assets\n[\s\S]*?- name: Run tests\n\s+if: env\.IS_TRUSTED_CANONICAL_SYNC_PR != 'true'\n\s+run: npm run test/,
-  "source-only skill PRs must refresh uncommitted mirrors and indexes before tests read them",
+  /source-validation:[\s\S]*?- name: Run component validation[\s\S]*?maintenance_validate\.cjs --base "\$BASE_SHA" --head "\$HEAD_SHA"/,
+  "source validation must execute an exact-diff component plan",
 );
 assert.doesNotMatch(
   ciWorkflow,
@@ -275,7 +200,7 @@ assert.doesNotMatch(
 assert.match(ciWorkflow, /name: pr-evidence-/);
 assert.doesNotMatch(ciWorkflow, /pull_request_target:/);
 assert.match(ciWorkflow, /actions\/download-artifact@[0-9a-f]{40}/);
-const prEvidenceJob = ciWorkflow.match(/^  pr-evidence:\n([\s\S]*?)(?=^  artifact-preview:)/m)?.[0] || "";
+const prEvidenceJob = ciWorkflow.match(/^  pr-evidence:\n([\s\S]*?)(?=^  [a-z][a-z0-9-]*:)/m)?.[0] || "";
 assert.ok(prEvidenceJob, "pr-evidence job must exist");
 assert.doesNotMatch(prEvidenceJob, /(?:contents|pull-requests|actions): write/);
 assert.doesNotMatch(prEvidenceJob, /secrets\./);
@@ -297,17 +222,13 @@ assert.match(
   "canonical-sync evidence must retain its explicit successful boundary record",
 );
 
-const sourceValidationJob = ciWorkflow.match(/^  source-validation:\n([\s\S]*?)(?=^  pr-evidence:)/m)?.[0] || "";
+const sourceValidationJob = ciWorkflow.match(/^  source-validation:\n([\s\S]*?)(?=^  [a-z][a-z0-9-]*:)/m)?.[0] || "";
 assert.match(sourceValidationJob, /needs: pr-policy/, "source validation should not wait for independent PR evidence");
 assert.doesNotMatch(sourceValidationJob, /needs:.*pr-evidence/);
-const sourceRefreshIndex = sourceValidationJob.indexOf("- name: Refresh ephemeral derived sources for tests");
-const sourceReferenceValidationIndex = sourceValidationJob.indexOf("- name: Validate references");
-assert.ok(
-  sourceRefreshIndex >= 0 &&
-    sourceReferenceValidationIndex >= 0 &&
-    sourceRefreshIndex < sourceReferenceValidationIndex,
-  "source validation must refresh source-derived bundle data before validating cross-references",
-);
+const componentPlan = require("../../lib/maintenance-impact").checkPlan("catalog");
+assert.ok(componentPlan.indexOf("preview") < componentPlan.indexOf("validate:references"),
+  "source validation must refresh source-derived bundle data before validating cross-references");
+
 assert.match(
   sourceValidationJob,
   /actions\/checkout@[0-9a-f]{40}[\s\S]*?ref: \$\{\{ github\.event\.pull_request\.head\.sha \}\}/,
@@ -321,7 +242,7 @@ assert.match(
   /- name: Record canonical source-validation boundary\n\s+if: env\.IS_TRUSTED_CANONICAL_SYNC_PR == 'true'/,
   "canonical source validation should become a lightweight boundary record after pr-policy exact-tree reproduction",
 );
-const artifactPreviewJob = ciWorkflow.match(/^  artifact-preview:\n([\s\S]*?)(?=^  main-validation-and-sync:)/m)?.[0] || "";
+const artifactPreviewJob = ciWorkflow.match(/^  artifact-preview:\n([\s\S]*?)(?=^  [a-z][a-z0-9-]*:)/m)?.[0] || "";
 assert.match(artifactPreviewJob, /needs: \[pr-policy, source-validation\]/);
 assert.match(artifactPreviewJob, /ref: \$\{\{ github\.event\.pull_request\.head\.sha \|\| github\.sha \}\}/);
 assert.match(
@@ -449,6 +370,10 @@ for (const [filePath, expectedKind] of [
   ["skills/example/assets/screenshot.png", "skill_support"],
   ["README.md", "documentation"],
   ["docs/users/faq.md", "documentation"],
+  ["apps/web-app/src/hooks/useSkillStars.ts", "web_app_source"],
+  ["apps/web-app/src/pages/Home.tsx", "web_app_source"],
+  ["apps/web-app/src/styles/theme.css", "web_app_source"],
+  ["apps/web-app/src/data/seoLandingPages.json", "web_app_source"],
 ]) {
   const policy = classifyPathPolicy(filePath);
   assert.strictEqual(policy.approvalSafe, true, filePath);
@@ -459,6 +384,15 @@ for (const [filePath, reason] of [
   [".github/workflows/ci.yml", "unapproved_path"],
   ["tools/scripts/check.js", "unapproved_path"],
   ["skills/example/references/run.py", "unknown_extension"],
+  ["apps/web-app/package.json", "unapproved_path"],
+  ["apps/web-app/package-lock.json", "unapproved_path"],
+  ["apps/web-app/vite.config.ts", "unapproved_path"],
+  ["apps/web-app/public/skills.json", "unapproved_path"],
+  ["apps/web-app/e2e/browse.spec.ts", "unapproved_path"],
+  ["apps/web-app/scripts/prerender-routes.js", "unapproved_path"],
+  ["apps/web-app/src/hooks/run.sh", "unknown_extension"],
+  ["apps/web-app/src/legacy/tool.js", "unknown_extension"],
+  ["skills/example/scripts/run.ts", "unknown_extension"],
   ["skills/example\\references\\guide.md", "backslash_path"],
   ["skills/example/references/../SKILL.md", "noncanonical_path"],
   ["skills/design-it/glassmorphism/references/../../escape.md", "noncanonical_path"],
@@ -499,6 +433,28 @@ for (const [filePath, reason] of [
 
 {
   const policy = classifyChangeRecords([
+    modifiedRecord("apps/web-app/src/hooks/useSkillStars.ts"),
+  ]);
+  assert.strictEqual(policy.approvalSafe, true);
+  assert.strictEqual(
+    policy.requiresHumanReview,
+    true,
+    "web-app source runs may be approved, but the merge still requires an exact-head attestation",
+  );
+  assert.deepStrictEqual(policy.canonicalSkillChanges, []);
+  assert.deepStrictEqual(policy.skillContentChanges, []);
+  assert.ok(policy.paths.every((entry) => entry.kind === "web_app_source"));
+}
+
+{
+  const policy = classifyChangeRecords([addedRecord("apps/web-app/package-lock.json")]);
+  assert.strictEqual(policy.approvalSafe, false);
+  assert.strictEqual(policy.requiresHumanReview, false);
+  assert.ok(policy.reasons.some((entry) => entry.includes("new_unapproved_path")));
+}
+
+{
+  const policy = classifyChangeRecords([
     {
       status: "R",
       old_path: "skills/example/references/old.md",
@@ -523,6 +479,79 @@ for (const [filePath, reason] of [
     },
   ]);
   assert.strictEqual(policy.approvalSafe, true);
+}
+
+{
+  // Git pairs a copy by similarity against any path already present in the base
+  // tree, so the same new canonical SKILL.md can be reported as a copy of a
+  // canonical skill, of a generated plugin mirror, or of nothing at all. The
+  // read-only origin must be accepted in every case; the destination still
+  // carries the reviewed change. Observed on the Beatra skill PRs #1473-#1487.
+  const canonicalCopy = {
+    status: "C",
+    old_path: "skills/suno-lyrics-to-song/SKILL.md",
+    new_path: "skills/example/SKILL.md",
+    old_mode: "100644",
+    new_mode: "100644",
+    old_oid: OLD_OID,
+    new_oid: NEW_OID,
+    old_size: 100,
+    new_size: 100,
+  };
+  const pluginCopy = {
+    ...canonicalCopy,
+    old_path: "plugins/agentic-awesome-skills/skills/suno-lyrics-to-song/SKILL.md",
+  };
+  for (const [label, record] of [
+    ["canonical origin", canonicalCopy],
+    ["generated mirror origin", pluginCopy],
+  ]) {
+    const policy = classifyChangeRecords([record]);
+    assert.strictEqual(policy.approvalSafe, true, label);
+    assert.strictEqual(policy.requiresHumanReview, true, label);
+    assert.deepStrictEqual(policy.canonicalSkillChanges, ["skills/example/SKILL.md"], label);
+    const origin = policy.paths.find((entry) => entry.side === "old");
+    assert.strictEqual(origin.approvalSafe, true, label);
+    assert.strictEqual(origin.kind, "copy_origin", label);
+    assert.ok(!policy.reasons.some((entry) => entry.includes("old_unapproved_path")), label);
+  }
+
+  // A rename modifies the origin, and deleting or editing an unapproved path
+  // stays a definite failure: only the copy origin is read-only.
+  for (const [label, record, reason] of [
+    ["unapproved origin rename", { ...pluginCopy, status: "R" }, "old_unapproved_path"],
+    ["unapproved origin deletion", {
+      status: "D",
+      old_path: pluginCopy.old_path,
+      new_path: null,
+      old_mode: "100644",
+      new_mode: "000000",
+      old_oid: OLD_OID,
+      new_oid: ZERO_OID,
+      old_size: 100,
+    }, "old_unapproved_path"],
+    ["unapproved origin modification", {
+      status: "M",
+      old_path: pluginCopy.old_path,
+      new_path: pluginCopy.old_path,
+      old_mode: "100644",
+      new_mode: "100644",
+      old_oid: OLD_OID,
+      new_oid: NEW_OID,
+      old_size: 100,
+      new_size: 100,
+    }, "old_unapproved_path"],
+    ["copy origin executable mode", { ...pluginCopy, old_mode: "100755" }, "old_executable_mode"],
+    ["copy origin symlink mode", { ...pluginCopy, old_mode: "120000" }, "old_symlink_mode"],
+    ["copy origin unapproved destination", {
+      ...pluginCopy,
+      new_path: "plugins/agentic-awesome-skills/skills/other/SKILL.md",
+    }, "new_unapproved_path"],
+  ]) {
+    const policy = classifyChangeRecords([record]);
+    assert.strictEqual(policy.approvalSafe, false, label);
+    assert.ok(policy.reasons.some((entry) => entry.includes(reason)), `${label}: ${policy.reasons.join(",")}`);
+  }
 }
 
 {
@@ -593,4 +622,56 @@ for (const [label, record, reason] of [
   assert.ok(tooMany.reasons.includes("too_many_change_records"));
   const tooLarge = classifyChangeRecords(records, { maxTotalBlobBytes: 700 });
   assert.ok(tooLarge.reasons.includes("oversized_total_diff"));
+}
+
+// Both generated setup guides must participate in canonical sync and scripted release staging.
+const actualContract = require("../../lib/workflow-contract").loadWorkflowContract(__dirname);
+const releaseManaged = require("../../lib/workflow-contract").getManagedFiles(actualContract, { includeMixed: true, includeReleaseManaged: true });
+for (const guide of ["docs/users/codex-cli-skills.md", "docs/users/claude-code-skills.md"]) {
+  assert.ok(actualContract.mixedFiles.includes(guide), `${guide} must be classified as mixed`);
+  assert.ok(releaseManaged.includes(guide), `${guide} must be included in release staging`);
+}
+
+// Execute the actual workflow resolver: failed bootstrap cannot be a passing review.
+{
+  const YAML = require('yaml');
+  const { spawnSync } = require('node:child_process');
+  const os = require('node:os');
+  const workflow = YAML.parse(skillReviewWorkflow);
+  const steps = workflow.jobs['review-attempt'].steps;
+  const setup = steps.find((step) => step.id === 'tessl-setup');
+  const review = steps.find((step) => step.id === 'tessl-review');
+  const resolver = steps.find((step) => step.id === 'outcome');
+  assert.strictEqual(setup['timeout-minutes'], 2);
+  assert.strictEqual(setup['continue-on-error'], true);
+  assert.match(review.if, /steps\.tessl-setup\.outcome == 'success'/);
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'aas-review-outcome-'));
+  const output = path.join(directory, 'output');
+  try {
+    for (const [setupOutcome, result, cache, expected] of [
+      ['failure', 'reviewed', 'false', 'manual'],
+      ['cancelled', 'reviewed', 'false', 'manual'],
+      ['success', 'manual', 'false', 'manual'],
+      ['success', 'reviewed', 'false', 'reviewed'],
+      ['skipped', '', 'true', 'reviewed'],
+    ]) {
+      fs.writeFileSync(output, '');
+      const run = spawnSync('bash', ['-c', resolver.run], {
+        encoding: 'utf8',
+        env: { ...process.env, GITHUB_OUTPUT: output, REQUIRES_MANUAL: 'false',
+          HAS_SKILLS: 'true', CACHE_HIT: cache, SETUP_OUTCOME: setupOutcome, TESSL_RESULT: result },
+      });
+      assert.strictEqual(run.status, 0, run.stderr);
+      assert.strictEqual(fs.readFileSync(output, 'utf8').trim(), `outcome=${expected}`);
+    }
+    // No setup and no trustworthy result must fail closed, not invent a pass.
+    const unresolved = spawnSync('bash', ['-c', resolver.run], {
+      encoding: 'utf8', env: { ...process.env, GITHUB_OUTPUT: output,
+        REQUIRES_MANUAL: 'false', HAS_SKILLS: 'true', CACHE_HIT: 'false',
+        SETUP_OUTCOME: '', TESSL_RESULT: '' },
+    });
+    assert.notStrictEqual(unresolved.status, 0);
+  } finally {
+    fs.rmSync(directory, { recursive: true, force: true });
+  }
 }

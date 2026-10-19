@@ -186,7 +186,7 @@ Choose a **specialized plugin** if:
 - you want the plugin itself to communicate a clear job, audience, and workflow
 - you want one package directory that compatible Agent Plugins clients can load without host-specific manifest fields
 
-The hosted [specialized plugin landing page](https://sickn33.github.io/agentic-awesome-skills/plugins) is the quickest way to compare the current AAS plugin packs.
+The hosted [specialized plugin landing page](https://aaskills.tech/plugins) is the quickest way to compare the current AAS plugin packs.
 
 ## Related guides
 
@@ -199,3 +199,7 @@ The hosted [specialized plugin landing page](https://sickn33.github.io/agentic-a
 - [Specialized Plugin Roadmap](specialized-plugin-roadmap.md)
 - [Usage](usage.md)
 - [AAS Agent & MCP Builder submission dossier](../plugin-submissions/aas-agent-mcp-builder/)
+
+## Consolidated offer
+
+Use the [plugin migration guide](plugin-migration.md) for replacements of overlapping historical packs. Retired IDs are activation lookup aliases, not duplicate marketplace plugins or automatic host migrations.

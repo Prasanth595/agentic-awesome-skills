@@ -10,7 +10,7 @@ const npmCommand = process.platform === "win32" ? "npm.cmd" : "npm";
 const npmPackOutputLimit = 16 * 1024 * 1024;
 
 function runNpmPackDryRunJson(cwd = repoRoot) {
-  const result = spawnSync(npmCommand, ["pack", "--dry-run", "--json"], {
+  const result = spawnSync(npmCommand, ["pack", "--dry-run", "--json", "--ignore-scripts"], {
     cwd,
     encoding: "utf8",
     shell: process.platform === "win32",
@@ -112,7 +112,7 @@ assert.ok(
 );
 assert.strictEqual(
   packageJson.dependencies?.yaml,
-  "^2.9.0",
+  "^2.9.1",
   "published package must declare yaml as a runtime dependency for the installer",
 );
 assert.strictEqual(

@@ -13,7 +13,8 @@
     ".agents/plugins/",
     ".claude-plugin/plugin.json",
     ".claude-plugin/marketplace.json",
-    "plugins/"
+    "plugins/",
+    "data/distribution-snapshot.json"
   ],
   "mixedFiles": [
     "README.md",
@@ -22,6 +23,7 @@
     "apps/web-app/public/llms.txt",
     "docs/users/getting-started.md",
     "docs/users/bundles.md",
+    "docs/users/codex-cli-skills.md",
     "docs/users/claude-code-skills.md",
     "docs/users/gemini-cli-skills.md",
     "docs/users/usage.md",

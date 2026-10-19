@@ -262,6 +262,22 @@ function runFixture(overrides = {}) {
   );
   assert.strictEqual(valid.length, 1);
 
+  assert.ok(
+    mergeBatch.approvalWorkflowPaths.has(".github/workflows/aas-agent-first-preview.yml"),
+    "the pinned read-only AAS agent-first preview workflow must be approvable for fork web-app PRs",
+  );
+  assert.ok(
+    mergeBatch.approvalWorkflowPaths.has(".github/workflows/skillspector-advisory.yml"),
+    "the pinned read-only SkillSpector advisory workflow must be approvable for fork skill PRs",
+  );
+  const previewValid = mergeBatch.validateActionRequiredRuns(
+    [runFixture({ path: ".github/workflows/aas-agent-first-preview.yml", workflow_id: 102 })],
+    [workflowFixture({ id: 102, path: ".github/workflows/aas-agent-first-preview.yml" })],
+    450,
+    HEAD_SHA,
+  );
+  assert.strictEqual(previewValid.length, 1);
+
   const emptyMetadataIdentity = {
     headRefName: "feature/example",
     headRepository: "contributor/repo",
@@ -398,16 +414,44 @@ function approvalDependencies(overrides = {}) {
     readRawChangeRecords() { return [supportRecord]; },
     resolveBlobSizes() { return new Map([[BASE_SHA, 100], [BLOB_SHA, 100]]); },
   });
-  assert.throws(
-    () => mergeBatch.approveActionRequiredRuns("/repo", "owner/repo", prDetails, { dependencies }),
-    /--reviewed-head/,
-    "skill support content must require an exact-head maintainer attestation",
+  assert.doesNotThrow(
+    () => mergeBatch.approveActionRequiredRuns("/repo", "owner/repo", prDetails, { dependencies, dryRun: true }),
+    "safe analysis starts before semantic review; merge review remains required",
   );
   const approved = mergeBatch.approveActionRequiredRuns("/repo", "owner/repo", prDetails, {
     dependencies,
     reviewedHeads: [HEAD_SHA],
     dryRun: true,
   });
+  assert.strictEqual(approved.policy.requiresHumanReview, true);
+  assert.deepStrictEqual(approved.policy.canonicalSkillChanges, []);
+}
+
+{
+  const prDetails = { number: 450, baseRefName: "main", baseRefOid: BASE_SHA, headRefOid: HEAD_SHA };
+  const webAppRecord = {
+    status: "M",
+    old_path: "apps/web-app/src/hooks/useSkillStars.ts",
+    new_path: "apps/web-app/src/hooks/useSkillStars.ts",
+    old_mode: "100644",
+    new_mode: "100644",
+    old_oid: BASE_SHA,
+    new_oid: BLOB_SHA,
+  };
+  const dependencies = approvalDependencies({
+    readRawChangeRecords() { return [webAppRecord]; },
+    resolveBlobSizes() { return new Map([[BASE_SHA, 100], [BLOB_SHA, 100]]); },
+  });
+  assert.doesNotThrow(
+    () => mergeBatch.approveActionRequiredRuns("/repo", "owner/repo", prDetails, { dependencies, dryRun: true }),
+    "safe browser-source analysis starts before semantic review",
+  );
+  const approved = mergeBatch.approveActionRequiredRuns("/repo", "owner/repo", prDetails, {
+    dependencies,
+    reviewedHeads: [HEAD_SHA],
+    dryRun: true,
+  });
+  assert.strictEqual(approved.policy.approvalSafe, true);
   assert.strictEqual(approved.policy.requiresHumanReview, true);
   assert.deepStrictEqual(approved.policy.canonicalSkillChanges, []);
 }
@@ -423,20 +467,8 @@ function approvalDependencies(overrides = {}) {
     },
     approveWorkflowRun() { approvals += 1; },
   });
-  assert.throws(
-    () => mergeBatch.approveActionRequiredRuns("/repo", "owner/repo", prDetails, { dependencies }),
-    /--reviewed-head/,
-  );
-  assert.throws(
-    () => mergeBatch.approveActionRequiredRuns("/repo", "owner/repo", prDetails, {
-      dependencies,
-      reviewedHeads: [BASE_SHA],
-    }),
-    /--reviewed-head/,
-    "a stale but full reviewed head must fail closed",
-  );
-  assert.strictEqual(approvals, 0);
-
+  // Analysis approval carries no semantic merge authority, with or without
+  // a stale attestation. getRequiredCheckAliases tests above keep merge gated.
   const result = mergeBatch.approveActionRequiredRuns("/repo", "owner/repo", prDetails, {
     dependencies,
     reviewedHeads: [HEAD_SHA],
@@ -893,3 +925,9 @@ function approvalDependencies(overrides = {}) {
 }
 
 console.log("ok");
+
+// Release mirrors may be detected as copies from an unchanged canonical tree.
+assert.equal(mergeBatch.isSkillContentRecord({status:"C",old_path:"skills/example/references/guide.md",new_path:"plugins/bundle/skills/example/references/guide.md"}),false);
+assert.equal(mergeBatch.isSkillContentRecord({status:"C",old_path:"plugins/bundle/skills/example/SKILL.md",new_path:"skills/new-example/SKILL.md"}),true);
+assert.equal(mergeBatch.isSkillContentRecord({status:"R",old_path:"skills/example/SKILL.md",new_path:"docs/example.md"}),true);
+assert.equal(mergeBatch.isSkillContentRecord({status:"D",old_path:"skills/example/SKILL.md",new_path:null}),true);

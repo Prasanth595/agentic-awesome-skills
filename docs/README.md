@@ -37,6 +37,9 @@ Current operational guidance lives in `users/`, `contributors/`, and the current
 
 ## Maintainers
 
+- [`maintainers/merge-batch.md`](maintainers/merge-batch.md)
+- [`maintainers/maintainer-sweep.md`](maintainers/maintainer-sweep.md) — one-shot triage before merge batches (`npm run maintainer:sweep`)
+- [`maintainers/jev-hints.md`](maintainers/jev-hints.md) — optional TypeSafe Jev triage (`maintainer:jev-batch` for open PRs; local only)
 - [`maintainers/release-process.md`](maintainers/release-process.md)
 - [`maintainers/merging-prs.md`](maintainers/merging-prs.md)
 - [`maintainers/rollback-procedure.md`](maintainers/rollback-procedure.md)
@@ -53,3 +56,11 @@ Current operational guidance lives in `users/`, `contributors/`, and the current
 - [`sources/sources.md`](sources/sources.md)
 - [`sources/LICENSE-MICROSOFT`](sources/LICENSE-MICROSOFT)
 - [`sources/microsoft-skills-attribution.json`](sources/microsoft-skills-attribution.json)
+
+- [Specialized plugin coverage review (2026-10-13)](maintainers/specialized-plugin-expansion-review-2026-10-13.md): all 21 compositions, selected additions, omissions and validation scope.
+
+- [Plugin consolidation and migration](users/plugin-migration.md): current focused offer and replacements for retired packs.
+
+- [Plugin consolidation review](maintainers/plugin-offer-consolidation-2026-10-13.md): preservation, migration and validation scope.
+
+- [Maintainer flow and recovery](maintainers/maintainer-flow.md): batch coordination, source credits, preflight, dossiers, and release verification.
