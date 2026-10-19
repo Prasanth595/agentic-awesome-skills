@@ -35,6 +35,22 @@ This skill is the checker and the adjudication discipline around it. It does
 not draft, outline, or polish. It answers one question per hit: is the
 manuscript wrong, or is the bible stale?
 
+## When to Use
+
+Use this skill when:
+
+- a manuscript or serial passes ~30k characters / ~10 chapters and you need a
+  continuity pass before publishing or before the next arc;
+- the writer reports "a name feels off", "I lost track of someone's age", or
+  "I forgot whether I already paid off the key";
+- you are about to continue a draft that was paused for weeks and the writer's
+  memory of the earlier chapters is no longer reliable;
+- a model-written draft has to be checked against facts the writer established
+  earlier, not against what the model believes the story is.
+
+Do **not** use it to judge quality, pacing, voice, or plot logic — see
+Limitations.
+
 ## The bible
 
 One JSON file beside the manuscript. Per-character birth years, era bounds and
@@ -106,7 +122,7 @@ Report format per hit: file:line, the check name, the two conflicting facts,
 and the verdict. Batch them by verdict, not by file, so the user sees "3 prose
 fixes, 1 bible update, 1 retcon to approve" instead of a wall of lines.
 
-## What the checker cannot see
+## Limitations
 
 Say this out loud rather than implying full coverage. It does not judge plot
 logic, motivation, pacing, voice, or whether a name is *deliberately* reused.
