@@ -1355,6 +1355,7 @@ function prepareBatch(projectRoot, repoSlug, prNumbers, options, dependencies = 
   const load = dependencies.load || loadPullRequestDetails;
   const approve = dependencies.approve || approveActionRequiredRuns;
   return prNumbers.map((prNumber) => {
+    try {
     const details = load(projectRoot, repoSlug, prNumber);
     if (mergeableIsConflict(details)) throw new Error(`PR #${prNumber} has conflicts`);
     const approval = approve(projectRoot, repoSlug, details, {
@@ -1363,6 +1364,9 @@ function prepareBatch(projectRoot, repoSlug, prNumbers, options, dependencies = 
     });
     return { prNumber, merged: false, approvedRuns: approval.approvedRuns.map((run) => run.id),
       headSha: details.headRefOid, prepared: true };
+    } catch (error) {
+      return { prNumber, merged: false, status: "blocked", reason: error.message };
+    }
   });
 }
 function assertEvaluatorCompatible(projectRoot, loadedOid, currentOid, execute = runCommand) {
