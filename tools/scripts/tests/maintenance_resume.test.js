@@ -20,7 +20,9 @@ const { runBatch } = require("../merge_batch.cjs");
       assert.equal(mergeOptions.pollSeconds, 20, "programmatic callers inherit the CLI polling interval");
       attempted.push(id);
       if (id === 1 && failed) throw new Error("PR conflict");
-      merged.add(id); return { prNumber: id, merged: true };
+      merged.add(id);
+      if(id===4) throw Object.assign(new Error("Merge accepted, response lost"),{failureCode:"WRITE_UNCERTAIN"});
+      return { prNumber: id, merged: true };
     },
   };
   try {
@@ -36,5 +38,10 @@ const { runBatch } = require("../merge_batch.cjs");
     assert.equal(journal.attempts.length,2);
     assert.equal(journal.attempts[0].success,false);
     assert.equal(journal.attempts[1].success,true);
+    const uncertain=await runBatch(repo,[4],options);
+    assert.equal(uncertain[0].failureCode,'WRITE_UNCERTAIN');
+    const reconciled=await runBatch(repo,[4],options);
+    assert.equal(reconciled[0].status,'already-merged');
+    assert.equal(attempted.filter(id=>id===4).length,1,'resume reads accepted merge and verifies ancestry without another write');
   } finally { fs.rmSync(store,{recursive:true,force:true}); fs.rmSync(repo,{recursive:true,force:true}); }
 })().catch(error=>{console.error(error);process.exitCode=1});

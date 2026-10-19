@@ -1,7 +1,7 @@
 const assert = require('node:assert/strict');
 const {main} = require('../maintenance_cycle.cjs');
 const sha = 'a'.repeat(40);
-let saved, pending = false, trusted = true, rerun = false, newRun = false, collected = false;
+let saved, pending = false, trusted = true, rerun = false, newRun = false, collected = false, alignment = false, writes = 0;
 const store = {readBatch: () => saved && structuredClone(saved), writeBatch: (_, state) => {saved=structuredClone(state);}};
 const dependencies = {
   openStore: () => store, readVersion: () => '19.11.0', run: () => '',
@@ -9,10 +9,12 @@ const dependencies = {
     parsePrList: require('../merge_batch.cjs').parsePrList,
     readRepositorySlug: () => 'sickn33/agentic-awesome-skills',
     ensureTrustedMain: () => {if (!trusted) throw Error('Not clean current main'); return sha;},
-    assertEffectiveMainProtection: () => {}, assertFullSha: () => {},
+    assertEffectiveMainProtection: () => {}, assertFullSha: require('../merge_batch.cjs').assertFullSha,
   },
   gh: args => {
     const endpoint = args.at(-1);
+    if(alignment && args.includes('--method')) {writes++;throw Error('ECONNRESET');}
+    if(alignment && endpoint.endsWith('/pulls/1')) return {state:'open',base:{ref:'main'},head:{sha}};
     if (endpoint.endsWith('/pulls/1')) return {number:1, merged:true, base:{ref:'main'}, head:{sha}, merge_commit_sha:sha};
     if (endpoint.includes('/jobs?')) {collected=true;return [{jobs:[]}];}
     const rows=[{workflow_runs:['ci.yml','codeql.yml'].map((name,i)=>({id:i+1+(newRun&&collected?10:0),path:'.github/workflows/'+name,head_sha:sha,head_branch:'main',event:'push',status:pending?'in_progress':'completed',conclusion:pending?null:'success'}))}];
@@ -51,6 +53,11 @@ const dependencies = {
     assert.equal(saved.startedAt,start,'never reset the original timer');
     assert.equal(saved.attempts[0].success,true,'retain historical proof');
     assert.equal(saved.attempts[1].success,false);
+    alignment=true;
+    await main(['align','--state-dir','/unused','--prs','1','--expected-head',sha],dependencies);
+    assert.equal(saved.attempts.at(-1).failureCode,'WRITE_UNCERTAIN');
+    assert.equal(writes,1,'lost branch-update response must not trigger another write');
+    assert.equal(saved.completedAt,undefined);
     await assert.rejects(main(['start','--state-dir','/unused','--prs','1'],dependencies),/already exists/);
   } finally {console.log=oldLog;process.exitCode=oldExit;}
 })().catch(error=>{console.error(error);process.exitCode=1;});
